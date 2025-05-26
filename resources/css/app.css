@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --primary-btn: #0C8CE9; /* blue-500 */
+        --secondary-btn: #64748b; /* slate-500 */
+    }
+
+    .dark {
+        --primary-btn: #60a5fa; /* blue-400 */
+        --secondary-btn: #94a3b8; /* slate-400 */
+    }
+}
+
+[x-cloak] {
+    display: none;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 1.6;
+    color: #333;
+    -webkit-font-smoothing: antialiased;
+}
+
+body.custom-gradient {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background: linear-gradient(to bottom, rgba(153,155,155,0.6), rgba(178,147,91,0.6));
+}
+
+@media (min-width: 768px) {
+    body.custom-gradient {
+        flex-direction: row;
+    }
+}
