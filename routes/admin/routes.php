@@ -22,3 +22,13 @@ Route::middleware(['admin.auth'])->prefix('admin')->group(function () {
 Route::get('/membership/pending', [MembershipApprovalController::class, 'pendingApplications'])->name('admin.membership.pending');
 Route::post('/membership/{id}/approve', [MembershipApprovalController::class, 'approveApplication'])->name('admin.membership.approve');
 Route::post('/membership/{id}/reject', [MembershipApprovalController::class, 'rejectApplication'])->name('admin.membership.reject');
+use Illuminate\Support\Facades\Mail;
+
+Route::get('/test-mail', function () {
+    Mail::raw('Test email from server.', function ($message) {
+        $message->to('lorjohn143@gmail.com')
+            ->subject('Server Mail Test');
+    });
+    return 'Email sent!';
+});
+
