@@ -56,7 +56,7 @@
 $__split = function ($name, $params = []) {
     return [$name, $params];
 };
-[$__name, $__params] = $__split('reminder.manage-reminder', []);
+[$__name, $__params] = $__split('reminder.manage-reminder', ['reminder' => $reminder]);
 
 $__html = app('livewire')->mount($__name, $__params, 'lw-876005099-0', $__slots ?? [], get_defined_vars());
 

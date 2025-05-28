@@ -39,3 +39,164 @@ body.custom-gradient {
         flex-direction: row;
     }
 }
+
+.form-section {
+    display: none;
+}
+.form-section.active {
+    display: block;
+}
+.nav-pills .nav-link.active {
+    background-color: #0d6efd;
+}
+.required-field::after {
+    content: " *";
+    color: red;
+}
+.form-card {
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.form-header {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes pulseGlow {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.gradient-bg {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.glass-morphism {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.card-hover {
+    transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.tab-active {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+    box-shadow: 0 8px 25px -8px rgba(99, 102, 241, 0.5);
+}
+
+.tab-inactive {
+    background: rgba(255, 255, 255, 0.8);
+    color: #64748b;
+    backdrop-filter: blur(10px);
+}
+
+.tab-inactive:hover {
+    background: rgba(255, 255, 255, 0.95);
+    color: #334155;
+    transform: translateY(-2px);
+}
+
+.shimmer-effect {
+    background: linear-gradient(90deg, #f0f9ff 25%, #e0f2fe 50%, #f0f9ff 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+.icon-bounce:hover {
+    animation: bounce 0.6s ease-in-out;
+}
+
+.status-badge {
+    @apply px-3 py-1 rounded-full text-xs font-semibold;
+}
+
+.status-upcoming {
+    @apply bg-blue-100 text-blue-800 border border-blue-200;
+}
+
+.status-ended {
+    @apply bg-gray-100 text-gray-800 border border-gray-200;
+}
+
+.status-archived {
+    @apply bg-purple-100 text-purple-800 border border-purple-200;
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.animate-fade-in-left {
+    animation: fadeInLeft 0.6s ease-out;
+}
+
+.animate-pulse-glow {
+    animation: pulseGlow 2s infinite;
+}
+
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+.glass-effect {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.loading-shimmer {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}

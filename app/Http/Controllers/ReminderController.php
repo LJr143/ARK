@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Reminder;
+use App\Models\ReminderAttachment;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Storage;
 
 class ReminderController extends Controller
 {
@@ -92,5 +94,15 @@ class ReminderController extends Controller
     {
         $reminder->delete();
         return redirect()->route('reminders.index')->with('success', 'Reminder deleted successfully!');
+    }
+
+    public function downloadAttachment(ReminderAttachment $attachment)
+    {
+        // Add any authorization checks here
+        if (!Storage::exists($attachment->file_path)) {
+            abort(404);
+        }
+
+        return Storage::download($attachment->file_path, $attachment->file_name);
     }
 }

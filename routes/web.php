@@ -22,4 +22,6 @@ Route::get('login/google', [LoginController::class, 'redirectToGoogle'])->name('
 Route::get('login/google/callback', [LoginController::class, 'handleGoogleCallback']);
 
 Route::resource('reminders', ReminderController::class);
-Route::get('/manage/reminder', [ViewController::class, 'ManageReminder'] )->name('manage.reminder');
+Route::get('/manage/reminder/{reminder}', [ViewController::class, 'ManageReminder'])->name('manage.reminder');
+Route::get('/attachments/{attachment}/download', [ReminderController::class, 'downloadAttachment'])
+    ->name('attachments.download');

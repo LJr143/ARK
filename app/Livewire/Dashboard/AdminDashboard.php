@@ -32,6 +32,16 @@ class AdminDashboard extends Component
         $this->loadData();
     }
 
+    public function updatedStartDate()
+    {
+        $this->dispatch('dataUpdated');
+    }
+
+    public function updatedEndDate()
+    {
+        $this->dispatch('dataUpdated');
+    }
+
     private function loadData(): void
     {
         // Replace with your actual data loading logic
@@ -40,12 +50,12 @@ class AdminDashboard extends Component
         // $this->paidMembers = Payment::whereBetween('created_at', [$this->startDate, $this->endDate])->count();
 
         // Placeholder values for demonstration
-        $this->paidDues = 0;
-        $this->unpaidDues = 0;
-        $this->totalDues = 0;
-        $this->paidMembers = 0;
-        $this->unpaidMembers = 0;
-        $this->totalMembers = 0;
+        $this->paidDues = 10;
+        $this->unpaidDues = 100;
+        $this->totalDues = 1000;
+        $this->paidMembers = 1;
+        $this->unpaidMembers = 9;
+        $this->totalMembers = 10;
     }
 
     public function render()

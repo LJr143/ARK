@@ -1,182 +1,344 @@
-<div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
-    <div class="flex justify-between items-center align-middle">
-        <h1 class="text-2xl font-bold text-gray-800 mb-6">Reminders</h1>
-        <livewire:reminder.create-reminder/>
-    </div>
-    <div>
-        <div class="border-gray-200">
-            <nav class="flex space-x-8 overflow-x-auto" aria-label="Tabs">
-                <div class="flex bg-[#F1F5F9] p-4 rounded-md space-x-8">
+<div>
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header Section -->
+        <div class="relative overflow-hidden bg-white rounded-3xl shadow-2xl mb-8 animate-fade-in-up">
+            <div class="absolute inset-0 gradient-bg opacity-90"></div>
+            <div
+                class="absolute top-0 right-0 w-96 h-96 bg-white opacity-10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+            <div
+                class="absolute bottom-0 left-0 w-72 h-72 bg-white opacity-5 rounded-full translate-y-1/2 -translate-x-1/2"></div>
+
+            <div class="relative p-6 lg:p-8">
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+                    <div class="text-white animate-fade-in-left">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="p-3 bg-white bg-opacity-20 rounded-2xl backdrop-blur-sm animate-float">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none"
+                                     viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <h1 class="text-2xl lg:text-3xl font-bold">Reminders</h1>
+                        </div>
+                        <p class="text-white text-opacity-90 text-md max-w-2xl leading-relaxed">
+                            Stay organized and never miss important tasks or events. Manage your reminders with style
+                            and efficiency.
+                        </p>
+                    </div>
+
+                    <livewire:reminder.create-reminder/>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Section -->
+        <div class="mb-8 animate-fade-in-up" style="animation-delay: 0.1s">
+            <div
+                class="bg-white bg-opacity-80 backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-white border-opacity-20">
+                <div class="flex flex-col md:flex-row gap-4 items-center">
+                    <div class="flex-1 relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none"
+                                 viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                        </div>
+                        <input
+                            type="text"
+                            wire:model.live.debounce.300ms="search"
+                            placeholder="Search reminders by title or date..."
+                            class="w-full text-[12px] pl-12 pr-4 py-2 bg-white bg-opacity-50 backdrop-blur-sm rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all duration-300 placeholder-gray-500"
+                        >
+                    </div>
+                    <div class="flex items-center gap-6">
+                        <span class="text-gray-600 text-[12px]">Show:</span>
+                        <select wire:model.live="perPage"
+                                class="bg-white bg-opacity-50 backdrop-blur-sm text-[12px] rounded-xl border border-gray-200 px-8 py-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all duration-300">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="all">All</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="mb-8 animate-fade-in-up" style="animation-delay: 0.2s">
+            <div
+                class="bg-white bg-opacity-60 backdrop-blur-xl rounded-2xl p-2 shadow-xl border border-white border-opacity-20">
+                <nav class="flex flex-wrap gap-2">
                     <button
                         wire:click="$set('filter', 'all_reminders')"
-                        class="whitespace-nowrap px-1 text-[12px] font-medium {{ $filter === 'all_reminders' ? 'bg-white py-2 px-4 rounded text-black' : 'text-gray-500 hover:text-black' }}"
+                        class="{{ $filter === 'all_reminders' ? 'tab-active' : 'tab-inactive' }} px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2"
                     >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                             stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M19 11H5m14-4l-3 3.5a5 5 0 0 1-7 0L6 7m2 5h8"/>
+                        </svg>
                         All Reminders
+                        <span class="bg-white bg-opacity-30 px-2 py-1 rounded-full text-xs">
+                        {{ $reminders instanceof \Illuminate\Pagination\LengthAwarePaginator ? $reminders->total() : $reminders->count() }}
+                    </span>
                     </button>
                     <button
                         wire:click="$set('filter', 'upcoming_reminders')"
-                        class="whitespace-nowrap px-1 text-[12px] font-medium {{ $filter === 'upcoming_reminders' ? 'bg-white py-2 px-4 rounded text-black' : 'text-gray-500 hover:text-black' }}"
+                        class="{{ $filter === 'upcoming_reminders' ? 'tab-active' : 'tab-inactive' }} px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2"
                     >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                             stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                        </svg>
                         Upcoming
+                        <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs">
+                        {{ App\Models\Reminder::where('status', 'upcoming')->count() }}
+                    </span>
                     </button>
                     <button
                         wire:click="$set('filter', 'ended_reminders')"
-                        class="whitespace-nowrap px-1 text-[12px] font-medium {{ $filter === 'ended_reminders' ? 'bg-white py-2 px-4 rounded text-black' : 'text-gray-500 hover:text-black' }}"
+                        class="{{ $filter === 'ended_reminders' ? 'tab-active' : 'tab-inactive' }} px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2"
                     >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                             stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
                         Ended
+                        <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs">
+                        {{ App\Models\Reminder::where('status', 'ended')->count() }}
+                    </span>
                     </button>
                     <button
                         wire:click="$set('filter', 'archived_reminders')"
-                        class="whitespace-nowrap px-1 text-[12px] font-medium {{ $filter === 'archived_reminders' ? 'bg-white py-2 px-4 rounded text-black' : 'text-gray-500 hover:text-black' }}"
+                        class="{{ $filter === 'archived_reminders' ? 'tab-active' : 'tab-inactive' }} px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2"
                     >
-                        Archived
-                    </button>
-                </div>
-            </nav>
-        </div>
-        <div class="mt-8 min-h-screen">
-            <div class="border rounded-lg min-h-screen p-6 bg-gray-50">
-                @foreach($reminders as $reminder)
-                    <div
-                        class="flex flex-col md:flex-row bg-white rounded-lg shadow-md p-4 mb-4 w-full hover:shadow-lg transition-shadow duration-200">
-                        <!-- Image Section - Fixed 280x150px -->
-                        <div class="w-[280px] h-[150px] flex-shrink-0 overflow-hidden rounded-lg mr-4">
-                            <img
-                                class="w-full h-full object-cover"
-                                src="{{ $reminder->image_path ? asset('storage/reminder-images/' . $reminder->image_path) : asset('storage/reminder-images/schedule-reminder.png') }}"
-                                alt="{{ $reminder->title }}"
-                            >
-                        </div>
-
-                        <!-- Content Section -->
-                        <div class="flex-1 flex flex-row justify-between">
-                            <div>
-                                <h2 class="text-xl font-bold text-gray-800 mb-3">{{ $reminder->title }}</h2>
-
-                                <div class="flex items-start text-gray-600 mb-3">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 mt-0.5 flex-shrink-0"
-                                         fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                    </svg>
-                                    <span class="break-words">{{ $reminder->formatted_date_time }}</span>
-                                </div>
-
-                                <div class="flex items-start text-gray-600 mb-3">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 mt-0.5 flex-shrink-0"
-                                         fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                                    </svg>
-                                    <span class="capitalize">{{ $reminder->location }}</span>
-                                </div>
-                                <div class="flex space-x-2 items-center">
-                                    @if($reminder->recipient_type == 'public')
-                                        <span>
-                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                                         xmlns="http://www.w3.org/2000/svg">
-                                        <g clip-path="url(#clip0_3675_3584)">
-                                        <path
-                                            d="M7.99998 14.6663C11.6819 14.6663 14.6666 11.6816 14.6666 7.99967C14.6666 4.31778 11.6819 1.33301 7.99998 1.33301C4.31808 1.33301 1.33331 4.31778 1.33331 7.99967C1.33331 11.6816 4.31808 14.6663 7.99998 14.6663Z"
-                                            stroke="#64748B" stroke-width="1.25" stroke-linecap="round"
-                                            stroke-linejoin="round"/>
-                                        <path d="M1.33331 8H14.6666" stroke="#64748B" stroke-width="1.25"
-                                              stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path
-                                            d="M7.99998 1.33301C9.6675 3.15858 10.6151 5.5277 10.6666 7.99967C10.6151 10.4717 9.6675 12.8408 7.99998 14.6663C6.33246 12.8408 5.38481 10.4717 5.33331 7.99967C5.38481 5.5277 6.33246 3.15858 7.99998 1.33301Z"
-                                            stroke="#64748B" stroke-width="1.25" stroke-linecap="round"
-                                            stroke-linejoin="round"/>
-                                        </g>
-                                        <defs>
-                                        <clipPath id="clip0_3675_3584">
-                                        <rect width="16" height="16" fill="white"/>
-                                        </clipPath>
-                                        </defs>
-                                        </svg>
-
-                                </span>
-
-                                    @elseif($reminder->recipient_type == 'private')
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                             xmlns="http://www.w3.org/2000/svg">
-                                            <path
-                                                d="M2 12C2 13.3261 2.52678 14.5979 3.46447 15.5355C4.40215 16.4732 5.67392 17 7 17C8.84771 17.0688 10.6145 17.7756 12 19C13.3855 17.7756 15.1523 17.0688 17 17C18.3261 17 19.5979 16.4732 20.5355 15.5355C21.4732 14.5979 22 13.3261 22 12V7H17C15.1523 7.06882 13.3855 7.77556 12 9C10.6145 7.77556 8.84771 7.06882 7 7H2V12Z"
-                                                stroke="#020617" stroke-width="1.25" stroke-linecap="round"
-                                                stroke-linejoin="round"/>
-                                            <path d="M6 11C7.5 11 9 11.5 9 13C7 13 6 13 6 11Z" stroke="#020617"
-                                                  stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M18 11C16.5 11 15 11.5 15 13C17 13 18 13 18 11Z" stroke="#020617"
-                                                  stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
-                                        </svg>
-
-                                    @else
-                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                                             xmlns="http://www.w3.org/2000/svg">
-                                            <path
-                                                d="M11.3334 12.0003C11.3334 11.6467 11.1929 11.3076 10.9428 11.0575C10.6928 10.8075 10.3536 10.667 10 10.667H6.00002C5.6464 10.667 5.30726 10.8075 5.05721 11.0575C4.80716 11.3076 4.66669 11.6467 4.66669 12.0003"
-                                                stroke="#64748B" stroke-width="1.25" stroke-linecap="round"
-                                                stroke-linejoin="round"/>
-                                            <path
-                                                d="M12.6667 2.66699H3.33333C2.59695 2.66699 2 3.26395 2 4.00033V13.3337C2 14.07 2.59695 14.667 3.33333 14.667H12.6667C13.403 14.667 14 14.07 14 13.3337V4.00033C14 3.26395 13.403 2.66699 12.6667 2.66699Z"
-                                                stroke="#64748B" stroke-width="1.25" stroke-linecap="round"
-                                                stroke-linejoin="round"/>
-                                            <path
-                                                d="M8.00002 7.99967C8.7364 7.99967 9.33335 7.40272 9.33335 6.66634C9.33335 5.92996 8.7364 5.33301 8.00002 5.33301C7.26364 5.33301 6.66669 5.92996 6.66669 6.66634C6.66669 7.40272 7.26364 7.99967 8.00002 7.99967Z"
-                                                stroke="#64748B" stroke-width="1.25" stroke-linecap="round"
-                                                stroke-linejoin="round"/>
-                                            <path d="M5.33331 1.33301V2.66634" stroke="#64748B" stroke-width="1.25"
-                                                  stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M10.6667 1.33301V2.66634" stroke="#64748B" stroke-width="1.25"
-                                                  stroke-linecap="round" stroke-linejoin="round"/>
-                                        </svg>
-
-                                    @endif
-                                    <p class="text-gray-600 capitalize">{{ $reminder->recipient_type }}</p>
-                                </div>
-
-                            </div>
-                            <div class="flex justify-center items-center">
-                                <div>
-                                    <!-- Using Livewire Navigate for SPA-like navigation -->
-                                    <x-button
-                                        class="bg-[#F1F5F9] !text-black hover:!text-white"
-                                        wire:navigate
-                                        href="{{ route('manage.reminder', ['reminder' => $reminder->id]) }}"
-                                    >
-                                        Manage Reminder
-                                        <span class="ml-2">
-                                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                                                 xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M8 13.333H14" stroke="#020617" stroke-width="1.25"
-                                                      stroke-linecap="round" stroke-linejoin="round"/>
-                                                <path
-                                                    d="M11 2.33316C11.2652 2.06794 11.6249 1.91895 12 1.91895C12.1857 1.91895 12.3696 1.95553 12.5412 2.0266C12.7128 2.09767 12.8687 2.20184 13 2.33316C13.1313 2.46448 13.2355 2.62038 13.3066 2.79196C13.3776 2.96354 13.4142 3.14744 13.4142 3.33316C13.4142 3.51888 13.3776 3.70277 13.3066 3.87436C13.2355 4.04594 13.1313 4.20184 13 4.33316L4.66667 12.6665L2 13.3332L2.66667 10.6665L11 2.33316Z"
-                                                    stroke="#020617" stroke-width="1.25" stroke-linecap="round"
-                                                    stroke-linejoin="round"/>
-                                            </svg>
-                                        </span>
-                                    </x-button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-
-                @if($reminders->isEmpty())
-                    <div class="bg-white rounded-lg shadow p-8 text-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400 mb-4" fill="none"
-                             viewBox="0 0 24 24" stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002 2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                  d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
                         </svg>
-                        <h3 class="text-lg font-medium text-gray-700 mb-1">No Scheduled Events/Reminders Yet</h3>
-                        <p class="text-gray-500">Create your first reminder to get started</p>
+                        Archived
+                        <span class="bg-purple-100 text-purple-600 px-2 py-1 rounded-full text-xs">
+                        {{ App\Models\Reminder::where('status', 'archived')->count() }}
+                    </span>
+                    </button>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="animate-fade-in-up" style="animation-delay: 0.4s">
+            @if($reminders->isNotEmpty())
+                <div class="grid gap-4">
+                    @foreach($reminders as $reminder)
+                        <div class="bg-white rounded-3xl h-2xl shadow-xl overflow-hidden card-hover border border-gray-100">
+                            <div class="flex flex-col lg:flex-row">
+                                <!-- Image Section -->
+                                <div class="lg:w-80 h-[150px] lg:h-auto relative overflow-hidden">
+                                    @php
+                                        $gradients = [
+                                            'upcoming' => 'from-blue-400 to-purple-500',
+                                            'ended' => 'from-gray-400 to-gray-500',
+                                            'archived' => 'from-purple-400 to-pink-500',
+                                        ];
+                                        $gradient = $gradients[$reminder->status] ?? 'from-indigo-400 to-blue-500';
+                                    @endphp
+                                    <div class="absolute inset-0 bg-gradient-to-br {{ $gradient }}"></div>
+                                    <div class="absolute inset-0 flex items-center justify-center">
+                                        <div
+                                            class="w-[35px] h-[35px] bg-white bg-opacity-20 rounded-full flex items-center justify-center backdrop-blur-sm animate-float">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white"
+                                                 fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="absolute top-4 left-4">
+                                    <span class="status-badge status-{{ $reminder->status }}">
+                                        {{ ucfirst($reminder->status) }}
+                                    </span>
+                                    </div>
+                                </div>
+
+                                <!-- Content Section -->
+                                <div class="flex-1 p-4">
+                                    <div class="flex flex-col lg:flex-row justify-between h-full">
+                                        <div class="flex-1">
+                                            <h2 class="text-[18px] font-bold text-gray-800 mb-4 leading-tight">
+                                                {{ $reminder->title }}
+                                            </h2>
+
+                                            <div class="space-y-3 mb-2">
+                                                @if($reminder->start_datetime)
+                                                    <div class="flex items-center text-gray-600 group">
+                                                        <div
+                                                            class="w-8 h-8 bg-indigo-100 rounded-xl flex items-center justify-center mr-4 group-hover:bg-indigo-200 transition-colors">
+                                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                                 class="h-5 w-5 text-indigo-600" fill="none"
+                                                                 viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                      stroke-width="2"
+                                                                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                            </svg>
+                                                        </div>
+                                                        <div>
+                                                            <p class="font-semibold text-[12px] capitalize">
+                                                                {{ \Carbon\Carbon::parse($reminder->start_datetime)->format('F j, Y') }} - {{ $reminder->recipient_type }}
+                                                            </p>
+                                                            <p class="text-[11px] text-gray-500">
+                                                                {{ \Carbon\Carbon::parse($reminder->start_datetime)->format('g:i A') }}
+                                                                @if($reminder->end_datetime)
+                                                                    - {{ \Carbon\Carbon::parse($reminder->end_datetime)->format('g:i A') }}
+                                                                @endif
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                @endif
+
+                                                @if($reminder->location ?? false)
+                                                    <div class="flex items-center text-gray-600 group">
+                                                        <div
+                                                            class="w-8 h-8 bg-green-100 rounded-xl flex items-center justify-center mr-4 group-hover:bg-green-200 transition-colors">
+                                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                                 class="h-5 w-5 text-green-600" fill="none"
+                                                                 viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                      stroke-width="2"
+                                                                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                      stroke-width="2"
+                                                                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                            </svg>
+                                                        </div>
+                                                        <div>
+                                                            <p class="font-semibold">{{ $reminder->location }}</p>
+                                                            <p class="text-[11px] text-gray-500">Location</p>
+                                                        </div>
+                                                    </div>
+                                                @endif
+
+                                                <div class="flex items-center text-gray-600 group">
+                                                    <div
+                                                        class="w-8 h-8 bg-purple-100 rounded-xl flex items-center justify-center mr-4 group-hover:bg-purple-200 transition-colors">
+                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                             class="h-5 w-5 text-purple-600" fill="none"
+                                                             viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                  stroke-width="2"
+                                                                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                        </svg>
+                                                    </div>
+                                                    <div>
+                                                        <p class="font-semibold">{{ ucfirst($reminder->status) }}
+                                                            Reminder</p>
+                                                        <p class="text-[11px] text-gray-500">
+                                                            Created {{ \Carbon\Carbon::parse($reminder->created_at)->diffForHumans() }}
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                @if($reminder->description)
+                                                    <div class="mt-2 px-4 py-2 bg-gray-50 rounded-xl">
+                                                        <p class="text-gray-700 text-[11px] leading-relaxed">
+                                                            {{ Str::limit($reminder->description, 150) }}
+                                                        </p>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
+
+                                        <div class="flex lg:flex-col gap-3 lg:ml-6">
+                                            <button
+                                                class="{{ $reminder->status === 'ended' || $reminder->status === 'archived' ? 'bg-gradient-to-r from-gray-400 to-gray-500 opacity-75' : 'bg-gradient-to-r from-indigo-500 to-purple-600' }} text-white px-6 py-2 rounded-2xl font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3 group"
+                                                wire:navigate
+                                                href="{{ route('manage.reminder', ['reminder' => $reminder->id]) }}"
+                                            >
+                                                <span>Manage</span>
+                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                     class="h-5 w-5 group-hover:translate-x-1 transition-transform"
+                                                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                          stroke-width="2"
+                                                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
+                <!-- Pagination -->
+                @if($reminders instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                    <div class="mt-8">
+                        {{ $reminders->links('ark.components.pagination.tailwind-pagination') }}
                     </div>
                 @endif
-            </div>
-            <div class="mt-4">
-                {{ $reminders->links('ark.components.pagination.tailwind-pagination') }}
-            </div>
+            @else
+                <!-- Empty State -->
+                <div class="bg-white rounded-3xl shadow-xl p-12 text-center">
+                    <div class="max-w-md mx-auto">
+                        <div
+                            class="w-24 h-24 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse-glow">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-indigo-600" fill="none"
+                                 viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">
+                            @if($search)
+                                No reminders found for "{{ $search }}"
+                            @elseif($filter !== 'all_reminders')
+                                No {{ str_replace('_', ' ', $filter) }} found
+                            @else
+                                No reminders found
+                            @endif
+                        </h3>
+                        <p class="text-gray-600 mb-8 leading-relaxed">
+                            @if($search)
+                                Try adjusting your search terms or clearing the search to see all reminders.
+                            @elseif($filter !== 'all_reminders')
+                                You don't have any {{ str_replace('_', ' ', $filter) }} at the moment.
+                            @else
+                                You haven't created any reminders yet. Get started by creating your first reminder and
+                                stay organized!
+                            @endif
+                        </p>
+                        @if($search)
+                            <button
+                                wire:click="$set('search', '')"
+                                class="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-8 py-4 rounded-2xl font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3 mx-auto group mb-4"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                     stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                                <span>Clear Search</span>
+                            </button>
+                        @endif
+                        <button
+                            class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-8 py-4 rounded-2xl font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3 mx-auto group">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                 stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M12 4v16m8-8H4"/>
+                            </svg>
+                            <span>Create Your First Reminder</span>
+                        </button>
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
 </div>

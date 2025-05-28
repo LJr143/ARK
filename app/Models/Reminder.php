@@ -22,6 +22,7 @@ class Reminder extends Model
         'category_id',
         'period_from',
         'period_to',
+        'notification_methods'
     ];
 
     protected $casts = [
@@ -34,6 +35,13 @@ class Reminder extends Model
     {
         return $this->belongsToMany(User::class);
     }
+
+    public function customRecipients(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'reminder_recipients', 'reminder_id', 'user_id');
+    }
+
+
 
     public function category(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {

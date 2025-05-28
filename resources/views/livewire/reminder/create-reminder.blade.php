@@ -1,8 +1,13 @@
 <div x-data="{ open: false }" x-cloak @election-created.window="open = false" @open-modal.window="open = true">
     <!-- Trigger Button -->
-    <x-button @click="open = true" class="bg-blue-600 hover:bg-blue-700 focus:bg-blue-700">
-        + New Reminder
-    </x-button>
+    <div class="glass-morphism rounded-2xl p-4 animate-pulse-glow">
+    <button @click="open = true" class="bg-white text-[0.7rem] text-indigo-600 px-6 py-2 rounded-xl font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center gap-3">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        Create Reminder
+    </button>
+    </div>
 
     <!-- Modal -->
     <div
@@ -23,152 +28,159 @@
             x-transition:leave="transition ease-in duration-200"
             x-transition:leave-start="opacity-100 transform scale-100"
             x-transition:leave-end="opacity-0 transform scale-90"
-            class="bg-white p-6 rounded shadow-md w-full mx-4 sm:mx-6 md:mx-8 lg:mx-10 xl:mx-12 overflow-y-auto max-h-[90vh]"
-            :class="{ 'sm:w-[38%]': $wire.currentStep === 1 || $wire.currentStep === 2 }"
+            class="bg-white rounded-lg shadow-md w-full max-w-full mx-4 overflow-hidden flex flex-col max-h-[90vh]"
+            :class="{ 'sm:w-[35%]': $wire.currentStep === 1 || $wire.currentStep === 2 }"
         >
 
 
-            <div class="flex justify-between items-center mb-4 border-b border-gray-300 pb-2">
-                <div>
-                    <div class="flex space-x-2 items-center">
-                        <h2 class="text-sm font-bold text-left w-full sm:w-auto">New reminder</h2>
-                        <h2 class="text-[11px] text-gray-500 text-left w-full sm:w-auto">Page 1 of 2</h2>
+            <!-- Modal Header (Sticky) -->
+            <div class="sticky top-0 bg-white z-10 px-6 py-4 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-lg font-bold">New reminder</h2>
+                        <p class="text-xs text-gray-500">Page {{ $currentStep }} of 2</p>
                     </div>
-                    <p class="text-[10px] text-gray-500 italic">To add a new reminder please fill out the required
-                        information.</p>
-
+                    <button
+                        @click="open = false; $wire.call('resetForm')"
+                        class="text-gray-500 hover:text-gray-700 focus:outline-none"
+                    >
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
-
-                <!-- Close Button (X) -->
-                <button @click="open = false; $wire.call('resetForm')" class="text-gray-500 hover:text-gray-700">
-                    <i class="fas fa-times"></i>
-                </button>
-
             </div>
 
-            @if ($currentStep === 1)
-                <form wire:submit.prevent="proceedToStep2" enctype="multipart/form-data">
-                    <div class="mb-3">
-                        <input
-                            id="title"
-                            type="text"
-                            class="text-[14px] border-0 rounded-lg px-0 py-2 w-full bg-gray-50 focus:bg-white focus:outline-none focus:ring-0 transition-colors"
-                            wire:model="title"
-                            placeholder="Reminder Title"
-                            autofocus
-                        >
-                        @error('title')
-                        <span class="text-red-500 text-[10px] italic">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div class="mb-3 flex space-x-2">
-                        <div class="w-1/3">
-                            <p class="border-gray-300 bg-[#F1F5F9] text-xs text-gray-500 rounded-lg px-4 py-2 w-full focus:ring-black focus:border-black">
-                                Reminder ID: {{ $reminder_id }} </p>
-                        </div>
-                        <div class="w-2/3">
-                            <select name="category" id="category" wire:model.live="category"
-                                    class="border-gray-300 text-xs rounded-lg px-4 py-2 w-full focus:ring-black focus:border-black">
-                                @if($categories && count($categories) > 0)
-                                    <option value="" selected>Select Category</option>
-                                    @foreach($categories as $category)
-                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                    @endforeach
-                                @else
-                                    <option value="">No categories available</option>
-                                @endif
-                            </select>
-                            @error('category')
-                            <span class="text-red-500 text-[10px] italic">{{ $message }}</span>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="location" class="text-xs font-semibold block mb-1">
-                            Location (eg. Mandaluyong City Complex)
-                        </label>
-                        <input id="location" type="text"
-                               class="border border-gray-300 text-xs rounded-lg px-4 py-2 w-full focus:ring-black focus:border-black"
-                               wire:model="location">
-
-                        @error('location')
-                        <span class="text-red-500 text-[10px] italic">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div class="mb-3" x-data="{ hasPeriodCovered: false }">
-                        <!-- Toggle checkbox -->
-                        <label class="flex items-center space-x-2 cursor-pointer mb-2">
+            <div class="flex-1 overflow-y-auto px-6 py-4">
+                @if ($currentStep === 1)
+                    <form wire:submit.prevent="proceedToStep2" enctype="multipart/form-data">
+                        <div class="mb-3">
                             <input
-                                type="checkbox"
-                                class="rounded"
-                                x-model="hasPeriodCovered"
+                                id="title"
+                                type="text"
+                                class="text-[14px] border-0 rounded-lg px-0 py-2 w-full bg-gray-50 focus:bg-white focus:outline-none focus:ring-0 transition-colors"
+                                wire:model="title"
+                                placeholder="Reminder Title"
+                                autofocus
                             >
-                            <span class="font-semibold">Has period covered</span>
-                        </label>
-
-                        <!-- Conditional date range inputs -->
-                        <div x-show="hasPeriodCovered" x-transition x-cloak class="space-y-2">
-                            <div>
-                                <label for="period_from" class="text-xs font-semibold block mb-1">
-                                    From
-                                </label>
-                                <input
-                                    id="period_from"
-                                    type="date"
-                                    class="border border-gray-300 text-xs rounded-lg px-4 py-2 w-full focus:ring-black focus:border-black"
-                                    wire:model="period_from"
-                                    x-bind:disabled="!hasPeriodCovered"
-                                >
-                            </div>
-
-                            <div>
-                                <label for="period_to" class="text-xs font-semibold block mb-1">
-                                    To
-                                </label>
-                                <input
-                                    id="period_to"
-                                    type="date"
-                                    class="border border-gray-300 text-xs rounded-lg px-4 py-2 w-full focus:ring-black focus:border-black"
-                                    wire:model="period_to"
-                                    x-bind:disabled="!hasPeriodCovered"
-                                    x-bind:min="$el.previousElementSibling.value"
-                                >
-                            </div>
-                        </div>
-                    </div>
-                    <p class="text-[12px] font-medium">Reminder Period</p>
-                    <div class="flex flex-col md:flex-row md:space-x-4 mb-4 border border-gray-300 rounded-md p-4">
-                        <div class="flex-1 mb-3 md:mb-0 min-w-0">
-                            <label for="reminder_start" class="text-[10px] block mb-1">From</label>
-                            <input id="reminder_start" type="datetime-local"
-                                   class="border border-gray-300 text-xs rounded-md px-4 py-2 w-full focus:ring-black focus:border-black"
-                                   wire:model="reminder_start">
-                            @error('reminder_start')
+                            @error('title')
                             <span class="text-red-500 text-[10px] italic">{{ $message }}</span>
                             @enderror
                         </div>
-                        <div class="flex-1 min-w-0">
-                            <label for="reminder_end" class="text-[10px] block mb-1">To</label>
-                            <input id="reminder_end" type="datetime-local"
-                                   class="border border-gray-300 text-xs rounded-md px-4 py-2 w-full focus:ring-black focus:border-black"
-                                   wire:model="reminder_end">
-                            @error('reminder_end')
+                        <div class="mb-3 flex space-x-2">
+                            <div class="w-1/3">
+                                <p class="border-gray-300 bg-[#F1F5F9] text-xs text-gray-500 rounded-lg px-4 py-2 w-full focus:ring-black focus:border-black">
+                                    Reminder ID: {{ $reminder_id }} </p>
+                            </div>
+                            <div class="w-2/3">
+                                <select name="category" id="category" wire:model.live="category"
+                                        class="required-field border-gray-300 text-xs rounded-lg px-4 py-2 w-full focus:ring-black focus:border-black">
+                                    @if($categories && count($categories) > 0)
+                                        <option value="" selected>Select Category</option>
+                                        @foreach($categories as $category)
+                                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                        @endforeach
+                                    @else
+                                        <option value="">No categories available</option>
+                                    @endif
+                                </select>
+                                @error('category')
+                                <span class="text-red-500 text-[10px] italic">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="location" class="text-xs form-label required-field font-semibold block mb-1">
+                                Location (eg. Mandaluyong City Complex)
+                            </label>
+                            <input id="location" type="text" name="location"
+                                   class="form-control @error('location') is-invalid @enderror border border-gray-300 text-xs rounded-lg px-4 py-2 w-full focus:ring-black focus:border-black"
+                                   wire:model="location">
+
+                            @error('location')
                             <span class="text-red-500 text-[10px] italic">{{ $message }}</span>
                             @enderror
                         </div>
-                    </div>
-                    <div class="flex-1 mb-3">
-                        <label for="description" class="text-xs font-semibold block mb-1">Description</label>
-                        <textarea name="description" id="description"
-                                  class="border-gray-300 text-xs rounded-lg px-4 py-2 w-full min-h-[100px]"
-                                  style="resize: none"
-                                  wire:model="description"></textarea>
-                        @error('description')
-                        <span class="text-red-500 text-[10px] italic">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div
-                        x-data="{
+                        <!-- Period Covered Toggle -->
+                        <div x-data="{ hasPeriodCovered: false }">
+                            <label class="flex items-center space-x-3 cursor-pointer">
+                                <div class="relative">
+                                    <input
+                                        type="checkbox"
+                                        class="sr-only"
+                                        x-model="hasPeriodCovered"
+                                    >
+                                    <div
+                                        class="block w-10 h-6 bg-gray-300 rounded-full transition duration-300 ease-in-out"
+                                        :class="{'bg-blue-600': hasPeriodCovered}"
+                                    ></div>
+                                    <div
+                                        class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition duration-300 ease-in-out"
+                                        :class="{'translate-x-4': hasPeriodCovered}"
+                                    ></div>
+                                </div>
+                                <span class="text-[12px] font-medium text-gray-700">Has period covered</span>
+                            </label>
+
+                            <!-- Conditional Date Range -->
+                            <div x-show="hasPeriodCovered" x-transition
+                                 class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                <div>
+                                    <label for="period_from" class="block text-[10px] font-medium text-gray-700 mb-1">From</label>
+                                    <input
+                                        id="period_from"
+                                        type="date"
+                                        class="block w-full px-4 py-3 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        wire:model="period_from"
+                                        x-bind:disabled="!hasPeriodCovered"
+                                    >
+                                </div>
+                                <div>
+                                    <label for="period_to"
+                                           class="block text-[10px] font-medium text-gray-700 mb-1">To</label>
+                                    <input
+                                        id="period_to"
+                                        type="date"
+                                        class="block w-full px-4 py-3 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        wire:model="period_to"
+                                        x-bind:disabled="!hasPeriodCovered"
+                                        x-bind:min="$el.previousElementSibling.value"
+                                    >
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class="text-[12px] font-medium">Reminder Period</p>
+                        <div class="flex flex-col md:flex-row md:space-x-4 mb-4 border border-gray-300 rounded-md p-4">
+                            <div class="flex-1 mb-3 md:mb-0 min-w-0">
+                                <label for="reminder_start" class="text-[10px] block mb-1 form-label required-field">From</label>
+                                <input id="reminder_start" type="datetime-local"
+                                       class="border border-gray-300 text-xs rounded-md px-4 py-2 w-full focus:ring-black focus:border-black"
+                                       wire:model="reminder_start">
+                                @error('reminder_start')
+                                <span class="text-red-500 text-[10px] italic">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <label for="reminder_end" class="text-[10px] block mb-1 form-label required-field">To</label>
+                                <input id="reminder_end" type="datetime-local"
+                                       class="border border-gray-300 text-xs rounded-md px-4 py-2 w-full focus:ring-black focus:border-black"
+                                       wire:model="reminder_end">
+                                @error('reminder_end')
+                                <span class="text-red-500 text-[10px] italic">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="flex-1 mb-3">
+                            <label for="description" class="text-xs font-semibold block mb-1">Description</label>
+                            <textarea name="description" id="description"
+                                      class="border-gray-300 text-xs rounded-lg px-4 py-2 w-full min-h-[100px]"
+                                      style="resize: none"
+                                      wire:model="description"></textarea>
+                            @error('description')
+                            <span class="text-red-500 text-[10px] italic">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div
+                            x-data="{
         dragOver: false,
         files: @entangle('attachments'),
         getFileIcon(fileName) {
@@ -213,287 +225,316 @@
             // Remove the manual event dispatch that was causing double uploads
         }
     }"
-                        class="space-y-4"
-                    >
-                        <label class="block">
-                            <span class="text-sm font-medium text-gray-700 mb-2 block">Attachments</span>
+                            class="space-y-4"
+                        >
+                            <label class="block">
+                                <span class="text-sm font-medium text-gray-700 mb-2 block">Attachments</span>
 
-                            <!-- Drag & Drop Zone -->
-                            <div
-                                @dragover.prevent="dragOver = true"
-                                @dragleave.prevent="dragOver = false"
-                                @drop.prevent="handleDrop($event)"
-                                :class="dragOver ? 'border-blue-500 bg-blue-50 scale-[1.02]' : 'border-gray-300 bg-gray-50'"
-                                class="relative border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all duration-300 hover:border-blue-400 hover:bg-blue-50 hover:shadow-md"
-                            >
-                                <!-- Upload Icon and Text -->
-                                <div class="space-y-3">
-                                    <div class="mx-auto w-12 h-12 text-gray-400" :class="dragOver && 'animate-bounce'">
-                                        <i class="fas fa-cloud-upload-alt text-4xl" :class="dragOver ? 'text-blue-500' : 'text-gray-400'"></i>
-                                    </div>
-                                    <div>
-                                        <p class="text-sm font-medium text-gray-700">
-                                            <span class="text-blue-600">Click to upload</span> or drag and drop
-                                        </p>
-                                        <p class="text-xs text-gray-500 mt-1">
-                                            PNG, JPG, PDF, DOC, DOCX, XLS, XLSX up to 10MB each
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <!-- Hidden File Input -->
-                                <input
-                                    x-ref="fileInput"
-                                    type="file"
-                                    multiple
-                                    wire:model="attachments"
-                                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                                    accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar"
-                                />
-                            </div>
-                        </label>
-
-                        <!-- File Previews -->
-                        <div x-show="$wire.attachments && $wire.attachments.length > 0" x-transition class="space-y-3">
-                            <h4 class="text-sm font-medium text-gray-700 flex items-center">
-                                <i class="fas fa-paperclip mr-2"></i>
-                                Attached Files (<span x-text="$wire.attachments ? $wire.attachments.length : 0"></span>)
-                            </h4>
-
-                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                                @foreach ($attachments as $index => $attachment)
-                                    <div class="relative group bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-all duration-200">
-                                        <div class="flex items-start space-x-3">
-                                            <!-- File Icon or Image Preview -->
-                                            <div class="flex-shrink-0">
-                                                @if (Str::startsWith($attachment->getMimeType(), 'image/'))
-                                                    <div class="w-12 h-12 rounded-lg overflow-hidden border border-gray-200">
-                                                        <img
-                                                            src="{{ $attachment->temporaryUrl() }}"
-                                                            alt="Preview"
-                                                            class="w-full h-full object-cover"
-                                                        />
-                                                    </div>
-                                                @else
-                                                    <div class="w-12 h-12 flex items-center justify-center bg-gray-50 rounded-lg">
-                                                        <i x-bind:class="getFileIcon('{{ $attachment->getClientOriginalName() }}')" class="text-xl"></i>
-                                                    </div>
-                                                @endif
-                                            </div>
-
-                                            <!-- File Info -->
-                                            <div class="flex-1 min-w-0">
-                                                <p class="text-sm font-medium text-gray-900 truncate" title="{{ $attachment->getClientOriginalName() }}">
-                                                    {{ $attachment->getClientOriginalName() }}
-                                                </p>
-                                                <p class="text-xs text-gray-500 mt-1">
-                                                    <span x-text="formatFileSize({{ $attachment->getSize() }})"></span>
-                                                    <span class="mx-1">•</span>
-                                                    <span class="uppercase">{{ pathinfo($attachment->getClientOriginalName(), PATHINFO_EXTENSION) }}</span>
-                                                </p>
-
-                                                <!-- Progress Bar (if needed) -->
-                                                <div class="mt-2">
-                                                    <div class="w-full bg-gray-200 rounded-full h-1">
-                                                        <div class="bg-green-500 h-1 rounded-full w-full"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <!-- Remove Button -->
-                                            <button
-                                                type="button"
-                                                wire:click="removeAttachment({{ $index }})"
-                                                class="flex-shrink-0 p-1 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors duration-200 opacity-0 group-hover:opacity-100"
-                                                title="Remove file"
-                                            >
-                                                <i class="fas fa-times text-sm"></i>
-                                            </button>
+                                <!-- Drag & Drop Zone -->
+                                <div
+                                    @dragover.prevent="dragOver = true"
+                                    @dragleave.prevent="dragOver = false"
+                                    @drop.prevent="handleDrop($event)"
+                                    :class="dragOver ? 'border-blue-500 bg-blue-50 scale-[1.02]' : 'border-gray-300 bg-gray-50'"
+                                    class="relative border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all duration-300 hover:border-blue-400 hover:bg-blue-50 hover:shadow-md"
+                                >
+                                    <!-- Upload Icon and Text -->
+                                    <div class="space-y-3">
+                                        <div class="mx-auto w-12 h-12 text-gray-400"
+                                             :class="dragOver && 'animate-bounce'">
+                                            <i class="fas fa-cloud-upload-alt text-4xl"
+                                               :class="dragOver ? 'text-blue-500' : 'text-gray-400'"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-700">
+                                                <span class="text-blue-600">Click to upload</span> or drag and drop
+                                            </p>
+                                            <p class="text-xs text-gray-500 mt-1">
+                                                PNG, JPG, PDF, DOC, DOCX, XLS, XLSX up to 10MB each
+                                            </p>
                                         </div>
                                     </div>
-                                @endforeach
-                            </div>
-                        </div>
 
-
-                        <!-- Error Messages -->
-                        @error('attachments.*')
-                        <div class="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg">
-                            <div class="flex items-center space-x-2">
-                                <i class="fas fa-exclamation-triangle text-red-500"></i>
-                                <p class="text-sm text-red-700">{{ $message }}</p>
-                            </div>
-                        </div>
-                        @enderror
-
-                        <!-- File Upload Tips -->
-                        <div class="mt-3 p-3 bg-gray-50 rounded-lg">
-                            <h5 class="text-xs font-medium text-gray-700 mb-2 flex items-center">
-                                <i class="fas fa-lightbulb mr-1 text-yellow-500"></i>
-                                Upload Tips
-                            </h5>
-                            <ul class="text-xs text-gray-600 space-y-1">
-                                <li>• Maximum file size: 10MB per file</li>
-                                <li>• Supported formats: Images, PDFs, Office documents, Archives</li>
-                                <li>• You can upload multiple files at once</li>
-                                <li>• Drag and drop files directly onto the upload area</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="mt-2 pt-1 flex justify-end space-x-2 ">
-                        <button type="button"
-                                @click="open = false; $wire.call('resetForm')"
-                                class="bg-white text-black text-[12px] border border-gray-300 h-7 px-4 py-1 rounded shadow-md hover:bg-gray-200 justify-center text-center hover:drop-shadow hover:scale-105 hover:ease-in-out hover:duration-300 transition-all duration-300 [transition-timing-function:cubic-bezier(0.175,0.885,0.32,1.275)] active:-translate-y-1 active:scale-x-90 active:scale-y-110">
-                            Cancel
-                        </button>
-                        <button type="submit"
-                                class="bg-blue-500 text-white px-6 py-1 h-7 rounded shadow-md hover:bg-gray-700 text-[12px] justify-center text-center hover:drop-shadow hover:scale-105 hover:ease-in-out hover:duration-300 transition-all duration-300 [transition-timing-function:cubic-bezier(0.175,0.885,0.32,1.275)] active:-translate-y-1 active:scale-x-90 active:scale-y-110">
-                            Next ->
-                        </button>
-                    </div>
-                </form>
-
-            @elseif ($currentStep === 2)
-                <form wire:submit.prevent="saveReminder">
-                    <div class="space-y-4">
-                        <!-- Recipient Selection -->
-                        <div class="mb-4">
-                            <h3 class="text-sm font-semibold mb-2">Select Recipient</h3>
-                            <p class="text-xs text-gray-500 mb-3">Choose who should receive this reminder.</p>
-
-                            <div class="space-y-3">
-                                <div class="flex items-center space-x-2">
-                                    <input type="radio" id="public_recipients"
-                                           class="form-radio h-4 w-4 text-blue-600"
-                                           wire:model="recipient_type" value="public">
-                                    <label for="public_recipients" class="text-sm">Public (Visible to anyone)</label>
+                                    <!-- Hidden File Input -->
+                                    <input
+                                        x-ref="fileInput"
+                                        type="file"
+                                        multiple
+                                        wire:model="attachments"
+                                        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                        accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar"
+                                    />
                                 </div>
+                            </label>
 
-                                <div class="flex items-center space-x-2">
-                                    <input type="radio" id="private_recipients"
-                                           class="form-radio h-4 w-4 text-blue-600"
-                                           wire:model="recipient_type" value="private">
-                                    <label for="private_recipients" class="text-sm">Private (Only you)</label>
-                                </div>
+                            <!-- File Previews -->
+                            <div x-show="$wire.attachments && $wire.attachments.length > 0" x-transition
+                                 class="space-y-3">
+                                <h4 class="text-sm font-medium text-gray-700 flex items-center">
+                                    <i class="fas fa-paperclip mr-2"></i>
+                                    Attached Files (<span
+                                        x-text="$wire.attachments ? $wire.attachments.length : 0"></span>)
+                                </h4>
 
-                                <div class="flex items-center space-x-2">
-                                    <input type="radio" id="custom_recipients"
-                                           class="form-radio h-4 w-4 text-blue-600"
-                                           wire:model="recipient_type" value="custom">
-                                    <label for="custom_recipients" class="text-sm">Custom Recipients</label>
-                                </div>
-
-                                @error('recipient_type')
-                                <span class="text-red-500 text-xs">{{ $message }}</span>
-                                @enderror
-                            </div>
-
-                            <!-- Custom Recipient Selection -->
-                            <div x-show="$wire.recipient_type === 'custom'" x-transition class="mt-4 space-y-2">
-                                <div x-data="{ isOpen: false }" class="relative">
-                                    <input type="text"
-                                           class="w-full border border-gray-300 rounded px-3 py-2 text-sm"
-                                           placeholder="Search for recipients..."
-                                           wire:model.live="recipientSearch"
-                                           x-on:focus="isOpen = true"
-                                           x-on:blur="setTimeout(() => isOpen = false, 200)">
-
-                                    <div x-show="isOpen && $wire.recipientSearchResults.length"
-                                         class="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-md border border-gray-300 max-h-60 overflow-auto">
-                                        <ul class="py-1">
-                                            @forelse($recipientSearchResults as $user)
-                                                <li class="px-3 py-2 hover:bg-gray-100 cursor-pointer flex items-center"
-                                                    wire:click="toggleRecipient({{ $user->id }})"
-                                                    x-on:click="isOpen = false">
-                                                    <span class="flex-1">{{ $user->name }} ({{ $user->email }})</span>
-                                                    @if(in_array($user->id, $selected_recipients))
-                                                        <svg class="h-5 w-5 text-green-500" fill="none"
-                                                             viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                  stroke-width="2" d="M5 13l4 4L19 7"/>
-                                                        </svg>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                                    @foreach ($attachments as $index => $attachment)
+                                        <div
+                                            class="relative group bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition-all duration-200">
+                                            <div class="flex items-start space-x-3">
+                                                <!-- File Icon or Image Preview -->
+                                                <div class="flex-shrink-0">
+                                                    @if (Str::startsWith($attachment->getMimeType(), 'image/'))
+                                                        <div
+                                                            class="w-12 h-12 rounded-lg overflow-hidden border border-gray-200">
+                                                            <img
+                                                                src="{{ $attachment->temporaryUrl() }}"
+                                                                alt="Preview"
+                                                                class="w-full h-full object-cover"
+                                                            />
+                                                        </div>
+                                                    @else
+                                                        <div
+                                                            class="w-12 h-12 flex items-center justify-center bg-gray-50 rounded-lg">
+                                                            <i x-bind:class="getFileIcon('{{ $attachment->getClientOriginalName() }}')"
+                                                               class="text-xl"></i>
+                                                        </div>
                                                     @endif
-                                                </li>
-                                            @empty
-                                                <li class="px-3 py-2 text-gray-500">No results found</li>
-                                            @endforelse
-                                        </ul>
-                                    </div>
-                                </div>
+                                                </div>
 
-                                <!-- Selected Recipients -->
-                                <div class="flex flex-wrap gap-2 mt-2">
-                                    @foreach($selected_recipients as $userId)
-                                        @php $user = \App\Models\User::find($userId); @endphp
-                                        @if($user)
-                                            <span
-                                                class="inline-flex items-center bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
-                                    {{ $user->name }}
-                                    <button type="button"
-                                            wire:click="toggleRecipient({{ $userId }})"
-                                            class="ml-1 text-blue-600 hover:text-blue-800">
-                                        &times;
-                                    </button>
-                                </span>
-                                        @endif
+                                                <!-- File Info -->
+                                                <div class="flex-1 min-w-0">
+                                                    <p class="text-sm font-medium text-gray-900 truncate"
+                                                       title="{{ $attachment->getClientOriginalName() }}">
+                                                        {{ $attachment->getClientOriginalName() }}
+                                                    </p>
+                                                    <p class="text-xs text-gray-500 mt-1">
+                                                        <span
+                                                            x-text="formatFileSize({{ $attachment->getSize() }})"></span>
+                                                        <span class="mx-1">•</span>
+                                                        <span
+                                                            class="uppercase">{{ pathinfo($attachment->getClientOriginalName(), PATHINFO_EXTENSION) }}</span>
+                                                    </p>
+
+                                                    <!-- Progress Bar (if needed) -->
+                                                    <div class="mt-2">
+                                                        <div class="w-full bg-gray-200 rounded-full h-1">
+                                                            <div class="bg-green-500 h-1 rounded-full w-full"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Remove Button -->
+                                                <button
+                                                    type="button"
+                                                    wire:click="removeAttachment({{ $index }})"
+                                                    class="flex-shrink-0 p-1 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors duration-200 opacity-0 group-hover:opacity-100"
+                                                    title="Remove file"
+                                                >
+                                                    <i class="fas fa-times text-sm"></i>
+                                                </button>
+                                            </div>
+                                        </div>
                                     @endforeach
                                 </div>
-
-                                @error('selected_recipients')
-                                <span class="text-red-500 text-xs">{{ $message }}</span>
-                                @enderror
                             </div>
-                        </div>
 
-                        <!-- Notification Methods -->
-                        <div class="mb-4">
-                            <h3 class="text-sm font-semibold mb-2">Notification Method</h3>
-                            <p class="text-xs text-gray-500 mb-3">How should recipients be notified.</p>
 
-                            <div class="space-y-2">
-                                <label class="flex items-center space-x-2 cursor-pointer">
-                                    <input type="checkbox"
-                                           class="form-checkbox h-4 w-4 text-blue-600"
-                                           wire:model="notification_methods.email">
-                                    <span class="text-sm">Email</span>
-                                </label>
-
-                                <label class="flex items-center space-x-2 cursor-pointer">
-                                    <input type="checkbox"
-                                           class="form-checkbox h-4 w-4 text-blue-600"
-                                           wire:model="notification_methods.sms">
-                                    <span class="text-sm">SMS</span>
-                                </label>
-
-                                <label class="flex items-center space-x-2 cursor-pointer">
-                                    <input type="checkbox"
-                                           class="form-checkbox h-4 w-4 text-blue-600"
-                                           wire:model="notification_methods.app">
-                                    <span class="text-sm">App Notification</span>
-                                </label>
-
-                                @error('notification_methods')
-                                <span class="text-red-500 text-xs">{{ $message }}</span>
-                                @enderror
+                            <!-- Error Messages -->
+                            @error('attachments.*')
+                            <div class="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-exclamation-triangle text-red-500"></i>
+                                    <p class="text-sm text-red-700">{{ $message }}</p>
+                                </div>
                             </div>
-                        </div>
+                            @enderror
 
-                        <!-- Navigation Buttons -->
-                        <div class="flex justify-between pt-4 border-t border-gray-200">
+                        </div>
+                        <div class="mt-2 pt-1 flex justify-end space-x-2 ">
                             <button type="button"
-                                    wire:click="backToStep1"
-                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                ← Back
+                                    @click="open = false; $wire.call('resetForm')"
+                                    class="bg-white text-black text-[12px] border border-gray-300 h-7 px-4 py-1 rounded shadow-md hover:bg-gray-200 justify-center text-center hover:drop-shadow hover:scale-105 hover:ease-in-out hover:duration-300 transition-all duration-300 [transition-timing-function:cubic-bezier(0.175,0.885,0.32,1.275)] active:-translate-y-1 active:scale-x-90 active:scale-y-110">
+                                Cancel
                             </button>
-
                             <button type="submit"
-                                    class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                Create Reminder
+                                    class="bg-blue-500 text-white px-6 py-1 h-7 rounded shadow-md hover:bg-gray-700 text-[12px] justify-center text-center hover:drop-shadow hover:scale-105 hover:ease-in-out hover:duration-300 transition-all duration-300 [transition-timing-function:cubic-bezier(0.175,0.885,0.32,1.275)] active:-translate-y-1 active:scale-x-90 active:scale-y-110">
+                                Next ->
                             </button>
                         </div>
-                    </div>
-                </form>
-            @endif
+                    </form>
+
+                @elseif ($currentStep === 2)
+                    <form wire:submit.prevent="saveReminder">
+                        <div class="space-y-4">
+                            <!-- Recipient Selection -->
+                            <div>
+                                <h3 class="text-sm font-semibold text-gray-800 mb-1">Select Recipient</h3>
+                                <p class="text-xs text-gray-500 mb-3">Choose who should receive this reminder</p>
+
+                                <div class="space-y-3">
+                                    <label class="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:border-blue-400 cursor-pointer transition-colors duration-200">
+                                        <input
+                                            type="radio"
+                                            class="form-radio h-5 w-5 text-blue-600"
+                                            wire:model="recipient_type"
+                                            value="public"
+                                        >
+                                        <div>
+                                            <span class="block text-sm font-medium text-gray-800">Public</span>
+                                            <span class="block text-xs text-gray-500">Visible to anyone</span>
+                                        </div>
+                                    </label>
+
+                                    <label class="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:border-blue-400 cursor-pointer transition-colors duration-200">
+                                        <input
+                                            type="radio"
+                                            class="form-radio h-5 w-5 text-blue-600"
+                                            wire:model="recipient_type"
+                                            value="private"
+                                        >
+                                        <div>
+                                            <span class="block text-sm font-medium text-gray-800">Private</span>
+                                            <span class="block text-xs text-gray-500">Only visible to you</span>
+                                        </div>
+                                    </label>
+
+                                    <label class="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:border-blue-400 cursor-pointer transition-colors duration-200">
+                                        <input
+                                            type="radio"
+                                            class="form-radio h-5 w-5 text-blue-600"
+                                            wire:model="recipient_type"
+                                            value="custom"
+                                        >
+                                        <div>
+                                            <span class="block text-sm font-medium text-gray-800">Custom Recipients</span>
+                                            <span class="block text-xs text-gray-500">Select specific people</span>
+                                        </div>
+                                    </label>
+
+                                    @error('recipient_type')
+                                    <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <!-- Custom Recipient Selection -->
+                                <div x-show="$wire.recipient_type === 'custom'" x-transition class="mt-4 space-y-3">
+                                    <div x-data="{ isOpen: false }" class="relative">
+                                        <input
+                                            type="text"
+                                            class="block w-full px-4 py-3 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                            placeholder="Search for recipients..."
+                                            wire:model.live="recipientSearch"
+                                            x-on:focus="isOpen = true"
+                                            x-on:blur="setTimeout(() => isOpen = false, 200)"
+                                        >
+
+                                        <div
+                                            x-show="isOpen && $wire.recipientSearchResults.length"
+                                            class="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-lg border border-gray-200 max-h-60 overflow-auto"
+                                        >
+                                            <ul class="divide-y divide-gray-200">
+                                                @forelse($recipientSearchResults as $user)
+                                                    <li
+                                                        class="px-4 py-3 hover:bg-gray-50 cursor-pointer flex items-center justify-between"
+                                                        wire:click="toggleRecipient({{ $user->id }})"
+                                                    >
+                                                        <div>
+                                                            <span class="block text-sm font-medium text-gray-800">{{ $user->first_name . ($user->middle_name ?? '') . $user->family_name }}</span>
+                                                            <span class="block text-xs text-gray-500">{{ $user->email }}</span>
+                                                        </div>
+                                                        @if(in_array($user->id, $selected_recipients))
+                                                            <i class="fas fa-check-circle text-green-500"></i>
+                                                        @endif
+                                                    </li>
+                                                @empty
+                                                    <li class="px-4 py-3 text-sm text-gray-500">No results found</li>
+                                                @endforelse
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <!-- Selected Recipients -->
+                                    <div x-show="$wire.selected_recipients.length > 0" x-transition class="flex flex-wrap gap-2 mt-2">
+                                        @foreach($selected_recipients as $userId)
+                                            @php $user = \App\Models\User::find($userId); @endphp
+                                            @if($user)
+                                                <span class="inline-flex items-center bg-blue-100 text-blue-800 text-xs px-3 py-1.5 rounded-full">
+                                            {{ $user->first_name . ($user->middle_name ?? '') . $user->family_name }}
+                                            <button
+                                                type="button"
+                                                wire:click="toggleRecipient({{ $userId }})"
+                                                class="ml-1.5 text-blue-600 hover:text-blue-800"
+                                            >
+                                                <i class="fas fa-times text-xs"></i>
+                                            </button>
+                                        </span>
+                                            @endif
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Notification Methods -->
+                            <div class="mb-2">
+                                <h3 class="text-sm font-semibold text-gray-800 mb-1">Notification Method</h3>
+                                <p class="text-xs text-gray-500 mb-3">How should recipients be notified?</p>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                    <label class="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:border-blue-400 cursor-pointer transition-colors duration-200">
+                                        <input
+                                            type="checkbox"
+                                            class="form-checkbox h-5 w-5 text-blue-600 rounded"
+                                            wire:model="notification_methods.email"
+                                        >
+                                        <div>
+                                            <span class="block text-sm font-medium text-gray-800">Email</span>
+                                            <span class="block text-xs text-gray-500">Send via email</span>
+                                        </div>
+                                    </label>
+
+                                    <label class="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:border-blue-400 cursor-pointer transition-colors duration-200">
+                                        <input
+                                            type="checkbox"
+                                            class="form-checkbox h-5 w-5 text-blue-600 rounded"
+                                            wire:model="notification_methods.sms"
+                                        >
+                                        <div>
+                                            <span class="block text-sm font-medium text-gray-800">SMS</span>
+                                            <span class="block text-xs text-gray-500">Text message</span>
+                                        </div>
+                                    </label>
+
+                                    <label class="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:border-blue-400 cursor-pointer transition-colors duration-200">
+                                        <input
+                                            type="checkbox"
+                                            class="form-checkbox h-5 w-5 text-blue-600 rounded"
+                                            wire:model="notification_methods.app"
+                                        >
+                                        <div>
+                                            <span class="block text-sm font-medium text-gray-800">App</span>
+                                            <span class="block text-xs text-gray-500">In-app notification</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Navigation Buttons -->
+                            <div class="flex justify-between pt-4 border-t border-gray-200">
+                                <button type="button"
+                                        wire:click="backToStep1"
+                                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                    ← Back
+                                </button>
+
+                                <button type="submit"
+                                        class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                    Create Reminder
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                @endif
+            </div>
 
         </div>
     </div>

@@ -15,7 +15,6 @@ class CreateReminder extends Component
     public $currentStep = 1;
     public $categories;
 
-    // Form fields
     public $title;
     public $category;
     public $location;
@@ -32,6 +31,7 @@ class CreateReminder extends Component
     public $selected_recipients = [];
     public $recipientSearch = '';
     public $recipientSearchResults = [];
+
     public $notification_methods = [
         'email' => false,
         'sms' => false,
@@ -44,7 +44,7 @@ class CreateReminder extends Component
         'location' => 'required|string|max:255',
         'period_from' => 'nullable|required_if:has_period_covered,true|date|before_or_equal:period_to',
         'period_to' => 'nullable|required_if:has_period_covered,true|date|after_or_equal:period_from',
-        'reminder_start' => 'required|date|before_or_equal:reminder_end',
+        'reminder_start' => 'required|date|before_or_equal:reminder_end|after_or_equal:now',
         'reminder_end' => 'required|date|after_or_equal:reminder_start',
         'description' => 'nullable|string',
         'attachments.*' => 'file|max:10240',
@@ -75,14 +75,14 @@ class CreateReminder extends Component
         $this->validateOnly($propertyName);
     }
 
-    public function updatedAttachments()
+    public function updatedAttachments(): void
     {
         $this->validate([
             'attachments.*' => 'file|max:10240',
         ]);
     }
 
-    public function removeAttachment($index)
+    public function removeAttachment($index): void
     {
         array_splice($this->attachments, $index, 1);
     }
@@ -150,7 +150,7 @@ class CreateReminder extends Component
         ]);
 
         if ($this->recipient_type === 'custom') {
-            $reminder->recipients()->sync($this->selected_recipients);
+            $reminder->customRecipients()->sync($this->selected_recipients);
         }
 
         // Handle file uploads

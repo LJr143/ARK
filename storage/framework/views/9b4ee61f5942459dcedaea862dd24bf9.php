@@ -44,6 +44,8 @@ unset($__defined_vars); ?>
               integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
               crossorigin="anonymous"
               referrerpolicy="no-referrer" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.44.0/apexcharts.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
         <!-- Scripts -->
         <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css', 'resources/js/app.js']); ?>
@@ -99,6 +101,26 @@ unset($__defined_vars); ?>
                             <?php echo e($header); ?>
 
                         </div>
+                        <?php if (isset($component)) { $__componentOriginal58ef761b4a8d895ed279bb45cfc348ea = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal58ef761b4a8d895ed279bb45cfc348ea = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'notify::components.notify','data' => ['class' => 'z-50 fixed top-4 right-4']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('notify::notify'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['class' => 'z-50 fixed top-4 right-4']); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal58ef761b4a8d895ed279bb45cfc348ea)): ?>
+<?php $attributes = $__attributesOriginal58ef761b4a8d895ed279bb45cfc348ea; ?>
+<?php unset($__attributesOriginal58ef761b4a8d895ed279bb45cfc348ea); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal58ef761b4a8d895ed279bb45cfc348ea)): ?>
+<?php $component = $__componentOriginal58ef761b4a8d895ed279bb45cfc348ea; ?>
+<?php unset($__componentOriginal58ef761b4a8d895ed279bb45cfc348ea); ?>
+<?php endif; ?>
                     </header>
                 <?php endif; ?>
 
@@ -114,26 +136,6 @@ unset($__defined_vars); ?>
     <?php echo $__env->yieldPushContent('modals'); ?>
     <?php echo \Livewire\Mechanisms\FrontendAssets\FrontendAssets::scripts(); ?>
 
-    <?php if (isset($component)) { $__componentOriginal58ef761b4a8d895ed279bb45cfc348ea = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginal58ef761b4a8d895ed279bb45cfc348ea = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'notify::components.notify','data' => []] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
-<?php $component->withName('notify::notify'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
-<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
-<?php endif; ?>
-<?php $component->withAttributes([]); ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginal58ef761b4a8d895ed279bb45cfc348ea)): ?>
-<?php $attributes = $__attributesOriginal58ef761b4a8d895ed279bb45cfc348ea; ?>
-<?php unset($__attributesOriginal58ef761b4a8d895ed279bb45cfc348ea); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginal58ef761b4a8d895ed279bb45cfc348ea)): ?>
-<?php $component = $__componentOriginal58ef761b4a8d895ed279bb45cfc348ea; ?>
-<?php unset($__componentOriginal58ef761b4a8d895ed279bb45cfc348ea); ?>
-<?php endif; ?>
     <?php echo notifyJs(); ?>
     </body>
 </html>

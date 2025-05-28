@@ -1,472 +1,845 @@
-<div class="bg-white overflow-hidden shadow-xl sm:rounded-lg" x-data="{
-    activeMainTab: 'list',
-    activeSubTab: 'members'
-}">
-    <div class="bg-white rounded-lg shadow-sm mb-6 p-6">
-        <div class="flex justify-between items-center">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-900">Reminders</h1>
-                <nav class="flex space-x-6 mt-4">
-                    <a href="#"
-                       @click.prevent="activeMainTab = 'list'"
-                       :class="{
-                           'text-blue-600 border-b-2 border-blue-600 pb-2 font-medium': activeMainTab === 'list',
-                           'text-gray-500 hover:text-gray-700 pb-2': activeMainTab !== 'list'
-                       }">List</a>
-                    <a href="#"
-                       @click.prevent="activeMainTab = 'manage'"
-                       :class="{
-                           'text-blue-600 border-b-2 border-blue-600 pb-2 font-medium': activeMainTab === 'manage',
-                           'text-gray-500 hover:text-gray-700 pb-2': activeMainTab !== 'manage'
-                       }">Manage Reminder</a>
-                    <a href="#"
-                       @click.prevent="activeMainTab = 'recipients'"
-                       :class="{
-                           'text-blue-600 border-b-2 border-blue-600 pb-2 font-medium': activeMainTab === 'recipients',
-                           'text-gray-500 hover:text-gray-700 pb-2': activeMainTab !== 'recipients'
-                       }">Recipients</a>
-                </nav>
+<div class="min-h-screen bg-gray-50">
+    <div class="container mx-auto px-4 py-4 lg:py-6 max-w-12xl">
+
+        {{-- Flash Messages --}}
+        @if (session()->has('message'))
+            <div class="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg" role="alert">
+                <div class="flex items-center">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    <span>{{ session('message') }}</span>
+                </div>
             </div>
-            <button
-                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
-                <i class="fas fa-paper-plane"></i>
-                <span>Send Reminder</span>
-            </button>
-        </div>
-    </div>
+        @endif
 
-    <!-- Main Content -->
-    <div class="bg-white rounded-lg shadow-sm">
-        <!-- Sub Navigation -->
-        <div class="border-b border-gray-200 px-6 py-4">
-            <div class="flex justify-between items-center">
-                <nav class="flex space-x-6">
-                    <a href="#"
-                       @click.prevent="activeSubTab = 'details'"
-                       :class="{
-                           'text-blue-600 border-b-2 border-blue-600 pb-2 font-medium': activeSubTab === 'details',
-                           'text-gray-500 hover:text-gray-700 font-medium': activeSubTab !== 'details'
-                       }">Reminder Details</a>
-                    <a href="#"
-                       @click.prevent="activeSubTab = 'members'"
-                       :class="{
-                           'text-blue-600 border-b-2 border-blue-600 pb-2 font-medium': activeSubTab === 'members',
-                           'text-gray-500 hover:text-gray-700 font-medium': activeSubTab !== 'members'
-                       }">Members</a>
-                </nav>
-                <button class="text-blue-600 hover:text-blue-700 flex items-center space-x-1 font-medium">
-                    <i class="fas fa-plus text-sm"></i>
-                    <span>Add Member</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Tab Content -->
-        <div x-show="activeSubTab === 'members'" class="p-6">
-            <div class="overflow-x-auto">
-                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                        <!-- Table -->
-                        <div class="p-6">
-                            <div class="overflow-x-auto">
-                                <table class="w-full">
-                                    <thead>
-                                    <tr class="border-b border-gray-200">
-                                        <th class="text-left py-3 px-4 font-medium text-gray-700">Member</th>
-                                        <th class="text-left py-3 px-4 font-medium text-gray-700">Payment Status</th>
-                                        <th class="text-left py-3 px-4 font-medium text-gray-700">Contact Details</th>
-                                        <th class="text-left py-3 px-4 font-medium text-gray-700">Date Added</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-gray-100">
-                                    <!-- Member 1 -->
-                                    <tr class="hover:bg-gray-50 transition-colors">
-                                        <td class="py-4 px-4">
-                                            <div class="flex items-center space-x-3">
-                                                <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
-                                                    <i class="fas fa-user text-white text-sm"></i>
-                                                </div>
-                                                <div>
-                                                    <div class="font-medium text-gray-900">Name of the member</div>
-                                                    <div class="text-sm text-gray-500">PRC No. 11111</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="py-4 px-4">
-                                    <span
-                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        Paid
-                                    </span>
-                                        </td>
-                                        <td class="py-4 px-4">
-                                            <div class="text-sm text-gray-900">sample@email.com</div>
-                                            <div class="text-sm text-gray-500">+63 123 1234 123</div>
-                                        </td>
-                                        <td class="py-4 px-4">
-                                            <div class="text-sm text-gray-900">2025-05-12 10:42 AM</div>
-                                        </td>
-                                    </tr>
-
-                                    <!-- Member 2 -->
-                                    <tr class="hover:bg-gray-50 transition-colors">
-                                        <td class="py-4 px-4">
-                                            <div class="flex items-center space-x-3">
-                                                <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
-                                                    <i class="fas fa-user text-white text-sm"></i>
-                                                </div>
-                                                <div>
-                                                    <div class="font-medium text-gray-900">Name of the member</div>
-                                                    <div class="text-sm text-gray-500">PRC No. 11111</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="py-4 px-4">
-                                    <span
-                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        Paid
-                                    </span>
-                                        </td>
-                                        <td class="py-4 px-4">
-                                            <div class="text-sm text-gray-900">sample@email.com</div>
-                                            <div class="text-sm text-gray-500">+63 123 1234 123</div>
-                                        </td>
-                                        <td class="py-4 px-4">
-                                            <div class="text-sm text-gray-900">2025-05-12 10:42 AM</div>
-                                        </td>
-                                    </tr>
-
-                                    <!-- Member 3 -->
-                                    <tr class="hover:bg-gray-50 transition-colors">
-                                        <td class="py-4 px-4">
-                                            <div class="flex items-center space-x-3">
-                                                <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
-                                                    <i class="fas fa-user text-white text-sm"></i>
-                                                </div>
-                                                <div>
-                                                    <div class="font-medium text-gray-900">Name of the member</div>
-                                                    <div class="text-sm text-gray-500">PRC No. 11111</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="py-4 px-4">
-                                    <span
-                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                        Unpaid
-                                    </span>
-                                        </td>
-                                        <td class="py-4 px-4">
-                                            <div class="text-sm text-gray-900">sample@email.com</div>
-                                            <div class="text-sm text-gray-500">+63 123 1234 123</div>
-                                        </td>
-                                        <td class="py-4 px-4">
-                                            <div class="text-sm text-gray-900">2025-05-12 10:42 AM</div>
-                                        </td>
-                                    </tr>
-
-                                    <!-- Member 4 -->
-                                    <tr class="hover:bg-gray-50 transition-colors">
-                                        <td class="py-4 px-4">
-                                            <div class="flex items-center space-x-3">
-                                                <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
-                                                    <i class="fas fa-user text-white text-sm"></i>
-                                                </div>
-                                                <div>
-                                                    <div class="font-medium text-gray-900">Name of the member</div>
-                                                    <div class="text-sm text-gray-500">PRC No. 11111</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="py-4 px-4">
-                                    <span
-                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                        Overdue
-                                    </span>
-                                        </td>
-                                        <td class="py-4 px-4">
-                                            <div class="text-sm text-gray-900">sample@email.com</div>
-                                            <div class="text-sm text-gray-500">+63 123 1234 123</div>
-                                        </td>
-                                        <td class="py-4 px-4">
-                                            <div class="text-sm text-gray-900">2025-05-12 10:42 AM</div>
-                                        </td>
-                                    </tr>
-
-                                    <!-- Member 5 -->
-                                    <tr class="hover:bg-gray-50 transition-colors">
-                                        <td class="py-4 px-4">
-                                            <div class="flex items-center space-x-3">
-                                                <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
-                                                    <i class="fas fa-user text-white text-sm"></i>
-                                                </div>
-                                                <div>
-                                                    <div class="font-medium text-gray-900">Name of the member</div>
-                                                    <div class="text-sm text-gray-500">PRC No. 11111</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="py-4 px-4">
-                                    <span
-                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                        Unpaid
-                                    </span>
-                                        </td>
-                                        <td class="py-4 px-4">
-                                            <div class="text-sm text-gray-900">sample@email.com</div>
-                                            <div class="text-sm text-gray-500">+63 123 1234 123</div>
-                                        </td>
-                                        <td class="py-4 px-4">
-                                            <div class="text-sm text-gray-900">2025-05-12 10:42 AM</div>
-                                        </td>
-                                    </tr>
-
-                                    <!-- Member 6 -->
-                                    <tr class="hover:bg-gray-50 transition-colors">
-                                        <td class="py-4 px-4">
-                                            <div class="flex items-center space-x-3">
-                                                <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
-                                                    <i class="fas fa-user text-white text-sm"></i>
-                                                </div>
-                                                <div>
-                                                    <div class="font-medium text-gray-900">Name of the member</div>
-                                                    <div class="text-sm text-gray-500">PRC No. 11111</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="py-4 px-4">
-                                    <span
-                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        Paid
-                                    </span>
-                                        </td>
-                                        <td class="py-4 px-4">
-                                            <div class="text-sm text-gray-900">sample@email.com</div>
-                                            <div class="text-sm text-gray-500">+63 123 1234 123</div>
-                                        </td>
-                                        <td class="py-4 px-4">
-                                            <div class="text-sm text-gray-900">2025-05-12 10:42 AM</div>
-                                        </td>
-                                    </tr>
-
-                                    <!-- Member 7 -->
-                                    <tr class="hover:bg-gray-50 transition-colors">
-                                        <td class="py-4 px-4">
-                                            <div class="flex items-center space-x-3">
-                                                <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
-                                                    <i class="fas fa-user text-white text-sm"></i>
-                                                </div>
-                                                <div>
-                                                    <div class="font-medium text-gray-900">Name of the member</div>
-                                                    <div class="text-sm text-gray-500">PRC No. 11111</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="py-4 px-4">
-                                    <span
-                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        Paid
-                                    </span>
-                                        </td>
-                                        <td class="py-4 px-4">
-                                            <div class="text-sm text-gray-900">sample@email.com</div>
-                                            <div class="text-sm text-gray-500">+63 123 1234 123</div>
-                                        </td>
-                                        <td class="py-4 px-4">
-                                            <div class="text-sm text-gray-900">2025-05-12 10:42 AM</div>
-                                        </td>
-                                    </tr>
-
-                                    <!-- Member 8 -->
-                                    <tr class="hover:bg-gray-50 transition-colors">
-                                        <td class="py-4 px-4">
-                                            <div class="flex items-center space-x-3">
-                                                <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
-                                                    <i class="fas fa-user text-white text-sm"></i>
-                                                </div>
-                                                <div>
-                                                    <div class="font-medium text-gray-900">Name of the member</div>
-                                                    <div class="text-sm text-gray-500">PRC No. 11111</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="py-4 px-4">
-                                    <span
-                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                        Unpaid
-                                    </span>
-                                        </td>
-                                        <td class="py-4 px-4">
-                                            <div class="text-sm text-gray-900">sample@email.com</div>
-                                            <div class="text-sm text-gray-500">+63 123 1234 123</div>
-                                        </td>
-                                        <td class="py-4 px-4">
-                                            <div class="text-sm text-gray-900">2025-05-12 10:42 AM</div>
-                                        </td>
-                                    </tr>
-
-                                    <!-- Member 9 -->
-                                    <tr class="hover:bg-gray-50 transition-colors">
-                                        <td class="py-4 px-4">
-                                            <div class="flex items-center space-x-3">
-                                                <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
-                                                    <i class="fas fa-user text-white text-sm"></i>
-                                                </div>
-                                                <div>
-                                                    <div class="font-medium text-gray-900">Name of the member</div>
-                                                    <div class="text-sm text-gray-500">PRC No. 11111</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="py-4 px-4">
-                                    <span
-                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                        Unpaid
-                                    </span>
-                                        </td>
-                                        <td class="py-4 px-4">
-                                            <div class="text-sm text-gray-900">sample@email.com</div>
-                                            <div class="text-sm text-gray-500">+63 123 1234 123</div>
-                                        </td>
-                                        <td class="py-4 px-4">
-                                            <div class="text-sm text-gray-900">2025-05-12 10:42 AM</div>
-                                        </td>
-                                    </tr>
-
-                                    <!-- Member 10 -->
-                                    <tr class="hover:bg-gray-50 transition-colors">
-                                        <td class="py-4 px-4">
-                                            <div class="flex items-center space-x-3">
-                                                <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
-                                                    <i class="fas fa-user text-white text-sm"></i>
-                                                </div>
-                                                <div>
-                                                    <div class="font-medium text-gray-900">Name of the member</div>
-                                                    <div class="text-sm text-gray-500">PRC No. 11111</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="py-4 px-4">
-                                    <span
-                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                        Unpaid
-                                    </span>
-                                        </td>
-                                        <td class="py-4 px-4">
-                                            <div class="text-sm text-gray-900">sample@email.com</div>
-                                            <div class="text-sm text-gray-500">+63 123 1234 123</div>
-                                        </td>
-                                        <td class="py-4 px-4">
-                                            <div class="text-sm text-gray-900">2025-05-12 10:42 AM</div>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
+        {{-- Header Section --}}
+        <div class="bg-white rounded-xl gradient-bg shadow-sm mb-6 overflow-hidden">
+            <div class="p-4 lg:p-6">
+                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+                    <div class="flex-1">
+                        <div class="relative overflow-hidden bg-white rounded-3xl shadow-2xl mb-8 animate-fade-in-up">
+                            <div class="absolute inset-0 gradient-bg opacity-90"></div>
+                            <div
+                                class="absolute top-0 right-0 w-96 h-96 bg-white opacity-10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+                            <div
+                                class="absolute bottom-0 left-0 w-72 h-72 bg-white opacity-5 rounded-full translate-y-1/2 -translate-x-1/2"></div>
+                            <div class="relative flex justify-between p-8 lg:p-12">
+                               <div>
+                                   <div class="flex items-center gap-4 mb-4">
+                                       <div class="p-3 bg-primary bg-opacity-20 rounded-2xl backdrop-blur-sm animate-float">
+                                           <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none"
+                                                viewBox="0 0 24 24" stroke="currentColor">
+                                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                           </svg>
+                                       </div>
+                                       <h1 class="text-2xl lg:text-3xl text-white font-bold">Reminders</h1>
+                                   </div>
+                                   <p class="text-white text-sm lg:text-base">Manage and track member reminders</p>
+                               </div>
+                                {{-- Action Button --}}
+                                <div class="flex-shrink-0">
+                                    <button wire:click="sendReminder"
+                                            class="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-lg flex items-center justify-center space-x-2 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                                        <i class="fas fa-paper-plane"></i>
+                                        <span class="font-medium">Send Reminder</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
+
+                        {{-- Desktop Navigation --}}
+                        <nav class="hidden lg:flex space-x-8 mt-6">
+                            <button wire:click="setMainTab('list')"
+                                    class="transition-colors duration-200 {{ $activeMainTab === 'list' ? 'text-white border-b-2 border-blue-600 pb-2 font-semibold' : 'text-black hover:text-gray-700 pb-2 font-medium' }}">
+                                <i class="fas fa-list mr-2"></i>List
+                            </button>
+                            <button wire:click="setMainTab('manage')"
+                                    class="transition-colors duration-200 {{ $activeMainTab === 'manage' ? 'text-white border-b-2 border-blue-600 pb-2 font-semibold' : 'text-black hover:text-gray-700 pb-2 font-medium' }}">
+                                <i class="fas fa-cog mr-2"></i>Manage Reminder
+                            </button>
+                            <button wire:click="setMainTab('recipients')"
+                                    class="transition-colors duration-200 {{ $activeMainTab === 'recipients' ? 'text-white border-b-2 border-blue-600 pb-2 font-semibold' : 'text-black hover:text-gray-700 pb-2 font-medium' }}">
+                                <i class="fas fa-users mr-2"></i>Recipients
+                            </button>
+                        </nav>
+
+                        {{-- Mobile Navigation Button --}}
+                        <button wire:click="toggleMobileMenu"
+                                class="lg:hidden flex items-center mt-4 px-4 py-2 bg-gray-100 rounded-lg text-gray-700 hover:bg-gray-200 transition-colors w-full sm:w-auto">
+                            <i class="fas fa-bars mr-2"></i>
+                            <span>{{ ucfirst($activeMainTab) }}</span>
+                            <i class="fas fa-chevron-down ml-auto transform transition-transform {{ $showMobileMenu ? 'rotate-180' : '' }}"></i>
+                        </button>
+
+                        {{-- Mobile Navigation Menu --}}
+                        @if($showMobileMenu)
+                            <div
+                                class="lg:hidden mt-2 bg-white border border-gray-200 rounded-lg shadow-lg py-2 animate-fade-in">
+                                <button wire:click="setMainTab('list')"
+                                        class="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors {{ $activeMainTab === 'list' ? 'bg-blue-50 text-blue-600' : '' }}">
+                                    <i class="fas fa-list mr-3"></i>List
+                                </button>
+                                <button wire:click="setMainTab('manage')"
+                                        class="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors {{ $activeMainTab === 'manage' ? 'bg-blue-50 text-blue-600' : '' }}">
+                                    <i class="fas fa-cog mr-3"></i>Manage Reminder
+                                </button>
+                                <button wire:click="setMainTab('recipients')"
+                                        class="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors {{ $activeMainTab === 'recipients' ? 'bg-blue-50 text-blue-600' : '' }}">
+                                    <i class="fas fa-users mr-3"></i>Recipients
+                                </button>
+                            </div>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div x-show="activeSubTab === 'details'" class="p-6">
-            <!-- Content for Reminder Details tab -->
-            <div class="max-w-full mx-auto bg-white rounded-lg shadow-md overflow-hidden">
-                <!-- Header Section -->
-                <div class="bg-blue-800 px-6 py-4">
-                    <h1 class="text-2xl font-bold text-white">Membership Annual Dues 2025</h1>
-                    <div class="mt-2">
-                        <span class="text-blue-200">Reminder ID: 00123</span>
+        {{-- Main Content --}}
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+
+            <!-- Send Reminder Modal -->
+            @if($showSendModal)
+                <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+                    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+                        <div class="mt-3 text-center">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Send Reminder</h3>
+
+                            <!-- Notification Method Selection -->
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Notification Methods</label>
+                                <div class="space-y-2">
+                                    <label class="flex items-center">
+                                        <input type="checkbox"
+                                               wire:model="selectedNotificationMethods.email"
+                                               class="rounded border-gray-300">
+                                        <span class="ml-2">Email</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox"
+                                               wire:model="selectedNotificationMethods.sms"
+                                               class="rounded border-gray-300">
+                                        <span class="ml-2">SMS</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox"
+                                               wire:model="selectedNotificationMethods.app"
+                                               class="rounded border-gray-300">
+                                        <span class="ml-2">App Notification</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Loading State -->
+                            @if($sendingNotification)
+                                <div class="mb-4">
+                                    <div class="flex items-center justify-center">
+                                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        <span>Sending notifications...</span>
+                                    </div>
+                                </div>
+                            @endif
+
+                            <!-- Results Display -->
+                            @if($notificationResults && !$sendingNotification)
+                                <div class="mb-4 p-4 border rounded-lg">
+                                    @if(isset($notificationResults['error']) && $notificationResults['error'])
+                                        <div class="text-red-600">
+                                            <h4 class="font-medium">Error occurred:</h4>
+                                            <p class="text-sm">{{ $notificationResults['message'] }}</p>
+                                        </div>
+                                    @else
+                                        <div class="text-left">
+                                            <h4 class="font-medium text-gray-900 mb-2">Notification Results:</h4>
+
+                                            <!-- Email Results -->
+                                            <div class="mb-2">
+                                                <span class="text-sm font-medium">Email:</span>
+                                                <span class="text-sm text-green-600">{{ $notificationResults['email']['sent'] ?? 0 }} sent</span>
+                                                @if(isset($notificationResults['email']['failed']) && $notificationResults['email']['failed'] > 0)
+                                                    <span class="text-sm text-red-600">, {{ $notificationResults['email']['failed'] }} failed</span>
+                                                @endif
+                                            </div>
+
+                                            <!-- SMS Results -->
+                                            <div class="mb-2">
+                                                <span class="text-sm font-medium">SMS:</span>
+                                                <span class="text-sm text-green-600">{{ $notificationResults['sms']['sent'] ?? 0 }} sent</span>
+                                                @if(isset($notificationResults['sms']['failed']) && $notificationResults['sms']['failed'] > 0)
+                                                    <span class="text-sm text-red-600">, {{ $notificationResults['sms']['failed'] }} failed</span>
+                                                @endif
+                                            </div>
+
+                                            <!-- App Notification Results -->
+                                            <div class="mb-2">
+                                                <span class="text-sm font-medium">App:</span>
+                                                <span class="text-sm text-green-600">{{ $notificationResults['app']['sent'] ?? 0 }} sent</span>
+                                                @if(isset($notificationResults['app']['failed']) && $notificationResults['app']['failed'] > 0)
+                                                    <span class="text-sm text-red-600">, {{ $notificationResults['app']['failed'] }} failed</span>
+                                                @endif
+                                            </div>
+
+                                            <!-- Total -->
+                                            @php
+                                                $totalSent = ($notificationResults['email']['sent'] ?? 0) +
+                                                           ($notificationResults['sms']['sent'] ?? 0) +
+                                                           ($notificationResults['app']['sent'] ?? 0);
+                                            @endphp
+                                            <div class="mt-2 pt-2 border-t">
+                                                <span class="text-sm font-medium">Total: </span>
+                                                <span class="text-sm font-bold text-green-600">{{ $totalSent }} notifications sent</span>
+                                            </div>
+                                        </div>
+                                    @endif
+                                </div>
+                            @endif
+
+                            <!-- Action Buttons -->
+                            <div class="flex justify-center space-x-3">
+                                @if(!$notificationResults || $sendingNotification)
+                                    <button wire:click="sendReminder"
+                                            @if($sendingNotification) disabled @endif
+                                            class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50">
+                                        @if($sendingNotification)
+                                            Sending...
+                                        @else
+                                            Send Reminder
+                                        @endif
+                                    </button>
+                                @endif
+
+                                <button wire:click="closeSendModal"
+                                        class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">
+                                    @if($notificationResults && !$sendingNotification)
+                                        Close
+                                    @else
+                                        Cancel
+                                    @endif
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Content Section -->
-                <div class="p-6 space-y-6">
-                    <!-- Location Section -->
-                    <div class="border-b border-gray-200 pb-4">
-                        <h2 class="text-lg font-semibold text-gray-800">Location</h2>
-                        <div class="mt-2 flex items-center">
-                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">Start</span>
-                        </div>
-                    </div>
-
-                    <!-- Period Covered -->
-                    <div class="border-b border-gray-200 pb-4">
-                        <h2 class="text-lg font-semibold text-gray-800">Period Covered</h2>
-                        <p class="mt-2 text-gray-600">June 2025 - July 2026</p>
-                    </div>
-
-                    <!-- Description -->
-                    <div class="border-b border-gray-200 pb-4">
-                        <h2 class="text-lg font-semibold text-gray-800">Description</h2>
-                        <div class="mt-2 text-gray-600 space-y-2">
-                            <p>Dear valued members,</p>
-                            <p>This is a sample description for this reminder wherein every members of UAP Fort-Bonifacio Chapter will receive and see details such as the <strong class="font-semibold">deadline for the Membership Dues Payment</strong> for the Calendar Year 2025 is June 4 2024.</p>
-                            <p>All members may request computation breakdown through this app.</p>
-                        </div>
-                    </div>
-
-                    <!-- Regards -->
-                    <div class="border-b border-gray-200 pb-4">
-                        <h2 class="text-lg font-semibold text-gray-800">Regards,</h2>
-                        <p class="mt-2 text-gray-600">UAP Fort-Bonifacio Chapter</p>
-                    </div>
-
-                    <!-- Activity Log -->
-                    <div class="border-b border-gray-200 pb-4">
-                        <h2 class="text-lg font-semibold text-gray-800">Activity Log</h2>
-                        <p class="mt-2 text-gray-600 mb-4">Recent send logs for this reminder</p>
-
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date last sent</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notification Send via</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Activity made by</th>
-                                </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                <tr>
-                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">21-May-2025</td>
-                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">SMS</td>
-                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">Juan Cruz (Admin)</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">16-May-2025</td>
-                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">App Notification, SMS, Email</td>
-                                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">Juan Cruz (Admin)</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Attachments -->
-                    <div>
-                        <h2 class="text-lg font-semibold text-gray-800">Attachment</h2>
-                        <p class="mt-2 text-gray-600 mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit</p>
-
-                        <div class="space-y-2">
-                            <div class="flex items-center">
-                                <input type="checkbox" class="h-4 w-4 text-blue-600 border-gray-300 rounded">
-                                <span class="ml-2 text-gray-600">Membership Annual Dues DL...</span>
-                            </div>
-                            <div class="flex items-center">
-                                <input type="checkbox" class="h-4 w-4 text-blue-600 border-gray-300 rounded">
-                                <span class="ml-2 text-gray-600">About UAP Fort-Bonifacio C...</span>
-                            </div>
+            @endif
+            {{-- Sub Navigation for Recipients Tab --}}
+            @if($activeMainTab === 'recipients')
+                <div class="border-b border-gray-200">
+                    <div class="px-4 lg:px-6 py-4">
+                        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+                            <nav class="flex space-x-6 overflow-x-auto">
+                                <button wire:click="setSubTab('details')"
+                                        class="whitespace-nowrap transition-colors duration-200 {{ $activeSubTab === 'details' ? 'text-blue-600 border-b-2 border-blue-600 pb-2 font-semibold' : 'text-gray-500 hover:text-gray-700 font-medium' }}">
+                                    <i class="fas fa-info-circle mr-2"></i>Reminder Details
+                                </button>
+                                <button wire:click="setSubTab('members')"
+                                        class="whitespace-nowrap transition-colors duration-200 {{ $activeSubTab === 'members' ? 'text-blue-600 border-b-2 border-blue-600 pb-2 font-semibold' : 'text-gray-500 hover:text-gray-700 font-medium' }}">
+                                    <i class="fas fa-users mr-2"></i>Members
+                                </button>
+                            </nav>
+                            <button wire:click="openAddMemberModal"
+                                    class="flex-shrink-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-4 py-2 rounded-lg flex items-center space-x-2 font-medium transition-colors duration-200">
+                                <i class="fas fa-plus text-sm"></i>
+                                <span>Add Member</span>
+                            </button>
                         </div>
                     </div>
                 </div>
+            @endif
+
+            {{-- Tab Content --}}
+            <div class="p-4 lg:p-6">
+                {{-- Recipients Tab --}}
+                @if($activeMainTab === 'recipients')
+                    {{-- Members Sub-tab --}}
+                    @if($activeSubTab === 'members')
+                        @if($members->count() > 0)
+                            {{-- Stats Cards --}}
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                                <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-lg p-4 text-white">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="text-green-100 text-sm">Paid</p>
+                                            <p class="text-2xl font-bold">{{ $members->where('payment_status', 'paid')->count() }}</p>
+                                        </div>
+                                        <i class="fas fa-check-circle text-2xl text-green-200"></i>
+                                    </div>
+                                </div>
+                                <div class="bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg p-4 text-white">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="text-yellow-100 text-sm">Unpaid</p>
+                                            <p class="text-2xl font-bold">{{ $members->where('payment_status', 'unpaid')->count() }}</p>
+                                        </div>
+                                        <i class="fas fa-clock text-2xl text-yellow-200"></i>
+                                    </div>
+                                </div>
+                                <div class="bg-gradient-to-r from-red-500 to-red-600 rounded-lg p-4 text-white">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="text-red-100 text-sm">Overdue</p>
+                                            <p class="text-2xl font-bold">{{ $members->where('payment_status', 'overdue')->count() }}</p>
+                                        </div>
+                                        <i class="fas fa-exclamation-triangle text-2xl text-red-200"></i>
+                                    </div>
+                                </div>
+                                <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-4 text-white">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="text-blue-100 text-sm">Total</p>
+                                            <p class="text-2xl font-bold">{{ $members->count() }}</p>
+                                        </div>
+                                        <i class="fas fa-users text-2xl text-blue-200"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Members Table --}}
+                            <div class="overflow-hidden rounded-lg border border-gray-200">
+                                {{-- Mobile Cards (visible on small screens) --}}
+                                <div class="block sm:hidden">
+                                    @foreach($members as $member)
+                                        <div class="bg-white border-b border-gray-200 p-4">
+                                            <div class="flex items-start space-x-3">
+                                                <div
+                                                    class="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                                    <i class="fas fa-user text-white text-sm"></i>
+                                                </div>
+                                                <div class="flex-1 min-w-0">
+                                                    <div class="flex items-center justify-between mb-2">
+                                                        <h3 class="font-medium text-gray-900 truncate">{{ $member['name'] }}</h3>
+                                                        <span
+                                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $this->getPaymentStatusBadgeClass($member['payment_status']) }}">
+                                                            {{ ucfirst($member['payment_status']) }}
+                                                        </span>
+                                                    </div>
+                                                    <p class="text-sm text-gray-500 mb-1">PRC
+                                                        No. {{ $member['prc_no'] }}</p>
+                                                    <p class="text-sm text-gray-900 mb-1">{{ $member['email'] }}</p>
+                                                    <p class="text-sm text-gray-500 mb-1">{{ $member['phone'] }}</p>
+                                                    <p class="text-xs text-gray-400">
+                                                        Added: {{ $member['date_added'] }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+
+                                {{-- Desktop Table (hidden on small screens) --}}
+                                <div class="hidden sm:block">
+                                    <table class="w-full divide-y divide-gray-200">
+                                        <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Member
+                                            </th>
+                                            <th class="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Payment Status
+                                            </th>
+                                            <th class="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Contact Details
+                                            </th>
+                                            <th class="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Date Added
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody class="bg-white divide-y divide-gray-200">
+                                        @foreach($members as $member)
+                                            <tr class="hover:bg-gray-50 transition-colors">
+                                                <td class="px-4 lg:px-6 py-4 whitespace-nowrap">
+                                                    <div class="flex items-center">
+                                                        <div
+                                                            class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                                            <i class="fas fa-user text-white text-sm"></i>
+                                                        </div>
+                                                        <div class="ml-3">
+                                                            <div
+                                                                class="text-sm font-medium text-gray-900">{{ $member['name'] }}</div>
+                                                            <div class="text-sm text-gray-500">PRC
+                                                                No. {{ $member['prc_no'] }}</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="px-4 lg:px-6 py-4 whitespace-nowrap">
+                                                        <span
+                                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $this->getPaymentStatusBadgeClass($member['payment_status']) }}">
+                                                            {{ ucfirst($member['payment_status']) }}
+                                                        </span>
+                                                </td>
+                                                <td class="px-4 lg:px-6 py-4 whitespace-nowrap">
+                                                    <div class="text-sm text-gray-900">{{ $member['email'] }}</div>
+                                                    <div class="text-sm text-gray-500">{{ $member['phone'] }}</div>
+                                                </td>
+                                                <td class="px-4 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                    {{ $member['date_added'] }}
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        @else
+                            {{-- Empty State for Members --}}
+                            <div class="text-center py-12">
+                                <div
+                                    class="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                                    <i class="fas fa-users text-gray-400 text-3xl"></i>
+                                </div>
+                                <h3 class="text-lg font-medium text-gray-900 mb-2">No members found</h3>
+                                <p class="text-gray-500 mb-6 max-w-sm mx-auto">Get started by adding your first member
+                                    to the reminder system.</p>
+                                <button wire:click="openAddMemberModal"
+                                        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center space-x-2 mx-auto transition-colors duration-200">
+                                    <i class="fas fa-plus"></i>
+                                    <span>Add First Member</span>
+                                </button>
+                            </div>
+                        @endif
+                    @endif
+
+                    {{-- Details Sub-tab --}}
+                    @if($activeSubTab === 'details')
+                        @if($reminderDetails)
+                            <div>
+                                <style>.gradient-bg {
+                                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                                    }
+
+                                    .glass-effect {
+                                        backdrop-filter: blur(10px);
+                                        background: rgba(255, 255, 255, 0.95);
+                                        border: 1px solid rgba(255, 255, 255, 0.2);
+                                    }
+
+                                    .card-hover {
+                                        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                                    }
+
+                                    .card-hover:hover {
+                                        transform: translateY(-2px);
+                                        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+                                    }
+
+                                    .status-badge {
+                                        position: relative;
+                                        overflow: hidden;
+                                    }
+
+                                    .status-badge::before {
+                                        content: '';
+                                        position: absolute;
+                                        top: 0;
+                                        left: -100%;
+                                        width: 100%;
+                                        height: 100%;
+                                        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+                                        transition: left 0.5s;
+                                    }
+
+                                    .status-badge:hover::before {
+                                        left: 100%;
+                                    }
+
+                                    .timeline-item {
+                                        position: relative;
+                                        padding-left: 2rem;
+                                    }
+
+                                    .timeline-item::before {
+                                        content: '';
+                                        position: absolute;
+                                        left: 0.5rem;
+                                        top: 1rem;
+                                        width: 2px;
+                                        height: calc(100% - 1rem);
+                                        background: linear-gradient(to bottom, #3b82f6, #e5e7eb);
+                                    }
+
+                                    .timeline-dot {
+                                        position: absolute;
+                                        left: 0.25rem;
+                                        top: 0.75rem;
+                                        width: 0.75rem;
+                                        height: 0.75rem;
+                                        background: #3b82f6;
+                                        border-radius: 50%;
+                                        border: 2px solid white;
+                                        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+                                    }
+
+                                    .attachment-grid {
+                                        display: grid;
+                                        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                                        gap: 1rem;
+                                    }
+
+                                    .pulse-animation {
+                                        animation: pulse 2s infinite;
+                                    }
+
+                                    @keyframes pulse {
+                                        0%, 100% {
+                                            opacity: 1;
+                                        }
+                                        50% {
+                                            opacity: 0.7;
+                                        }
+                                    }
+                                </style>
+                                <div class="relative z-10 max-w-full mx-auto px-4 py-8">
+                                    <!-- Header Section -->
+                                    <div class="gradient-bg rounded-2xl p-8 mb-8 text-white relative overflow-hidden">
+                                        <div
+                                            class="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -translate-y-32 translate-x-32"></div>
+                                        <div
+                                            class="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-5 rounded-full translate-y-24 -translate-x-24"></div>
+
+                                        <div class="relative z-10">
+                                            <div
+                                                class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+                                                <div class="flex-1">
+                                                    <div class="flex items-center gap-3 mb-4">
+                                                        <div
+                                                            class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
+                                                            <i class="fas fa-bell text-xl"></i>
+                                                        </div>
+                                                        <div>
+                                                            <h1 class="text-3xl lg:text-4xl font-bold mb-2">{{ $reminderDetails['title'] }}</h1>
+                                                            <div
+                                                                class="flex items-center gap-2 text-white text-opacity-80">
+                                                                <i class="fas fa-hashtag text-sm"></i>
+                                                                <span
+                                                                    class="text-sm font-medium">{{ $reminderDetails['reminder_id'] }}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="flex flex-wrap gap-3">
+                                                    <button
+                                                        wire:click="toggleArchive"
+                                                        class="status-badge px-6 py-3 {{ $reminderDetails['status'] === 'archived' ? 'bg-green-100 text-green-800' : 'bg-white bg-opacity-20 text-white' }} rounded-xl hover:bg-opacity-30 transition-all duration-300 flex items-center gap-2 font-medium">
+                                                        <i class="fas fa-archive"></i>
+                                                        <span>{{ $reminderDetails['status'] === 'archived' ? 'Unarchive' : 'Archive' }}</span>
+                                                    </button>
+                                                    <button
+                                                        class="status-badge px-6 py-3 bg-white text-gray-800 rounded-xl hover:bg-opacity-90 transition-all duration-300 flex items-center gap-2 font-medium shadow-lg">
+                                                        <i class="fas fa-edit"></i>
+                                                        <span>Edit Reminder</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                        <!-- Main Content -->
+                                        <div class="lg:col-span-2 space-y-6">
+                                            <!-- Schedule Information -->
+                                            <div class="glass-effect rounded-2xl p-6 card-hover">
+                                                <div class="flex items-center gap-3 mb-6">
+                                                    <div
+                                                        class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                                                        <i class="fas fa-calendar-alt text-blue-600"></i>
+                                                    </div>
+                                                    <h2 class="text-xl font-semibold text-gray-800">{{ $reminderDetails['category'] }}
+                                                        Details</h2>
+                                                </div>
+
+                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                    <div class="space-y-4">
+                                                        <div class="p-4 bg-green-50 rounded-xl border border-green-200">
+                                                            <p class="text-sm font-medium text-green-700 mb-1">Start
+                                                                Time</p>
+                                                            <div class="flex items-center gap-2">
+                                                                <i class="fas fa-play-circle text-green-600"></i>
+                                                                <p class="text-green-800 font-semibold">{{ $reminderDetails['start_date']['date'] }}</p>
+                                                            </div>
+                                                            <p class="text-green-700 text-sm">{{ $reminderDetails['start_date']['time'] }}</p>
+                                                        </div>
+                                                        <div class="p-4 bg-blue-50 rounded-xl border border-blue-200">
+
+                                                            @if($reminderDetails['period'])
+
+                                                                <p class="text-sm font-medium text-blue-700 mb-1">Period
+                                                                    Covered</p>
+                                                                <div class="flex items-center gap-2">
+                                                                    <i class="fas fa-calendar-range text-blue-600"></i>
+                                                                    <p class="text-blue-800 font-semibold">June 2025 -
+                                                                        July 2026</p>
+                                                                </div>
+                                                            @else
+                                                                <p class="text-sm font-medium text-blue-700 mb-1">Period
+                                                                    Covered</p>
+                                                                <div class="flex items-center gap-2">
+                                                                    <i class="fas fa-calendar-range text-blue-600"></i>
+                                                                    <p class="text-blue-800 font-semibold">No Period
+                                                                        Covered</p>
+                                                                </div>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="space-y-4">
+                                                        <div class="p-4 bg-red-50 rounded-xl border border-red-200">
+                                                            <p class="text-sm font-medium text-red-700 mb-1">End
+                                                                Time</p>
+                                                            <div class="flex items-center gap-2">
+                                                                <i class="fas fa-stop-circle text-red-600"></i>
+                                                                <p class="text-red-800 font-semibold">{{ $reminderDetails['end_date']['date'] }}</p>
+                                                            </div>
+                                                            <p class="text-red-700 text-sm">{{ $reminderDetails['end_date']['time'] }}</p>
+                                                        </div>
+
+                                                        <div
+                                                            class="p-4 bg-purple-50 rounded-xl border border-purple-200">
+                                                            <p class="text-sm font-medium text-purple-700 mb-1">
+                                                                Location</p>
+                                                            <div class="flex items-center gap-2">
+                                                                <i class="fas fa-map-marker-alt text-purple-600"></i>
+                                                                <p class="text-purple-800 font-semibold">{{ $reminderDetails['location'] }}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Description -->
+                                            <div class="glass-effect rounded-2xl p-6 card-hover">
+                                                <div class="flex items-center gap-3 mb-6">
+                                                    <div
+                                                        class="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center">
+                                                        <i class="fas fa-file-alt text-indigo-600"></i>
+                                                    </div>
+                                                    <h2 class="text-xl font-semibold text-gray-800">Message Details</h2>
+                                                </div>
+
+                                                <div class="prose prose-gray max-w-none">
+                                                    <div
+                                                        class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border-l-4 border-blue-500 mb-4">
+                                                        <p class="text-gray-700 leading-relaxed mb-4">{{ $reminderDetails['description'] }}</p>
+                                                        {{--                                                    <p class="text-gray-700 leading-relaxed mb-4">This is a friendly reminder regarding your upcoming UAP dues payment. Please ensure timely payment to maintain your active membership status and continue enjoying all member benefits.</p>--}}
+                                                        {{--                                                    <p class="text-gray-700 leading-relaxed">All members may request computation breakdown through this app.</p>--}}
+                                                    </div>
+
+                                                    <div
+                                                        class="bg-gradient-to-r from-gray-50 to-blue-50 p-4 rounded-xl">
+                                                        <div class="flex items-center gap-3">
+                                                            <div
+                                                                class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                                                <i class="fas fa-heart text-blue-600 text-sm"></i>
+                                                            </div>
+                                                            <div>
+                                                                <p class="font-semibold text-gray-800">Regards,</p>
+                                                                <p class="text-gray-600">UAP Fort-Bonifacio Chapter</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Activity Log -->
+                                            <div class="glass-effect rounded-2xl p-6 card-hover">
+                                                <div class="flex items-center gap-3 mb-6">
+                                                    <div
+                                                        class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+                                                        <i class="fas fa-history text-green-600"></i>
+                                                    </div>
+                                                    <h2 class="text-xl font-semibold text-gray-800">Activity
+                                                        Timeline</h2>
+                                                    <div class="ml-auto pulse-animation">
+                                                        <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="space-y-4">
+                                                    <div class="timeline-item">
+                                                        <div class="timeline-dot"></div>
+                                                        <div
+                                                            class="bg-white p-4 rounded-xl border border-gray-200 hover:shadow-md transition-shadow">
+                                                            <div class="flex items-center justify-between mb-2">
+                                                                <span class="font-semibold text-gray-800">Email Notification Sent</span>
+                                                                <span class="text-sm text-gray-500">May 28, 2025</span>
+                                                            </div>
+                                                            <p class="text-gray-600 text-sm">Sent by System
+                                                                Administrator</p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="timeline-item">
+                                                        <div class="timeline-dot bg-yellow-500"></div>
+                                                        <div
+                                                            class="bg-white p-4 rounded-xl border border-gray-200 hover:shadow-md transition-shadow">
+                                                            <div class="flex items-center justify-between mb-2">
+                                                                <span
+                                                                    class="font-semibold text-gray-800">SMS Reminder</span>
+                                                                <span class="text-sm text-gray-500">May 27, 2025</span>
+                                                            </div>
+                                                            <p class="text-gray-600 text-sm">Sent by John Doe</p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="timeline-item">
+                                                        <div class="timeline-dot bg-purple-500"></div>
+                                                        <div
+                                                            class="bg-white p-4 rounded-xl border border-gray-200 hover:shadow-md transition-shadow">
+                                                            <div class="flex items-center justify-between mb-2">
+                                                                <span class="font-semibold text-gray-800">Reminder Created</span>
+                                                                <span
+                                                                    class="text-sm text-gray-500">{{ $reminderDetails['created_at'] }}</span>
+                                                            </div>
+                                                            <p class="text-gray-600 text-sm">Created by Admin User</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Sidebar -->
+                                        <div class="space-y-6">
+                                            <!-- Quick Stats -->
+                                            <div class="glass-effect rounded-2xl p-6 card-hover">
+                                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Quick Stats</h3>
+                                                <div class="space-y-4">
+                                                    <div
+                                                        class="flex items-center justify-between p-3 bg-blue-50 rounded-xl">
+                                                        <div class="flex items-center gap-3">
+                                                            <i class="fas fa-users text-blue-600"></i>
+                                                            <span class="text-gray-700">Recipients</span>
+                                                        </div>
+                                                        <span class="font-bold text-blue-600">247</span>
+                                                    </div>
+
+                                                    <div
+                                                        class="flex items-center justify-between p-3 bg-green-50 rounded-xl">
+                                                        <div class="flex items-center gap-3">
+                                                            <i class="fas fa-check-circle text-green-600"></i>
+                                                            <span class="text-gray-700">Delivered</span>
+                                                        </div>
+                                                        <span class="font-bold text-green-600">245</span>
+                                                    </div>
+
+                                                    <div
+                                                        class="flex items-center justify-between p-3 bg-yellow-50 rounded-xl">
+                                                        <div class="flex items-center gap-3">
+                                                            <i class="fas fa-clock text-yellow-600"></i>
+                                                            <span class="text-gray-700">Pending</span>
+                                                        </div>
+                                                        <span class="font-bold text-yellow-600">2</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Attachments -->
+                                            <div class="glass-effect rounded-2xl p-6 card-hover">
+                                                <div class="flex items-center gap-3 mb-6">
+                                                    <div
+                                                        class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
+                                                        <i class="fas fa-paperclip text-purple-600"></i>
+                                                    </div>
+                                                    <h3 class="text-lg font-semibold text-gray-800">Attachments</h3>
+                                                </div>
+
+                                                @if(empty($reminderDetails['attachments']))
+                                                    <div
+                                                        class="flex flex-col items-center justify-center p-6 bg-gray-50 rounded-xl border border-gray-200 text-center">
+                                                        <i class="fas fa-paperclip text-gray-400 text-3xl mb-3"></i>
+                                                        <p class="text-gray-600 font-medium mb-1">No Attachments
+                                                            Available</p>
+                                                        <p class="text-sm text-gray-500">There are no files attached to
+                                                            this reminder.</p>
+                                                    </div>
+                                                @else
+                                                    <div class="space-y-3">
+                                                        @foreach($reminderDetails['attachments'] as $attachment)
+                                                            @php
+                                                                $colorClasses = [
+                                                                    'red' => 'from-red-50 to-pink-50 hover:from-red-100 hover:to-pink-100 border-red-200 text-red-600',
+                                                                    'green' => 'from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100 border-green-200 text-green-600',
+                                                                    'blue' => 'from-blue-50 to-cyan-50 hover:from-blue-100 hover:to-cyan-100 border-blue-200 text-blue-600',
+                                                                    'purple' => 'from-purple-50 to-violet-50 hover:from-purple-100 hover:to-violet-100 border-purple-200 text-purple-600',
+                                                                    'default' => 'from-gray-50 to-gray-100 hover:from-gray-100 hover:to-gray-200 border-gray-200 text-gray-600'
+                                                                ];
+                                                                $colorClass = $colorClasses[$attachment['color']] ?? $colorClasses['default'];
+                                                            @endphp
+
+                                                            <div
+                                                                class="group flex items-center p-4 bg-gradient-to-r {{ $colorClass }} rounded-xl transition-all duration-300 cursor-pointer border">
+                                                                <input type="checkbox"
+                                                                       class="h-4 w-4 text-{{ $attachment['color'] }}-600 border-{{ $attachment['color'] }}-300 rounded focus:ring-{{ $attachment['color'] }}-500 mr-3">
+                                                                <div
+                                                                    class="w-10 h-10 bg-{{ $attachment['color'] }}-100 rounded-lg flex items-center justify-center mr-3">
+                                                                    <i class="fas {{ $attachment['icon'] }} text-{{ $attachment['color'] }}-600"></i>
+                                                                </div>
+                                                                <div class="flex-1">
+                                                                    <p class="font-medium text-gray-800 group-hover:text-{{ $attachment['color'] }}-700">{{ $attachment['name'] }}</p>
+                                                                    <p class="text-sm text-gray-500">{{ $attachment['size'] }}</p>
+                                                                </div>
+                                                                <a href="{{ Storage::url($attachment['path']) }}"
+                                                                   target="_blank"
+                                                                   class="opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-white hover:bg-opacity-50 rounded-lg"
+                                                                   download="{{ $attachment['name'] }}">
+                                                                    <i class="fas fa-download text-{{ $attachment['color'] }}-600"></i>
+                                                                </a>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+
+                                                    @if(count($reminderDetails['attachments']) > 1)
+                                                        <div class="mt-4 pt-4 border-t border-gray-200">
+                                                            <button
+                                                                class="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 font-medium flex items-center justify-center gap-2">
+                                                                <i class="fas fa-download"></i>
+                                                                Download All
+                                                            </button>
+                                                        </div>
+                                                    @endif
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @else
+                            {{-- Empty State for Reminder Details --}}
+                            <div class="text-center py-12">
+                                <div
+                                    class="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                                    <i class="fas fa-bell text-gray-400 text-3xl"></i>
+                                </div>
+                                <h3 class="text-lg font-medium text-gray-900 mb-2">No reminder details available</h3>
+                                <p class="text-gray-500 mb-6 max-w-sm mx-auto">Create a new reminder to see details
+                                    here.</p>
+                                <button wire:click="setMainTab('manage')"
+                                        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center space-x-2 mx-auto transition-colors duration-200">
+                                    <i class="fas fa-plus"></i>
+                                    <span>Create Reminder</span>
+                                </button>
+                            </div>
+                        @endif
+                    @endif
+                @endif
+
+                {{-- List Tab --}}
+                @if($activeMainTab === 'list')
+                    <div class="text-center py-12">
+                        <div class="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-list text-gray-400 text-3xl"></i>
+                        </div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">No reminders found</h3>
+                        <p class="text-gray-500 mb-6 max-w-sm mx-auto">Create your first reminder to get started with
+                            member notifications.</p>
+                        <button wire:click="setMainTab('manage')"
+                                class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center space-x-2 mx-auto transition-colors duration-200">
+                            <i class="fas fa-plus"></i>
+                            <span>Create First Reminder</span>
+                        </button>
+                    </div>
+@endif
             </div>
         </div>
-    </div>
-
-    <!-- Content for other main tabs -->
-    <div x-show="activeMainTab === 'manage'" class="bg-white rounded-lg shadow-sm mt-4 p-6">
-        <!-- Content for Manage Reminder tab -->
-        <p>Manage reminder content goes here</p>
-    </div>
-
-    <div x-show="activeMainTab === 'recipients'" class="bg-white rounded-lg shadow-sm mt-4 p-6">
-        <!-- Content for Recipients tab -->
-        <p>Recipients content goes here</p>
     </div>
 </div>

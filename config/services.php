@@ -40,4 +40,10 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
 
+    'textbee' => [
+        'api_key' => env('TEXTBEE_API_KEY'),
+        'sender_id' => env('TEXTBEE_SENDER_ID'),
+        'base_url' => env('TEXTBEE_BASE_URL', 'https://api.textbee.ph/api/v1'),
+    ],
+
 ];

@@ -16,6 +16,8 @@
               integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
               crossorigin="anonymous"
               referrerpolicy="no-referrer" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.44.0/apexcharts.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -49,6 +51,7 @@
                         <div class="w-full mx-auto py-6 px-4 sm:px-6 lg:px-8">
                             {{ $header }}
                         </div>
+                        <x-notify::notify class="z-50 fixed top-4 right-4" />
                     </header>
                 @endif
 
@@ -62,7 +65,6 @@
 
     @stack('modals')
     @livewireScripts
-    <x-notify::notify />
     @notifyJs
     </body>
 </html>

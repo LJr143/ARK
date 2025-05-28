@@ -7,7 +7,7 @@
     </x-slot>
     <div class="py-2">
         <div class="max-w-full mx-auto sm:px-6 lg:px-6">
-            <livewire:reminder.manage-reminder/>
+            <livewire:reminder.manage-reminder :reminder="$reminder"/>
         </div>
     </div>
 </x-app-layout>

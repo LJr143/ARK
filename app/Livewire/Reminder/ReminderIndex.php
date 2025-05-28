@@ -14,9 +14,30 @@ class ReminderIndex extends Component
     public $search = '';
     public $perPage = 10;
 
+    protected $queryString = [
+        'filter' => ['except' => 'all_reminders'],
+        'search' => ['except' => ''],
+        'perPage' => ['except' => 10],
+    ];
+
     public function mount(): void
     {
-        //TODO:INITIALIZATION FOR FUTURE NEEDS
+        // Initialize component - you can add any setup logic here
+    }
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingPerPage()
+    {
+        $this->resetPage();
     }
 
     public function fetchReminders()
@@ -28,6 +49,7 @@ class ReminderIndex extends Component
         if ($this->search) {
             $query->where(function ($query) {
                 $query->where('title', 'like', '%' . $this->search . '%')
+                    ->orWhere('description', 'like', '%' . $this->search . '%')
                     ->orWhere('start_datetime', 'like', '%' . $this->search . '%')
                     ->orWhere('end_datetime', 'like', '%' . $this->search . '%');
             });
@@ -45,6 +67,18 @@ class ReminderIndex extends Component
         return $this->perPage === 'all'
             ? $query->get()
             : $query->paginate($this->perPage);
+    }
+
+    public function clearSearch()
+    {
+        $this->search = '';
+        $this->resetPage();
+    }
+
+    public function setFilter($filter)
+    {
+        $this->filter = $filter;
+        $this->resetPage();
     }
 
     public function render()

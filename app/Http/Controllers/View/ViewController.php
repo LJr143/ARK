@@ -20,7 +20,8 @@ class ViewController
         return view('ark.member.pages.registration.membership-registration');
     }
 
-    public function ManageReminder(){
-        return view('ark.admin.reminders.manage-reminder');
+    public function ManageReminder($reminder)
+    {
+        return view('ark.admin.reminders.manage-reminder', compact('reminder'));
     }
 }
