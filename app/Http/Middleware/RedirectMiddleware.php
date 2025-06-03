@@ -23,7 +23,7 @@ class RedirectMiddleware
             return redirect()->route('admin.dashboard');
         }
         if (Auth::check() && Auth::user()->hasAnyRole('member')) {
-            return redirect()->route('member.dashboard');
+            return redirect()->route('admin.dashboard');
         }
 
         return $next($request);

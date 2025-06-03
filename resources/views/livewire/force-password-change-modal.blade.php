@@ -5,6 +5,7 @@
                 <h2 class="text-xl font-semibold mb-4">Change Your Password</h2>
 
                 <form wire:submit.prevent="updatePassword">
+                    @csrf
                     <div class="mb-4">
                         <label class="block">New Password</label>
                         <input type="password" wire:model.defer="newPassword" class="w-full border p-2 rounded" required>

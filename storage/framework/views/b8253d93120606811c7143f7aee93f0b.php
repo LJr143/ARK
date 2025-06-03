@@ -26,8 +26,8 @@
                             and efficiency.
                         </p>
                     </div>
-
-                    <?php
+                    <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('create-reminder')): ?>
+                        <?php
 $__split = function ($name, $params = []) {
     return [$name, $params];
 };
@@ -43,6 +43,7 @@ unset($__params);
 unset($__split);
 if (isset($__slots)) unset($__slots);
 ?>
+                    <?php endif; ?>
 
                 </div>
             </div>
@@ -98,7 +99,7 @@ if (isset($__slots)) unset($__slots);
                         </svg>
                         All Reminders
                         <span class="bg-white bg-opacity-30 px-2 py-1 rounded-full text-xs">
-                        <?php echo e($reminders instanceof \Illuminate\Pagination\LengthAwarePaginator ? $reminders->total() : $reminders->count()); ?>
+                         <?php echo e($reminders->count()); ?>
 
                     </span>
                     </button>
@@ -113,7 +114,7 @@ if (isset($__slots)) unset($__slots);
                         </svg>
                         Upcoming
                         <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs">
-                        <?php echo e(App\Models\Reminder::where('status', 'upcoming')->count()); ?>
+                       <?php echo e($reminders->where('status', 'upcoming')->count()); ?>
 
                     </span>
                     </button>
@@ -128,7 +129,7 @@ if (isset($__slots)) unset($__slots);
                         </svg>
                         Ended
                         <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs">
-                        <?php echo e(App\Models\Reminder::where('status', 'ended')->count()); ?>
+                            <?php echo e($reminders->where('status', 'ended')->count()); ?>
 
                     </span>
                     </button>
@@ -143,7 +144,7 @@ if (isset($__slots)) unset($__slots);
                         </svg>
                         Archived
                         <span class="bg-purple-100 text-purple-600 px-2 py-1 rounded-full text-xs">
-                        <?php echo e(App\Models\Reminder::where('status', 'archived')->count()); ?>
+                            <?php echo e($reminders->where('status', 'archived')->count()); ?>
 
                     </span>
                     </button>
@@ -156,7 +157,8 @@ if (isset($__slots)) unset($__slots);
             <!--[if BLOCK]><![endif]--><?php if($reminders->isNotEmpty()): ?>
                 <div class="grid gap-4">
                     <!--[if BLOCK]><![endif]--><?php $__currentLoopData = $reminders; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $reminder): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                        <div class="bg-white rounded-3xl h-2xl shadow-xl overflow-hidden card-hover border border-gray-100">
+                        <div
+                            class="bg-white rounded-3xl h-2xl shadow-xl overflow-hidden card-hover border border-gray-100">
                             <div class="flex flex-col lg:flex-row">
                                 <!-- Image Section -->
                                 <div class="lg:w-80 h-[150px] lg:h-auto relative overflow-hidden">
@@ -211,7 +213,9 @@ if (isset($__slots)) unset($__slots);
                                                         </div>
                                                         <div>
                                                             <p class="font-semibold text-[12px] capitalize">
-                                                                <?php echo e(\Carbon\Carbon::parse($reminder->start_datetime)->format('F j, Y')); ?> - <?php echo e($reminder->recipient_type); ?>
+                                                                <?php echo e(\Carbon\Carbon::parse($reminder->start_datetime)->format('F j, Y')); ?>
+
+                                                                - <?php echo e($reminder->recipient_type); ?>
 
                                                             </p>
                                                             <p class="text-[11px] text-gray-500">
@@ -287,7 +291,11 @@ if (isset($__slots)) unset($__slots);
                                                 wire:navigate
                                                 href="<?php echo e(route('manage.reminder', ['reminder' => $reminder->id])); ?>"
                                             >
-                                                <span>Manage</span>
+                                                <!--[if BLOCK]><![endif]--><?php if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('superadmin') ): ?>
+                                                    <span>Manage</span>
+                                                <?php else: ?>
+                                                    <span>View Reminder Details</span>
+                                                <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                      class="h-5 w-5 group-hover:translate-x-1 transition-transform"
                                                      fill="none" viewBox="0 0 24 24" stroke="currentColor">

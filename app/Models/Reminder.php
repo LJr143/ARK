@@ -41,8 +41,6 @@ class Reminder extends Model
         return $this->belongsToMany(User::class, 'reminder_recipients', 'reminder_id', 'user_id');
     }
 
-
-
     public function category(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(ReminderCategory::class);

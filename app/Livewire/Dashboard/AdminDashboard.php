@@ -32,12 +32,12 @@ class AdminDashboard extends Component
         $this->loadData();
     }
 
-    public function updatedStartDate()
+    public function updatedStartDate(): void
     {
         $this->dispatch('dataUpdated');
     }
 
-    public function updatedEndDate()
+    public function updatedEndDate(): void
     {
         $this->dispatch('dataUpdated');
     }

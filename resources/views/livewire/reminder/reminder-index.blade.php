@@ -26,8 +26,9 @@
                             and efficiency.
                         </p>
                     </div>
-
-                    <livewire:reminder.create-reminder/>
+                    @can('create-reminder')
+                        <livewire:reminder.create-reminder/>
+                    @endcan
 
                 </div>
             </div>
@@ -83,7 +84,7 @@
                         </svg>
                         All Reminders
                         <span class="bg-white bg-opacity-30 px-2 py-1 rounded-full text-xs">
-                        {{ $reminders instanceof \Illuminate\Pagination\LengthAwarePaginator ? $reminders->total() : $reminders->count() }}
+                         {{ $reminders->count() }}
                     </span>
                     </button>
                     <button
@@ -97,7 +98,7 @@
                         </svg>
                         Upcoming
                         <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-xs">
-                        {{ App\Models\Reminder::where('status', 'upcoming')->count() }}
+                       {{ $reminders->where('status', 'upcoming')->count() }}
                     </span>
                     </button>
                     <button
@@ -111,7 +112,7 @@
                         </svg>
                         Ended
                         <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs">
-                        {{ App\Models\Reminder::where('status', 'ended')->count() }}
+                            {{ $reminders->where('status', 'ended')->count() }}
                     </span>
                     </button>
                     <button
@@ -125,7 +126,7 @@
                         </svg>
                         Archived
                         <span class="bg-purple-100 text-purple-600 px-2 py-1 rounded-full text-xs">
-                        {{ App\Models\Reminder::where('status', 'archived')->count() }}
+                            {{ $reminders->where('status', 'archived')->count() }}
                     </span>
                     </button>
                 </nav>
@@ -137,7 +138,8 @@
             @if($reminders->isNotEmpty())
                 <div class="grid gap-4">
                     @foreach($reminders as $reminder)
-                        <div class="bg-white rounded-3xl h-2xl shadow-xl overflow-hidden card-hover border border-gray-100">
+                        <div
+                            class="bg-white rounded-3xl h-2xl shadow-xl overflow-hidden card-hover border border-gray-100">
                             <div class="flex flex-col lg:flex-row">
                                 <!-- Image Section -->
                                 <div class="lg:w-80 h-[150px] lg:h-auto relative overflow-hidden">
@@ -190,7 +192,8 @@
                                                         </div>
                                                         <div>
                                                             <p class="font-semibold text-[12px] capitalize">
-                                                                {{ \Carbon\Carbon::parse($reminder->start_datetime)->format('F j, Y') }} - {{ $reminder->recipient_type }}
+                                                                {{ \Carbon\Carbon::parse($reminder->start_datetime)->format('F j, Y') }}
+                                                                - {{ $reminder->recipient_type }}
                                                             </p>
                                                             <p class="text-[11px] text-gray-500">
                                                                 {{ \Carbon\Carbon::parse($reminder->start_datetime)->format('g:i A') }}
@@ -260,7 +263,11 @@
                                                 wire:navigate
                                                 href="{{ route('manage.reminder', ['reminder' => $reminder->id]) }}"
                                             >
-                                                <span>Manage</span>
+                                                @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('superadmin') )
+                                                    <span>Manage</span>
+                                                @else
+                                                    <span>View Reminder Details</span>
+                                                @endif
                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                      class="h-5 w-5 group-hover:translate-x-1 transition-transform"
                                                      fill="none" viewBox="0 0 24 24" stroke="currentColor">

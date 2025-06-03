@@ -200,32 +200,35 @@
                     @endif
                 </div>
 
-                <!-- Payment Status Chart -->
-                <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
-                    <div class="flex items-center justify-between mb-6">
-                        <div>
-                            <h2 class="text-xl font-semibold text-gray-800 mb-2">Payment Status Distribution</h2>
-                            <p class="text-gray-600 text-sm">Current status of member dues payments</p>
-                        </div>
-                        <div class="bg-purple-100 rounded-full p-3">
-                            <i class="fas fa-chart-pie text-purple-600"></i>
-                        </div>
-                    </div>
-                    @if($totalMembers > 0)
-                        <div id="statusChart" class="h-80" wire:ignore></div>
-                    @else
-                        <div class="h-80 bg-gray-50 rounded-lg flex flex-col items-center justify-center">
-                            <div class="text-center">
-                                <i class="fas fa-chart-pie text-gray-300 text-6xl mb-4"></i>
-                                <h3 class="text-lg font-medium text-gray-500 mb-2">No Members Found</h3>
-                                <p class="text-gray-400 text-sm">There are no members to display for this period.</p>
-                                <p class="text-gray-400 text-sm">Member data will appear here once available.</p>
+                @if(auth()->user()->hasAnyRole('admin', 'superadmin'))
+                    <!-- Payment Status Chart -->
+                    <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <h2 class="text-xl font-semibold text-gray-800 mb-2">Payment Status Distribution</h2>
+                                <p class="text-gray-600 text-sm">Current status of member dues payments</p>
+                            </div>
+                            <div class="bg-purple-100 rounded-full p-3">
+                                <i class="fas fa-chart-pie text-purple-600"></i>
                             </div>
                         </div>
-                    @endif
-                </div>
+                        @if($totalMembers > 0)
+                            <div id="statusChart" class="h-80" wire:ignore></div>
+                        @else
+                            <div class="h-80 bg-gray-50 rounded-lg flex flex-col items-center justify-center">
+                                <div class="text-center">
+                                    <i class="fas fa-chart-pie text-gray-300 text-6xl mb-4"></i>
+                                    <h3 class="text-lg font-medium text-gray-500 mb-2">No Members Found</h3>
+                                    <p class="text-gray-400 text-sm">There are no members to display for this period.</p>
+                                    <p class="text-gray-400 text-sm">Member data will appear here once available.</p>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                @endif
             </div>
 
+            @if(auth()->user()->hasRole('admin', 'superadmin'))
             <!-- Additional Analytics -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
                 <!-- Collection Efficiency -->
@@ -287,6 +290,7 @@
                     </div>
                 </div>
             </div>
+            @endif
         </div>
     </div>
 

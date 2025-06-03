@@ -6,6 +6,8 @@ use App\Models\User;
 use App\Models\Reminder;
 use App\Events\ReminderNotificationSent;
 use App\Mail\ReminderNotification;
+use App\Notifications\CustomNotification;
+use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
@@ -13,21 +15,30 @@ use Carbon\Carbon;
 
 class NotificationService
 {
-    private $philSmsConfig;
+    private $textBeeConfig;
 
     public function __construct()
     {
-        $this->philSmsConfig = [
-            'token' => config('services.philsms.token'),
-            'sender_id' => config('services.philsms.sender_id'),
-            'base_url' => config('services.philsms.base_url', 'https://app.philsms.com/api/v3'),
+        $this->textBeeConfig = [
+            'api_key' => config('services.textbee.api_key'),
+            'device_id' => config('services.textbee.device_id'),
+            'base_url' => config('services.textbee.base_url', 'https://api.textbee.dev/api/v1/gateway/devices'),
         ];
     }
 
     public function sendReminderNotifications(Reminder $reminder, array $recipients = null): array
     {
         $recipients = collect($recipients ?: $this->getRecipients($reminder))
-            ->map(fn($r) => is_array($r) ? new User($r) : $r)
+            ->map(function($r) {
+                if ($r instanceof User) {
+                    return $r;
+                }
+                if (is_array($r) && isset($r['user']) && $r['user'] instanceof User) {
+                    return $r['user'];
+                }
+                return User::find(is_array($r) ? ($r['id'] ?? null) : $r);
+            })
+            ->filter()
             ->all();
 
         $results = [
@@ -38,8 +49,8 @@ class NotificationService
 
         Log::info('NotificationService - Total recipients: ' . count($recipients));
 
-        // Get notification methods from the reminder instead of recipients
         $methods = $this->parseNotificationMethods($reminder);
+        Log::info('Selected notification methods: ', $methods);
 
         foreach ($recipients as $index => $recipient) {
             if (!$this->isValidRecipient($recipient)) {
@@ -49,6 +60,7 @@ class NotificationService
 
             Log::info("Processing recipient #{$index} ({$recipient->id})", [
                 'email' => $recipient->email,
+                'id' => $recipient->id,
                 'phone' => $recipient->phone ?? $recipient->mobile,
             ]);
 
@@ -57,6 +69,7 @@ class NotificationService
                 try {
                     $this->sendEmailNotification($reminder, $recipient);
                     $results['email']['sent']++;
+                    Log::info("Email sent to {$recipient->email}");
                 } catch (\Exception $e) {
                     $this->logFailure($results['email'], $recipient->email, $e, 'Email');
                 }
@@ -68,6 +81,7 @@ class NotificationService
                 try {
                     $this->sendSmsNotification($reminder, $recipient);
                     $results['sms']['sent']++;
+                    Log::info("SMS sent to { $recipient->mobile }");
                 } catch (\Exception $e) {
                     $this->logFailure($results['sms'], $recipient->phone ?? $recipient->mobile, $e, 'SMS');
                 }
@@ -76,8 +90,13 @@ class NotificationService
             // APP
             if ($methods['app']) {
                 try {
-                    $this->sendAppNotification($reminder, $recipient);
-                    $results['app']['sent']++;
+                    $success = $this->sendAppNotification($reminder, $recipient);
+                    if ($success) {
+                        $results['app']['sent']++;
+                    } else {
+                        $results['app']['failed']++;
+                        $results['app']['errors'][] = "App notification failed for user {$recipient->id}";
+                    }
                 } catch (\Exception $e) {
                     $this->logFailure($results['app'], $recipient->id, $e, 'App');
                 }
@@ -85,7 +104,6 @@ class NotificationService
         }
 
         Log::info('NotificationService - Final results:', $results);
-
         $this->logNotificationActivity($reminder, $results);
 
         return $results;
@@ -106,7 +124,7 @@ class NotificationService
         ]);
     }
 
-    private function sendEmailNotification(Reminder $reminder, User $recipient)
+    private function sendEmailNotification(Reminder $reminder, User $recipient): void
     {
         Mail::to($recipient->email)->send(new ReminderNotification($reminder, $recipient));
     }
@@ -115,67 +133,84 @@ class NotificationService
     {
         $phone = $this->formatPhoneNumber($recipient->phone ?? $recipient->mobile);
 
-        $response = Http::retry(3, 500) // Retry 3 times with 500ms delay
-        ->timeout(10) // 10-second timeout
-        ->withHeaders([
-            'Authorization' => 'Bearer ' . config('services.textbee.api_key'),
-            'Accept' => 'application/json',
-        ])->post(config('services.textbee.base_url') . '/send', [
-            'sender_id' => config('services.textbee.sender_id'),
-            'mobile_number' => $phone,
-            'message' => $this->buildSmsMessage($reminder),
-        ]);
-
-        $responseData = $response->json();
-
-        if ($response->failed()) {
-            Log::error("TextBee SMS Failed", [
-                'error' => $responseData['message'] ?? $response->body(),
-                'phone' => $phone,
+        try {
+            $client = new Client();
+            $response = $client->post("{$this->textBeeConfig['base_url']}/{$this->textBeeConfig['device_id']}/send-sms", [
+                'headers' => [
+                    'x-api-key' => $this->textBeeConfig['api_key'],
+                    'Content-Type' => 'application/json',
+                ],
+                'json' => [
+                    'recipients' => [$phone],
+                    'message' => $this->buildSmsMessage($reminder),
+                ],
             ]);
-            throw new \Exception("TextBee Error: " . ($responseData['message'] ?? "Unknown error"));
+
+            $responseData = json_decode($response->getBody()->getContents(), true);
+
+            Log::info("SMS Sent via TextBee", [
+                'reminder_id' => $reminder->id,
+                'recipient' => $recipient->id,
+                'phone' => $phone,
+                'response' => $responseData,
+            ]);
+
+            return $responseData;
+        } catch (RequestException $e) {
+            $errorMessage = $e->hasResponse() ? $e->getResponse()->getBody()->getContents() : $e->getMessage();
+            Log::error("TextBee SMS Failed", [
+                'reminder_id' => $reminder->id,
+                'phone' => $phone,
+                'error' => $errorMessage,
+            ]);
+            throw new \Exception("TextBee Error: " . $errorMessage);
         }
-
-        Log::info("SMS Sent via TextBee", [
-            'reminder_id' => $reminder->id,
-            'recipient' => $recipient->id,
-            'response' => $responseData,
-        ]);
-
-        return $responseData;
     }
 
     private function sendAppNotification(Reminder $reminder, User $recipient)
     {
-        $data = [
-            'id' => uniqid(),
-            'type' => 'reminder',
-            'title' => 'Reminder: ' . $reminder->title,
-            'message' => $this->buildAppMessage($reminder),
-            'reminder_id' => $reminder->id,
-            'created_at' => now()->toISOString(),
-            'read_at' => null,
-            'data' => [
+        try {
+            $categoryName = optional($reminder->category)->name ?? 'General';
+
+            $notificationData = [
+                'reminder_id' => $reminder->id,
                 'reminder' => [
                     'id' => $reminder->id,
                     'title' => $reminder->title,
-                    'start_datetime' => $reminder->start_datetime,
-                    'location' => $reminder->location,
-                    'category' => $reminder->category->name ?? 'General',
+                    'start_datetime' => $reminder->start_datetime->toISOString(),
+                    'location' => $reminder->location ?? 'Not specified',
+                    'category' => $categoryName,
                 ]
-            ]
-        ];
+            ];
 
-        $recipient->notifications()->create([
-            'id' => $data['id'],
-            'type' => 'App\Notifications\ReminderNotification',
-            'notifiable_type' => User::class,
-            'notifiable_id' => $recipient->id,
-            'data' => json_encode($data['data']),
-            'created_at' => now(),
-        ]);
+            $notification = new CustomNotification(
+                'Reminder: ' . $reminder->title,
+                $this->buildAppMessage($reminder),
+                'reminder',
+                'normal',
+                $notificationData,
+                $recipient->id,
+            );
 
-        event(new ReminderNotificationSent($recipient, $data));
+            if ($recipient) {
+                $recipient->notify($notification);
+                return true;
+            } else {
+                Log::warning('Notification recipient is null. Notification not sent.', [
+                    'reminder_id' => $reminder->id
+                ]);
+                return false;
+            }
+
+            return true; // Return true on success
+        } catch (\Exception $e) {
+            Log::error('App notification creation failed', [
+                'recipient_id' => $recipient?->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw $e; // Re-throw to be caught by the outer try-catch
+        }
     }
 
     private function parseNotificationMethods(Reminder $reminder): array

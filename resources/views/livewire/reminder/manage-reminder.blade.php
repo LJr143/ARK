@@ -23,27 +23,31 @@
                             <div
                                 class="absolute bottom-0 left-0 w-72 h-72 bg-white opacity-5 rounded-full translate-y-1/2 -translate-x-1/2"></div>
                             <div class="relative flex justify-between p-8 lg:p-12">
-                               <div>
-                                   <div class="flex items-center gap-4 mb-4">
-                                       <div class="p-3 bg-primary bg-opacity-20 rounded-2xl backdrop-blur-sm animate-float">
-                                           <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none"
-                                                viewBox="0 0 24 24" stroke="currentColor">
-                                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                           </svg>
-                                       </div>
-                                       <h1 class="text-2xl lg:text-3xl text-white font-bold">Reminders</h1>
-                                   </div>
-                                   <p class="text-white text-sm lg:text-base">Manage and track member reminders</p>
-                               </div>
-                                {{-- Action Button --}}
-                                <div class="flex-shrink-0">
-                                    <button wire:click="sendReminder"
-                                            class="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-lg flex items-center justify-center space-x-2 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
-                                        <i class="fas fa-paper-plane"></i>
-                                        <span class="font-medium">Send Reminder</span>
-                                    </button>
+                                <div>
+                                    <div class="flex items-center gap-4 mb-4">
+                                        <div
+                                            class="p-3 bg-primary bg-opacity-20 rounded-2xl backdrop-blur-sm animate-float">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white"
+                                                 fill="none"
+                                                 viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                        </div>
+                                        <h1 class="text-2xl lg:text-3xl text-white font-bold">Reminders</h1>
+                                    </div>
+                                    <p class="text-white text-sm lg:text-base">Manage and track member reminders</p>
                                 </div>
+                                @can('send-reminder')
+                                    {{-- Action Button --}}
+                                    <div class="flex-shrink-0">
+                                        <button wire:click="openSendModal"
+                                                class="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-lg flex items-center justify-center space-x-2 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                                            <i class="fas fa-paper-plane"></i>
+                                            <span class="font-medium">Send Reminder</span>
+                                        </button>
+                                    </div>
+                                @endcan
                             </div>
                         </div>
 
@@ -133,9 +137,12 @@
                             @if($sendingNotification)
                                 <div class="mb-4">
                                     <div class="flex items-center justify-center">
-                                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-500"
+                                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                                    stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor"
+                                                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                         </svg>
                                         <span>Sending notifications...</span>
                                     </div>
@@ -223,6 +230,7 @@
                     </div>
                 </div>
             @endif
+
             {{-- Sub Navigation for Recipients Tab --}}
             @if($activeMainTab === 'recipients')
                 <div class="border-b border-gray-200">
@@ -233,16 +241,20 @@
                                         class="whitespace-nowrap transition-colors duration-200 {{ $activeSubTab === 'details' ? 'text-blue-600 border-b-2 border-blue-600 pb-2 font-semibold' : 'text-gray-500 hover:text-gray-700 font-medium' }}">
                                     <i class="fas fa-info-circle mr-2"></i>Reminder Details
                                 </button>
-                                <button wire:click="setSubTab('members')"
-                                        class="whitespace-nowrap transition-colors duration-200 {{ $activeSubTab === 'members' ? 'text-blue-600 border-b-2 border-blue-600 pb-2 font-semibold' : 'text-gray-500 hover:text-gray-700 font-medium' }}">
-                                    <i class="fas fa-users mr-2"></i>Members
-                                </button>
+                                @can('view-reminder-member')
+                                    <button wire:click="setSubTab('members')"
+                                            class="whitespace-nowrap transition-colors duration-200 {{ $activeSubTab === 'members' ? 'text-blue-600 border-b-2 border-blue-600 pb-2 font-semibold' : 'text-gray-500 hover:text-gray-700 font-medium' }}">
+                                        <i class="fas fa-users mr-2"></i>Members
+                                    </button>
+                                @endcan
                             </nav>
-                            <button wire:click="openAddMemberModal"
-                                    class="flex-shrink-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-4 py-2 rounded-lg flex items-center space-x-2 font-medium transition-colors duration-200">
-                                <i class="fas fa-plus text-sm"></i>
-                                <span>Add Member</span>
-                            </button>
+                            @can('add-member-reminder')
+                                <button wire:click="openAddMemberModal"
+                                        class="flex-shrink-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-4 py-2 rounded-lg flex items-center space-x-2 font-medium transition-colors duration-200">
+                                    <i class="fas fa-plus text-sm"></i>
+                                    <span>Add Member</span>
+                                </button>
+                            @endcan
                         </div>
                     </div>
                 </div>
@@ -250,155 +262,318 @@
 
             {{-- Tab Content --}}
             <div class="p-4 lg:p-6">
+                <!-- Request Computation Modal -->
+                @if($showComputationRequestModal)
+                    <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+                        <div
+                            class="relative top-10 mx-auto p-5 border w-1/3 shadow-lg rounded-md bg-white max-h-[90vh] overflow-y-auto">
+                            <div class="mt-3">
+                                <h3 class="text-lg font-medium text-gray-900 mb-4 text-center">Request Computation
+                                    Breakdown</h3>
+
+                                <div class="text-sm text-gray-500 mb-4 text-center">
+                                    {{ now()->format('M j, Y') }}<br>
+                                    {{ now()->format('H:i') }}
+                                </div>
+
+                                <!-- Member Information Section -->
+                                <div class="mb-6">
+                                    <h4 class="text-md font-medium text-gray-800 mb-3 text-center">Member
+                                        Information</h4>
+
+                                    <div class="space-y-3 text-sm">
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">Name</span>
+                                            <span class="font-medium">
+                                                {{ isset($memberData['first_name'], $memberData['family_name']) ?
+                                                    $memberData['first_name'] . ' ' . ($memberData['middle_name'] ?? '') . ' ' . $memberData['family_name'] :
+                                                    'Error' }}
+                                            </span>
+
+                                        </div>
+
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">PRC#</span>
+                                            <span
+                                                class="font-medium">{{ $memberData['prc_registration_number'] ?? 'Error' }}</span>
+                                        </div>
+
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">Membership date</span>
+                                            <span
+                                                class="font-medium">{{ $memberData['membership_date'] ?? '24-Apr-2023' }}</span>
+                                        </div>
+
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">Chapter Member</span>
+                                            <span
+                                                class="font-medium">{{ $memberData['current_chapter'] ?? 'Error' }}</span>
+                                        </div>
+
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">E-mail Address</span>
+                                            <span class="font-medium">{{ $memberData['email'] ?? 'Error' }}</span>
+                                        </div>
+
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">Mobile number</span>
+                                            <span class="font-medium">{{ $memberData['mobile'] ?? 'Error' }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Additional Message Section -->
+                                <div class="mb-6">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        Additional Message (Optional)
+                                    </label>
+                                    <textarea
+                                        wire:model="additionalMessage"
+                                        rows="4"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm"
+                                        placeholder="Type your message here..."></textarea>
+                                </div>
+
+                                <!-- Agreement Section -->
+                                <div class="mb-6">
+                                    <h4 class="text-sm font-medium text-gray-800 mb-2">Please review before
+                                        submitting</h4>
+                                    <p class="text-xs text-gray-600 mb-3">
+                                        This request includes personal information that will be used by the
+                                        administrator to verify your identity and process your request.
+                                    </p>
+
+                                    <label class="flex items-start space-x-2">
+                                        <input
+                                            type="checkbox"
+                                            wire:model.live="agreementAccepted"
+                                            class="mt-1 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                        <span class="text-xs text-gray-700">
+                            I understand and agree to submit my personal information for this request.
+                        </span>
+                                    </label>
+                                </div>
+
+                                <!-- Loading State -->
+                                @if($submittingRequest)
+                                    <div class="mb-4">
+                                        <div class="flex items-center justify-center">
+                                            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-500"
+                                                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                                        stroke-width="4"></circle>
+                                                <path class="opacity-75" fill="currentColor"
+                                                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                            <span>Submitting request...</span>
+                                        </div>
+                                    </div>
+                                @endif
+
+                                <!-- Success/Error Results -->
+                                @if($requestResult && !$submittingRequest)
+                                    <div class="mb-4 p-4 border rounded-lg">
+                                        @if(isset($requestResult['error']) && $requestResult['error'])
+                                            <div class="text-red-600 text-center">
+                                                <h4 class="font-medium">Error occurred:</h4>
+                                                <p class="text-sm">{{ $requestResult['message'] }}</p>
+                                            </div>
+                                        @else
+                                            <div class="text-green-600 text-center">
+                                                <h4 class="font-medium">Request Submitted Successfully!</h4>
+                                                <p class="text-sm">{{ $requestResult['message'] ?? 'Your computation breakdown request has been submitted and will be processed soon.' }}</p>
+                                                @if(isset($requestResult['reference_number']))
+                                                    <p class="text-sm mt-2">Reference Number:
+                                                        <strong>{{ $requestResult['reference_number'] }}</strong></p>
+                                                @endif
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endif
+
+                                <!-- Action Buttons -->
+                                <div class="flex justify-center space-x-3">
+                                    @if(!$requestResult || $submittingRequest)
+                                        <button
+                                            wire:click="submitComputationRequest"
+                                            @if($submittingRequest || !$agreementAccepted) disabled @endif
+                                            class="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium">
+                                            @if($submittingRequest)
+                                                Submitting...
+                                            @else
+                                                Submit Request
+                                            @endif
+                                        </button>
+                                    @endif
+
+                                    <button
+                                        wire:click="closeComputationModal"
+                                        class="px-6 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 text-sm font-medium">
+                                        @if($requestResult && !$submittingRequest)
+                                            Close
+                                        @else
+                                            Cancel
+                                        @endif
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 {{-- Recipients Tab --}}
                 @if($activeMainTab === 'recipients')
                     {{-- Members Sub-tab --}}
-                    @if($activeSubTab === 'members')
-                        @if($members->count() > 0)
-                            {{-- Stats Cards --}}
-                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                                <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-lg p-4 text-white">
-                                    <div class="flex items-center justify-between">
-                                        <div>
-                                            <p class="text-green-100 text-sm">Paid</p>
-                                            <p class="text-2xl font-bold">{{ $members->where('payment_status', 'paid')->count() }}</p>
+                    @can('view-reminder-member')
+                        @if($activeSubTab === 'members')
+                            @if($members->count() > 0)
+                                {{-- Stats Cards --}}
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                                    <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-lg p-4 text-white">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <p class="text-green-100 text-sm">Paid</p>
+                                                <p class="text-2xl font-bold">{{ $members->where('payment_status', 'paid')->count() }}</p>
+                                            </div>
+                                            <i class="fas fa-check-circle text-2xl text-green-200"></i>
                                         </div>
-                                        <i class="fas fa-check-circle text-2xl text-green-200"></i>
+                                    </div>
+                                    <div
+                                        class="bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg p-4 text-white">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <p class="text-yellow-100 text-sm">Unpaid</p>
+                                                <p class="text-2xl font-bold">{{ $members->where('payment_status', 'unpaid')->count() }}</p>
+                                            </div>
+                                            <i class="fas fa-clock text-2xl text-yellow-200"></i>
+                                        </div>
+                                    </div>
+                                    <div class="bg-gradient-to-r from-red-500 to-red-600 rounded-lg p-4 text-white">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <p class="text-red-100 text-sm">Overdue</p>
+                                                <p class="text-2xl font-bold">{{ $members->where('payment_status', 'overdue')->count() }}</p>
+                                            </div>
+                                            <i class="fas fa-exclamation-triangle text-2xl text-red-200"></i>
+                                        </div>
+                                    </div>
+                                    <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-4 text-white">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <p class="text-blue-100 text-sm">Total</p>
+                                                <p class="text-2xl font-bold">{{ $members->count() }}</p>
+                                            </div>
+                                            <i class="fas fa-users text-2xl text-blue-200"></i>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg p-4 text-white">
-                                    <div class="flex items-center justify-between">
-                                        <div>
-                                            <p class="text-yellow-100 text-sm">Unpaid</p>
-                                            <p class="text-2xl font-bold">{{ $members->where('payment_status', 'unpaid')->count() }}</p>
-                                        </div>
-                                        <i class="fas fa-clock text-2xl text-yellow-200"></i>
-                                    </div>
-                                </div>
-                                <div class="bg-gradient-to-r from-red-500 to-red-600 rounded-lg p-4 text-white">
-                                    <div class="flex items-center justify-between">
-                                        <div>
-                                            <p class="text-red-100 text-sm">Overdue</p>
-                                            <p class="text-2xl font-bold">{{ $members->where('payment_status', 'overdue')->count() }}</p>
-                                        </div>
-                                        <i class="fas fa-exclamation-triangle text-2xl text-red-200"></i>
-                                    </div>
-                                </div>
-                                <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-4 text-white">
-                                    <div class="flex items-center justify-between">
-                                        <div>
-                                            <p class="text-blue-100 text-sm">Total</p>
-                                            <p class="text-2xl font-bold">{{ $members->count() }}</p>
-                                        </div>
-                                        <i class="fas fa-users text-2xl text-blue-200"></i>
-                                    </div>
-                                </div>
-                            </div>
 
-                            {{-- Members Table --}}
-                            <div class="overflow-hidden rounded-lg border border-gray-200">
-                                {{-- Mobile Cards (visible on small screens) --}}
-                                <div class="block sm:hidden">
-                                    @foreach($members as $member)
-                                        <div class="bg-white border-b border-gray-200 p-4">
-                                            <div class="flex items-start space-x-3">
-                                                <div
-                                                    class="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
-                                                    <i class="fas fa-user text-white text-sm"></i>
-                                                </div>
-                                                <div class="flex-1 min-w-0">
-                                                    <div class="flex items-center justify-between mb-2">
-                                                        <h3 class="font-medium text-gray-900 truncate">{{ $member['name'] }}</h3>
-                                                        <span
-                                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $this->getPaymentStatusBadgeClass($member['payment_status']) }}">
+                                {{-- Members Table --}}
+                                <div class="overflow-hidden rounded-lg border border-gray-200">
+                                    {{-- Mobile Cards (visible on small screens) --}}
+                                    <div class="block sm:hidden">
+                                        @foreach($members as $member)
+                                            <div class="bg-white border-b border-gray-200 p-4">
+                                                <div class="flex items-start space-x-3">
+                                                    <div
+                                                        class="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                                        <i class="fas fa-user text-white text-sm"></i>
+                                                    </div>
+                                                    <div class="flex-1 min-w-0">
+                                                        <div class="flex items-center justify-between mb-2">
+                                                            <h3 class="font-medium text-gray-900 truncate">{{ $member['name'] }}</h3>
+                                                            <span
+                                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $this->getPaymentStatusBadgeClass($member['payment_status']) }}">
                                                             {{ ucfirst($member['payment_status']) }}
                                                         </span>
+                                                        </div>
+                                                        <p class="text-sm text-gray-500 mb-1">PRC
+                                                            No. {{ $member['prc_no'] }}</p>
+                                                        <p class="text-sm text-gray-900 mb-1">{{ $member['email'] }}</p>
+                                                        <p class="text-sm text-gray-500 mb-1">{{ $member['phone'] }}</p>
+                                                        <p class="text-xs text-gray-400">
+                                                            Added: {{ $member['date_added'] }}</p>
                                                     </div>
-                                                    <p class="text-sm text-gray-500 mb-1">PRC
-                                                        No. {{ $member['prc_no'] }}</p>
-                                                    <p class="text-sm text-gray-900 mb-1">{{ $member['email'] }}</p>
-                                                    <p class="text-sm text-gray-500 mb-1">{{ $member['phone'] }}</p>
-                                                    <p class="text-xs text-gray-400">
-                                                        Added: {{ $member['date_added'] }}</p>
                                                 </div>
                                             </div>
-                                        </div>
-                                    @endforeach
-                                </div>
+                                        @endforeach
+                                    </div>
 
-                                {{-- Desktop Table (hidden on small screens) --}}
-                                <div class="hidden sm:block">
-                                    <table class="w-full divide-y divide-gray-200">
-                                        <thead class="bg-gray-50">
-                                        <tr>
-                                            <th class="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Member
-                                            </th>
-                                            <th class="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Payment Status
-                                            </th>
-                                            <th class="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Contact Details
-                                            </th>
-                                            <th class="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Date Added
-                                            </th>
-                                        </tr>
-                                        </thead>
-                                        <tbody class="bg-white divide-y divide-gray-200">
-                                        @foreach($members as $member)
-                                            <tr class="hover:bg-gray-50 transition-colors">
-                                                <td class="px-4 lg:px-6 py-4 whitespace-nowrap">
-                                                    <div class="flex items-center">
-                                                        <div
-                                                            class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
-                                                            <i class="fas fa-user text-white text-sm"></i>
-                                                        </div>
-                                                        <div class="ml-3">
+                                    {{-- Desktop Table (hidden on small screens) --}}
+                                    <div class="hidden sm:block">
+                                        <table class="w-full divide-y divide-gray-200">
+                                            <thead class="bg-gray-50">
+                                            <tr>
+                                                <th class="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Member
+                                                </th>
+                                                <th class="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Payment Status
+                                                </th>
+                                                <th class="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Contact Details
+                                                </th>
+                                                <th class="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Date Added
+                                                </th>
+                                            </tr>
+                                            </thead>
+                                            <tbody class="bg-white divide-y divide-gray-200">
+                                            @foreach($members as $member)
+                                                <tr class="hover:bg-gray-50 transition-colors">
+                                                    <td class="px-4 lg:px-6 py-4 whitespace-nowrap">
+                                                        <div class="flex items-center">
                                                             <div
-                                                                class="text-sm font-medium text-gray-900">{{ $member['name'] }}</div>
-                                                            <div class="text-sm text-gray-500">PRC
-                                                                No. {{ $member['prc_no'] }}</div>
+                                                                class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                                                <i class="fas fa-user text-white text-sm"></i>
+                                                            </div>
+                                                            <div class="ml-3">
+                                                                <div
+                                                                    class="text-sm font-medium text-gray-900">{{ $member['name'] }}</div>
+                                                                <div class="text-sm text-gray-500">PRC
+                                                                    No. {{ $member['prc_no'] }}</div>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </td>
-                                                <td class="px-4 lg:px-6 py-4 whitespace-nowrap">
+                                                    </td>
+                                                    <td class="px-4 lg:px-6 py-4 whitespace-nowrap">
                                                         <span
                                                             class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $this->getPaymentStatusBadgeClass($member['payment_status']) }}">
                                                             {{ ucfirst($member['payment_status']) }}
                                                         </span>
-                                                </td>
-                                                <td class="px-4 lg:px-6 py-4 whitespace-nowrap">
-                                                    <div class="text-sm text-gray-900">{{ $member['email'] }}</div>
-                                                    <div class="text-sm text-gray-500">{{ $member['phone'] }}</div>
-                                                </td>
-                                                <td class="px-4 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                    {{ $member['date_added'] }}
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                        </tbody>
-                                    </table>
+                                                    </td>
+                                                    <td class="px-4 lg:px-6 py-4 whitespace-nowrap">
+                                                        <div class="text-sm text-gray-900">{{ $member['email'] }}</div>
+                                                        <div class="text-sm text-gray-500">{{ $member['phone'] }}</div>
+                                                    </td>
+                                                    <td class="px-4 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                        {{ $member['date_added'] }}
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-                            </div>
-                        @else
-                            {{-- Empty State for Members --}}
-                            <div class="text-center py-12">
-                                <div
-                                    class="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                                    <i class="fas fa-users text-gray-400 text-3xl"></i>
+                            @else
+                                {{-- Empty State for Members --}}
+                                <div class="text-center py-12">
+                                    <div
+                                        class="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                                        <i class="fas fa-users text-gray-400 text-3xl"></i>
+                                    </div>
+                                    <h3 class="text-lg font-medium text-gray-900 mb-2">No members found</h3>
+                                    <p class="text-gray-500 mb-6 max-w-sm mx-auto">Get started by adding your first
+                                        member
+                                        to the reminder system.</p>
+                                    <button wire:click="openAddMemberModal"
+                                            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center space-x-2 mx-auto transition-colors duration-200">
+                                        <i class="fas fa-plus"></i>
+                                        <span>Add First Member</span>
+                                    </button>
                                 </div>
-                                <h3 class="text-lg font-medium text-gray-900 mb-2">No members found</h3>
-                                <p class="text-gray-500 mb-6 max-w-sm mx-auto">Get started by adding your first member
-                                    to the reminder system.</p>
-                                <button wire:click="openAddMemberModal"
-                                        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center space-x-2 mx-auto transition-colors duration-200">
-                                    <i class="fas fa-plus"></i>
-                                    <span>Add First Member</span>
-                                </button>
-                            </div>
+                            @endif
                         @endif
-                    @endif
+                    @endcan
 
                     {{-- Details Sub-tab --}}
                     @if($activeSubTab === 'details')
@@ -498,6 +673,47 @@
                                             class="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-5 rounded-full translate-y-24 -translate-x-24"></div>
 
                                         <div class="relative z-10">
+                                            <style>
+                                                input, textarea {
+                                                    background-color: rgba(255, 255, 255, 0.9);
+                                                    transition: all 0.3s ease;
+                                                }
+
+                                                input:focus, textarea:focus {
+                                                    background-color: white;
+                                                    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+                                                }
+
+                                                .file-upload-container {
+                                                    background: rgba(255, 255, 255, 0.95);
+                                                    backdrop-filter: blur(10px);
+                                                    border: 1px solid rgba(255, 255, 255, 0.2);
+                                                    border-radius: 0.75rem;
+                                                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                                                }
+
+                                                .file-upload-container:hover {
+                                                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+                                                }
+
+                                                .attachment-item {
+                                                    transition: all 0.3s ease;
+                                                }
+
+                                                .attachment-item:hover {
+                                                    transform: translateY(-2px);
+                                                    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+                                                }
+
+                                                .delete-btn {
+                                                    opacity: 0;
+                                                    transition: opacity 0.2s ease;
+                                                }
+
+                                                .attachment-item:hover .delete-btn {
+                                                    opacity: 1;
+                                                }
+                                            </style>
                                             <div
                                                 class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
                                                 <div class="flex-1">
@@ -507,7 +723,14 @@
                                                             <i class="fas fa-bell text-xl"></i>
                                                         </div>
                                                         <div>
-                                                            <h1 class="text-3xl lg:text-4xl font-bold mb-2">{{ $reminderDetails['title'] }}</h1>
+                                                            <div class="w-full">
+                                                                @if($isEditing)
+                                                                    <input type="text" wire:model="editableFields.title"
+                                                                           class="w-full px-4 py-2 bg-white bg-opacity-90 text-gray-900 rounded-lg border border-white border-opacity-30 focus:ring-2 focus:ring-white focus:ring-opacity-50">
+                                                                @else
+                                                                    <h1 class="text-3xl lg:text-4xl font-bold mb-2">{{ $reminderDetails['title'] }}</h1>
+                                                                @endif
+                                                            </div>
                                                             <div
                                                                 class="flex items-center gap-2 text-white text-opacity-80">
                                                                 <i class="fas fa-hashtag text-sm"></i>
@@ -519,17 +742,65 @@
                                                 </div>
 
                                                 <div class="flex flex-wrap gap-3">
-                                                    <button
-                                                        wire:click="toggleArchive"
-                                                        class="status-badge px-6 py-3 {{ $reminderDetails['status'] === 'archived' ? 'bg-green-100 text-green-800' : 'bg-white bg-opacity-20 text-white' }} rounded-xl hover:bg-opacity-30 transition-all duration-300 flex items-center gap-2 font-medium">
-                                                        <i class="fas fa-archive"></i>
-                                                        <span>{{ $reminderDetails['status'] === 'archived' ? 'Unarchive' : 'Archive' }}</span>
-                                                    </button>
-                                                    <button
-                                                        class="status-badge px-6 py-3 bg-white text-gray-800 rounded-xl hover:bg-opacity-90 transition-all duration-300 flex items-center gap-2 font-medium shadow-lg">
-                                                        <i class="fas fa-edit"></i>
-                                                        <span>Edit Reminder</span>
-                                                    </button>
+                                                    @can('archive-reminder')
+                                                        <button wire:click="toggleArchive"
+                                                                class="status-badge px-6 py-3 {{ $reminderDetails['status'] === 'archived' ? 'bg-green-100 text-green-800' : 'bg-white bg-opacity-20 text-white' }} rounded-xl hover:bg-opacity-30 transition-all duration-300 flex items-center gap-2 font-medium">
+                                                            <i class="fas fa-archive"></i>
+                                                            <span>{{ $reminderDetails['status'] === 'archived' ? 'Unarchive' : 'Archive' }}</span>
+                                                        </button>
+                                                    @endcan
+
+                                                    @can('edit-reminder')
+                                                        @if($isEditing)
+                                                            <button wire:click="cancelEditing"
+                                                                    class="status-badge px-6 py-3 bg-gray-100 text-gray-800 rounded-xl hover:bg-opacity-90 transition-all duration-300 flex items-center gap-2 font-medium shadow-lg">
+                                                                <i class="fas fa-times"></i>
+                                                                <span>Cancel</span>
+                                                            </button>
+                                                            <button wire:click="saveChanges"
+                                                                    class="status-badge px-6 py-3 bg-green-100 text-green-800 rounded-xl hover:bg-opacity-90 transition-all duration-300 flex items-center gap-2 font-medium shadow-lg">
+                                                                <i class="fas fa-check"></i>
+                                                                <span>Save Changes</span>
+                                                            </button>
+                                                        @else
+                                                            <button wire:click="startEditing"
+                                                                    class="status-badge px-6 py-3 bg-white text-gray-800 rounded-xl hover:bg-opacity-90 transition-all duration-300 flex items-center gap-2 font-medium shadow-lg">
+                                                                <i class="fas fa-edit"></i>
+                                                                <span>Edit Reminder</span>
+                                                            </button>
+                                                        @endif
+                                                    @endcan
+
+                                                    @if(auth()->user()->hasRole('member') && $reminder->category->name == 'Deadline')
+                                                            @php
+                                                                $existingRequest = \App\Models\ComputationRequest::where('member_id', auth()->id())
+                                                                                    ->where('status', 'pending')
+                                                                                    ->first();
+                                                            @endphp
+                                                            @if ($existingRequest)
+                                                                <p>You already have a pending computation request.</p>
+                                                            @else
+                                                            <button
+                                                                wire:click="openComputationModal"
+                                                                wire:loading.attr="disabled"
+                                                                wire:loading.class="opacity-75 cursor-not-allowed"
+                                                                class="status-badge px-6 py-6 bg-white text-gray-800 rounded-xl hover:bg-opacity-90 transition-all duration-300 flex items-center gap-2 font-medium shadow-lg"
+                                                            >
+                                                                <!-- Default state content -->
+                                                                <span wire:loading.class="hidden">
+                                                                            <i class="fas fa-calculator"></i>
+                                                                            <span>Request Computation Breakdown</span>
+                                                                        </span>
+
+                                                                <!-- Loading state content -->
+                                                                <span wire:loading wire:target="openComputationModal"
+                                                                      class="hidden">
+                                                                        <i class="fas fa-spinner fa-spin"></i>
+                                                                        <span>Processing...</span>
+                                                                    </span>
+                                                            </button>
+                                                            @endif
+                                                    @endif
                                                 </div>
                                             </div>
                                         </div>
@@ -556,30 +827,36 @@
                                                                 Time</p>
                                                             <div class="flex items-center gap-2">
                                                                 <i class="fas fa-play-circle text-green-600"></i>
-                                                                <p class="text-green-800 font-semibold">{{ $reminderDetails['start_date']['date'] }}</p>
+                                                                @if($isEditing)
+                                                                    <input type="datetime-local"
+                                                                           wire:model="editableFields.start_datetime"
+                                                                           class="px-3 py-1 bg-white border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500">
+                                                                @else
+                                                                    <p class="text-green-800 font-semibold">{{ $reminderDetails['start_date']['date'] }}</p>
+                                                                @endif
                                                             </div>
-                                                            <p class="text-green-700 text-sm">{{ $reminderDetails['start_date']['time'] }}</p>
+                                                            @if(!$isEditing)
+                                                                <p class="text-green-700 text-sm">{{ $reminderDetails['start_date']['time'] }}</p>
+                                                            @endif
                                                         </div>
                                                         <div class="p-4 bg-blue-50 rounded-xl border border-blue-200">
-
-                                                            @if($reminderDetails['period'])
-
-                                                                <p class="text-sm font-medium text-blue-700 mb-1">Period
-                                                                    Covered</p>
-                                                                <div class="flex items-center gap-2">
-                                                                    <i class="fas fa-calendar-range text-blue-600"></i>
-                                                                    <p class="text-blue-800 font-semibold">June 2025 -
-                                                                        July 2026</p>
-                                                                </div>
-                                                            @else
-                                                                <p class="text-sm font-medium text-blue-700 mb-1">Period
-                                                                    Covered</p>
-                                                                <div class="flex items-center gap-2">
-                                                                    <i class="fas fa-calendar-range text-blue-600"></i>
-                                                                    <p class="text-blue-800 font-semibold">No Period
-                                                                        Covered</p>
-                                                                </div>
-                                                            @endif
+                                                            <p class="text-sm font-medium text-blue-700 mb-1">Period
+                                                                Covered</p>
+                                                            <div class="flex items-center gap-2">
+                                                                <i class="fas fa-calendar-range text-blue-600"></i>
+                                                                @if($isEditing)
+                                                                    <label class="inline-flex items-center">
+                                                                        <input type="checkbox"
+                                                                               wire:model="editableFields.period"
+                                                                               class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                                                                        <span class="ml-2 text-blue-800 font-semibold">Enable Period</span>
+                                                                    </label>
+                                                                @else
+                                                                    <p class="text-blue-800 font-semibold">
+                                                                        {{ $reminderDetails['period'] ? 'June 2025 - July 2026' : 'No Period Covered' }}
+                                                                    </p>
+                                                                @endif
+                                                            </div>
                                                         </div>
                                                     </div>
 
@@ -589,9 +866,17 @@
                                                                 Time</p>
                                                             <div class="flex items-center gap-2">
                                                                 <i class="fas fa-stop-circle text-red-600"></i>
-                                                                <p class="text-red-800 font-semibold">{{ $reminderDetails['end_date']['date'] }}</p>
+                                                                @if($isEditing)
+                                                                    <input type="datetime-local"
+                                                                           wire:model="editableFields.end_datetime"
+                                                                           class="px-3 py-1 bg-white border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500">
+                                                                @else
+                                                                    <p class="text-red-800 font-semibold">{{ $reminderDetails['end_date']['date'] }}</p>
+                                                                @endif
                                                             </div>
-                                                            <p class="text-red-700 text-sm">{{ $reminderDetails['end_date']['time'] }}</p>
+                                                            @if(!$isEditing)
+                                                                <p class="text-red-700 text-sm">{{ $reminderDetails['end_date']['time'] }}</p>
+                                                            @endif
                                                         </div>
 
                                                         <div
@@ -600,7 +885,13 @@
                                                                 Location</p>
                                                             <div class="flex items-center gap-2">
                                                                 <i class="fas fa-map-marker-alt text-purple-600"></i>
-                                                                <p class="text-purple-800 font-semibold">{{ $reminderDetails['location'] }}</p>
+                                                                @if($isEditing)
+                                                                    <input type="text"
+                                                                           wire:model="editableFields.location"
+                                                                           class="w-full px-3 py-1 bg-white border border-gray-300 rounded-md focus:ring-purple-500 focus:border-purple-500">
+                                                                @else
+                                                                    <p class="text-purple-800 font-semibold">{{ $reminderDetails['location'] }}</p>
+                                                                @endif
                                                             </div>
                                                         </div>
                                                     </div>
@@ -620,9 +911,12 @@
                                                 <div class="prose prose-gray max-w-none">
                                                     <div
                                                         class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border-l-4 border-blue-500 mb-4">
-                                                        <p class="text-gray-700 leading-relaxed mb-4">{{ $reminderDetails['description'] }}</p>
-                                                        {{--                                                    <p class="text-gray-700 leading-relaxed mb-4">This is a friendly reminder regarding your upcoming UAP dues payment. Please ensure timely payment to maintain your active membership status and continue enjoying all member benefits.</p>--}}
-                                                        {{--                                                    <p class="text-gray-700 leading-relaxed">All members may request computation breakdown through this app.</p>--}}
+                                                        @if($isEditing)
+                                                            <textarea wire:model="editableFields.description" rows="4"
+                                                                      class="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"></textarea>
+                                                        @else
+                                                            <p class="text-gray-700 leading-relaxed mb-4">{{ $reminderDetails['description'] }}</p>
+                                                        @endif
                                                     </div>
 
                                                     <div
@@ -733,16 +1027,74 @@
                                                 </div>
                                             </div>
 
-                                            <!-- Attachments -->
+                                            <!-- Attachments Section -->
                                             <div class="glass-effect rounded-2xl p-6 card-hover">
-                                                <div class="flex items-center gap-3 mb-6">
-                                                    <div
-                                                        class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
-                                                        <i class="fas fa-paperclip text-purple-600"></i>
+                                                <div class="flex items-center justify-between mb-6">
+                                                    <div class="flex items-center gap-3">
+                                                        <div
+                                                            class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
+                                                            <i class="fas fa-paperclip text-purple-600"></i>
+                                                        </div>
+                                                        <h3 class="text-lg font-semibold text-gray-800">Attachments</h3>
                                                     </div>
-                                                    <h3 class="text-lg font-semibold text-gray-800">Attachments</h3>
+
+                                                    @if($isEditing)
+                                                        <button wire:click="toggleFileUpload"
+                                                                class="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                                                            <i class="fas fa-plus"></i>
+                                                            <span>{{ $showFileUpload ? 'Cancel Upload' : 'Add Files' }}</span>
+                                                        </button>
+                                                    @endif
                                                 </div>
 
+                                                <!-- File Upload Section (Visible during editing) -->
+                                                @if($isEditing && $showFileUpload)
+                                                    <div class="mb-6" x-data="{ isUploading: false, progress: 0 }"
+                                                         x-on:livewire-upload-start="isUploading = true"
+                                                         x-on:livewire-upload-finish="isUploading = false"
+                                                         x-on:livewire-upload-error="isUploading = false"
+                                                         x-on:livewire-upload-progress="progress = $event.detail.progress">
+                                                        <div class="flex items-center gap-3 mb-3">
+                                                            <input type="file" wire:model="uploadedFiles" multiple
+                                                                   class="block w-full text-sm text-gray-500
+                          file:mr-4 file:py-2 file:px-4
+                          file:rounded-lg file:border-0
+                          file:text-sm file:font-semibold
+                          file:bg-purple-50 file:text-purple-700
+                          hover:file:bg-purple-100">
+                                                        </div>
+
+                                                        <!-- Upload Progress -->
+                                                        <div x-show="isUploading" class="mt-2">
+                                                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                                                <div class="bg-purple-600 h-2.5 rounded-full"
+                                                                     :style="`width: ${progress}%`"></div>
+                                                            </div>
+                                                            <p class="text-xs text-gray-500 mt-1"
+                                                               x-text="`Uploading: ${progress}%`"></p>
+                                                        </div>
+
+                                                        <!-- Upload Button -->
+                                                        <div class="flex justify-end mt-3">
+                                                            <button wire:click="saveFiles"
+                                                                    wire:loading.attr="disabled"
+                                                                    class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                                                                    :disabled="!uploadedFiles.length">
+                                                                <span wire:loading.remove>Upload Files</span>
+                                                                <span wire:loading>
+                    <i class="fas fa-spinner fa-spin mr-1"></i> Uploading...
+                </span>
+                                                            </button>
+                                                        </div>
+
+                                                        <!-- Validation Error -->
+                                                        @error('uploadedFiles.*')
+                                                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                                        @enderror
+                                                    </div>
+                                                @endif
+
+                                                <!-- Attachments List -->
                                                 @if(empty($reminderDetails['attachments']))
                                                     <div
                                                         class="flex flex-col items-center justify-center p-6 bg-gray-50 rounded-xl border border-gray-200 text-center">
@@ -768,8 +1120,6 @@
 
                                                             <div
                                                                 class="group flex items-center p-4 bg-gradient-to-r {{ $colorClass }} rounded-xl transition-all duration-300 cursor-pointer border">
-                                                                <input type="checkbox"
-                                                                       class="h-4 w-4 text-{{ $attachment['color'] }}-600 border-{{ $attachment['color'] }}-300 rounded focus:ring-{{ $attachment['color'] }}-500 mr-3">
                                                                 <div
                                                                     class="w-10 h-10 bg-{{ $attachment['color'] }}-100 rounded-lg flex items-center justify-center mr-3">
                                                                     <i class="fas {{ $attachment['icon'] }} text-{{ $attachment['color'] }}-600"></i>
@@ -778,12 +1128,21 @@
                                                                     <p class="font-medium text-gray-800 group-hover:text-{{ $attachment['color'] }}-700">{{ $attachment['name'] }}</p>
                                                                     <p class="text-sm text-gray-500">{{ $attachment['size'] }}</p>
                                                                 </div>
-                                                                <a href="{{ Storage::url($attachment['path']) }}"
-                                                                   target="_blank"
-                                                                   class="opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-white hover:bg-opacity-50 rounded-lg"
-                                                                   download="{{ $attachment['name'] }}">
-                                                                    <i class="fas fa-download text-{{ $attachment['color'] }}-600"></i>
-                                                                </a>
+                                                                <div class="flex gap-2">
+                                                                    <a href="{{ Storage::url($attachment['path']) }}"
+                                                                       target="_blank"
+                                                                       class="opacity-70 hover:opacity-100 transition-opacity p-2 hover:bg-white hover:bg-opacity-50 rounded-lg"
+                                                                       download="{{ $attachment['name'] }}">
+                                                                        <i class="fas fa-download text-{{ $attachment['color'] }}-600"></i>
+                                                                    </a>
+                                                                    @if($isEditing)
+                                                                        <button
+                                                                            wire:click="confirmRemoveAttachment({{ $attachment['id'] }})"
+                                                                            class="opacity-70 hover:opacity-100 transition-opacity p-2 hover:bg-white hover:bg-opacity-50 rounded-lg text-red-600">
+                                                                            <i class="fas fa-trash-alt"></i>
+                                                                        </button>
+                                                                    @endif
+                                                                </div>
                                                             </div>
                                                         @endforeach
                                                     </div>
@@ -799,6 +1158,29 @@
                                                     @endif
                                                 @endif
                                             </div>
+
+                                            <!-- Delete Confirmation Modal -->
+                                            @if($removingAttachmentId)
+                                                <div
+                                                    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                                                    <div class="bg-white rounded-xl p-6 max-w-md w-full">
+                                                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Confirm
+                                                            Deletion</h3>
+                                                        <p class="text-gray-600 mb-6">Are you sure you want to delete
+                                                            this file? This action cannot be undone.</p>
+                                                        <div class="flex justify-end gap-3">
+                                                            <button wire:click="cancelRemoveAttachment"
+                                                                    class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors">
+                                                                Cancel
+                                                            </button>
+                                                            <button wire:click="removeAttachment"
+                                                                    class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                                                                Delete File
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
@@ -832,13 +1214,13 @@
                         <h3 class="text-lg font-medium text-gray-900 mb-2">No reminders found</h3>
                         <p class="text-gray-500 mb-6 max-w-sm mx-auto">Create your first reminder to get started with
                             member notifications.</p>
-                        <button wire:click="setMainTab('manage')"
-                                class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center space-x-2 mx-auto transition-colors duration-200">
-                            <i class="fas fa-plus"></i>
-                            <span>Create First Reminder</span>
-                        </button>
+                        {{--                        <button wire:click="setMainTab('manage')"--}}
+                        {{--                                class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center space-x-2 mx-auto transition-colors duration-200">--}}
+                        {{--                            <i class="fas fa-plus"></i>--}}
+                        {{--                            <span>Create First Reminder</span>--}}
+                        {{--                        </button>--}}
                     </div>
-@endif
+                @endif
             </div>
         </div>
     </div>

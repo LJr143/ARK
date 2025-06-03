@@ -17,11 +17,11 @@ return new class extends Migration
             $table->string('family_name');
             $table->string('first_name');
             $table->string('middle_name')->nullable();
-            $table->date('birthdate');
-            $table->string('birthplace');
+            $table->date('birthdate')->nullable();
+            $table->string('birthplace')->nullable();
             $table->enum('sex', ['Male', 'Female', 'Other']);
             $table->enum('civil_status', ['Single', 'Married', 'Divorced', 'Widowed']);
-            $table->text('permanent_address');
+            $table->text('permanent_address')->nullable();
             $table->string('telephone')->nullable();
             $table->string('fax')->nullable();
             $table->string('mobile');
@@ -33,8 +33,8 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
 
             //Login Details
-            $table->string('username');
-            $table->string('password');
+            $table->string('username')->nullable();
+            $table->string('password')->nullable();
             $table->longText('google_id')->nullable();
             $table->string('temp_password')->nullable(); // Temporary storage for generated password
             $table->boolean('is_approved')->default(false); // Track approval status
@@ -50,8 +50,8 @@ return new class extends Migration
             $table->string('company_telephone')->nullable();
             $table->string('company_fax')->nullable();
             $table->string('designation')->nullable();
-            $table->string('school_graduated');
-            $table->integer('year_graduated');
+            $table->string('school_graduated')->nullable();
+            $table->integer('year_graduated')->nullable();
             $table->string('honors')->nullable();
             $table->string('post_graduate_school')->nullable();
             $table->integer('post_graduate_year')->nullable();
@@ -65,16 +65,16 @@ return new class extends Migration
             $table->date('prc_valid_until');
 
             // Expertise Information
-            $table->text('expertise');
-            $table->integer('years_of_practice');
-            $table->string('practice_type');
-            $table->text('services_rendered');
+            $table->text('expertise')->nullable();
+            $table->integer('years_of_practice')->nullable();
+            $table->string('practice_type')->nullable();
+            $table->text('services_rendered')->nullable();
 
             // CPE/CPD Information
             $table->text('cpe_seminars_attended')->nullable();
 
             // Membership Information
-            $table->string('current_chapter');
+            $table->string('current_chapter')->nullable();
             $table->string('previous_chapter')->nullable();
             $table->text('positions_held')->nullable();
 

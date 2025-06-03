@@ -34,6 +34,33 @@ body.custom-gradient {
     background: linear-gradient(to bottom, rgba(153,155,155,0.6), rgba(178,147,91,0.6));
 }
 
+.logo-gradient {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+}
+
+.nav-item-active {
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    border-left: 4px solid #3b82f6;
+}
+
+.nav-item-hover:hover {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    transform: translateX(2px);
+}
+
+.sidebar-shadow {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1), 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.icon-active {
+    filter: drop-shadow(0 2px 4px rgba(59, 130, 246, 0.3));
+}
+
+.mobile-overlay {
+    backdrop-filter: blur(4px);
+    background: rgba(0, 0, 0, 0.3);
+}
+
 @media (min-width: 768px) {
     body.custom-gradient {
         flex-direction: row;

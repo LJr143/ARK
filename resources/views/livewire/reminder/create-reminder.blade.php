@@ -52,6 +52,7 @@
             <div class="flex-1 overflow-y-auto px-6 py-4">
                 @if ($currentStep === 1)
                     <form wire:submit.prevent="proceedToStep2" enctype="multipart/form-data">
+                        @csrf
                         <div class="mb-3">
                             <input
                                 id="title"

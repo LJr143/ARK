@@ -24,9 +24,6 @@ class ReminderNotificationSent implements ShouldBroadcast
         $this->notification = $notification;
     }
 
-    /**
-     * Get the channels the event should broadcast on.
-     */
     public function broadcastOn(): array
     {
         return [
@@ -34,21 +31,17 @@ class ReminderNotificationSent implements ShouldBroadcast
         ];
     }
 
-    /**
-     * The event's broadcast name.
-     */
     public function broadcastAs(): string
     {
         return 'reminder.notification';
     }
 
-    /**
-     * Get the data to broadcast.
-     */
     public function broadcastWith(): array
     {
         return [
             'notification' => $this->notification
         ];
     }
+
+
 }

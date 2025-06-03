@@ -42,8 +42,28 @@ class ReminderIndex extends Component
 
     public function fetchReminders()
     {
+        $user = auth()->user();
+
         $query = Reminder::query()
             ->orderBy('created_at', 'desc');
+
+        if ($user->hasRole('member')){
+            // Filter by recipient access
+            $query->where(function($query) use ($user) {
+                // Public reminders (visible to everyone)
+                $query->where('recipient_type', 'public');
+
+                // Custom reminders (only visible to recipients)
+                if ($user) { // Only check if user is logged in
+                    $query->orWhere(function($query) use ($user) {
+                        $query->where('recipient_type', 'custom')
+                            ->whereHas('customRecipients', function($q) use ($user) {
+                                $q->where('user_id', $user->id);
+                            });
+                    });
+                }
+            });
+        }
 
         // Enhanced search functionality
         if ($this->search) {

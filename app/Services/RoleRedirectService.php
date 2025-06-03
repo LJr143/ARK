@@ -16,7 +16,7 @@ class RoleRedirectService
             return redirect()->route('admin.dashboard');
         }
         if ($user->hasAnyRole('member')) {
-            return redirect()->route('member.dashboard');
+            return redirect()->route('admin.dashboard');
         }
 
         Auth::logout();

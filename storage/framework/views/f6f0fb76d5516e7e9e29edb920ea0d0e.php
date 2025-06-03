@@ -24,27 +24,28 @@
             <div x-data="{photoName: null, photoPreview: null}" class="col-span-6 sm:col-span-4">
                 <!-- Profile Photo File Input -->
                 <input type="file" id="photo" class="hidden"
-                            wire:model.live="photo"
-                            x-ref="photo"
-                            x-on:change="
+                       wire:model.live="photo"
+                       x-ref="photo"
+                       accept="image/*"
+                       x-on:change="
                                     photoName = $refs.photo.files[0].name;
                                     const reader = new FileReader();
                                     reader.onload = (e) => {
                                         photoPreview = e.target.result;
                                     };
                                     reader.readAsDataURL($refs.photo.files[0]);
-                            " />
+                            "/>
 
                 <?php if (isset($component)) { $__componentOriginald8ba2b4c22a13c55321e34443c386276 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginald8ba2b4c22a13c55321e34443c386276 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.label','data' => ['for' => 'photo','value' => ''.e(__('Photo')).'']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.label','data' => ['for' => 'photo','value' => ''.e(__('Profile Photo')).'','class' => 'text-sm font-medium text-gray-700 mb-3 block']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('label'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['for' => 'photo','value' => ''.e(__('Photo')).'']); ?>
+<?php $component->withAttributes(['for' => 'photo','value' => ''.e(__('Profile Photo')).'','class' => 'text-sm font-medium text-gray-700 mb-3 block']); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginald8ba2b4c22a13c55321e34443c386276)): ?>
@@ -56,33 +57,55 @@
 <?php unset($__componentOriginald8ba2b4c22a13c55321e34443c386276); ?>
 <?php endif; ?>
 
-                <!-- Current Profile Photo -->
-                <div class="mt-2" x-show="! photoPreview">
-                    <img src="<?php echo e($this->user->profile_photo_path ? asset('storage/' . $this->user->profile_photo_path) : $this->user->profile_photo_url); ?>"
-                         alt="<?php echo e($this->user->first_name); ?>"
-                         class="rounded-full size-20 object-cover">
-                </div>
+                <div class="flex items-center space-x-6">
+                    <!-- Current Profile Photo -->
+                    <div class="relative" x-show="! photoPreview">
+                        <img
+                            src="<?php echo e($this->user->profile_photo_path ? asset('storage/' . $this->user->profile_photo_path) : $this->user->profile_photo_url); ?>"
+                            alt="<?php echo e($this->user->first_name); ?>"
+                            class="rounded-full size-20 object-cover ring-4 ring-gray-100 shadow-md">
+                        <div class="absolute -bottom-1 -right-1 bg-blue-500 rounded-full p-1.5 ring-2 ring-white">
+                            <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                      d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                                      clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                    </div>
 
-                <!-- New Profile Photo Preview -->
-                <div class="mt-2" x-show="photoPreview" style="display: none;">
-                    <span class="block rounded-full size-20 bg-cover bg-no-repeat bg-center"
-                          x-bind:style="'background-image: url(\'' + photoPreview + '\');'">
-                    </span>
-                </div>
+                    <!-- New Profile Photo Preview -->
+                    <div class="relative" x-show="photoPreview" style="display: none;">
+                        <span
+                            class="block rounded-full size-20 bg-cover bg-no-repeat bg-center ring-4 ring-green-100 shadow-md"
+                            x-bind:style="'background-image: url(\'' + photoPreview + '\');'">
+                        </span>
+                        <div class="absolute -bottom-1 -right-1 bg-green-500 rounded-full p-1.5 ring-2 ring-white">
+                            <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                      clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                    </div>
 
-                <?php if (isset($component)) { $__componentOriginal3b0e04e43cf890250cc4d85cff4d94af = $component; } ?>
+                    <div class="flex flex-col space-y-2">
+                        <?php if (isset($component)) { $__componentOriginal3b0e04e43cf890250cc4d85cff4d94af = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal3b0e04e43cf890250cc4d85cff4d94af = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.secondary-button','data' => ['class' => 'mt-2 me-2','type' => 'button','xOn:click.prevent' => '$refs.photo.click()']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.secondary-button','data' => ['type' => 'button','xOn:click.prevent' => '$refs.photo.click()','class' => 'inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('secondary-button'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['class' => 'mt-2 me-2','type' => 'button','x-on:click.prevent' => '$refs.photo.click()']); ?>
-                    <?php echo e(__('Select A New Photo')); ?>
+<?php $component->withAttributes(['type' => 'button','x-on:click.prevent' => '$refs.photo.click()','class' => 'inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150']); ?>
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <?php echo e(__('Select New Photo')); ?>
 
-                 <?php echo $__env->renderComponent(); ?>
+                         <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginal3b0e04e43cf890250cc4d85cff4d94af)): ?>
 <?php $attributes = $__attributesOriginal3b0e04e43cf890250cc4d85cff4d94af; ?>
@@ -93,20 +116,24 @@
 <?php unset($__componentOriginal3b0e04e43cf890250cc4d85cff4d94af); ?>
 <?php endif; ?>
 
-                <!--[if BLOCK]><![endif]--><?php if($this->user->profile_photo_path): ?>
-                    <?php if (isset($component)) { $__componentOriginal3b0e04e43cf890250cc4d85cff4d94af = $component; } ?>
+                        <!--[if BLOCK]><![endif]--><?php if($this->user->profile_photo_path): ?>
+                            <?php if (isset($component)) { $__componentOriginal3b0e04e43cf890250cc4d85cff4d94af = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal3b0e04e43cf890250cc4d85cff4d94af = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.secondary-button','data' => ['type' => 'button','class' => 'mt-2','wire:click' => 'deleteProfilePhoto']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.secondary-button','data' => ['type' => 'button','wire:click' => 'deleteProfilePhoto','onclick' => 'return confirm(\'Are you sure you want to remove your profile photo?\')','class' => 'inline-flex items-center px-4 py-2 bg-white border border-red-300 rounded-md font-semibold text-xs text-red-700 uppercase tracking-widest shadow-sm hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('secondary-button'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['type' => 'button','class' => 'mt-2','wire:click' => 'deleteProfilePhoto']); ?>
-                        <?php echo e(__('Remove Photo')); ?>
+<?php $component->withAttributes(['type' => 'button','wire:click' => 'deleteProfilePhoto','onclick' => 'return confirm(\'Are you sure you want to remove your profile photo?\')','class' => 'inline-flex items-center px-4 py-2 bg-white border border-red-300 rounded-md font-semibold text-xs text-red-700 uppercase tracking-widest shadow-sm hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150']); ?>
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                                <?php echo e(__('Remove Photo')); ?>
 
-                     <?php echo $__env->renderComponent(); ?>
+                             <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginal3b0e04e43cf890250cc4d85cff4d94af)): ?>
 <?php $attributes = $__attributesOriginal3b0e04e43cf890250cc4d85cff4d94af; ?>
@@ -116,7 +143,9 @@
 <?php $component = $__componentOriginal3b0e04e43cf890250cc4d85cff4d94af; ?>
 <?php unset($__componentOriginal3b0e04e43cf890250cc4d85cff4d94af); ?>
 <?php endif; ?>
-                <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
+                        <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
+                    </div>
+                </div>
 
                 <?php if (isset($component)) { $__componentOriginalf94ed9c5393ef72725d159fe01139746 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginalf94ed9c5393ef72725d159fe01139746 = $attributes; } ?>
@@ -138,21 +167,36 @@
 <?php $component = $__componentOriginalf94ed9c5393ef72725d159fe01139746; ?>
 <?php unset($__componentOriginalf94ed9c5393ef72725d159fe01139746); ?>
 <?php endif; ?>
+
+                <!-- Photo Upload Tips -->
+                <div class="mt-3 text-sm text-gray-500">
+                    <p class="flex items-center">
+                        <svg class="w-4 h-4 mr-1 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                  clip-rule="evenodd"></path>
+                        </svg>
+                        Recommended: Square image, at least 400x400px, max 2MB
+                    </p>
+                </div>
             </div>
         <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
 
-        <!-- Name -->
-        <div class="col-span-6 sm:col-span-4">
-            <?php if (isset($component)) { $__componentOriginald8ba2b4c22a13c55321e34443c386276 = $component; } ?>
+        <!-- Name Fields -->
+        <div class="col-span-6 sm:col-span-4 space-y-6">
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <!-- First Name -->
+                <div class="relative">
+                    <?php if (isset($component)) { $__componentOriginald8ba2b4c22a13c55321e34443c386276 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginald8ba2b4c22a13c55321e34443c386276 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.label','data' => ['for' => 'first_name','value' => ''.e(__('First Name')).'']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.label','data' => ['for' => 'first_name','value' => ''.e(__('First Name')).'','class' => 'text-sm font-medium text-gray-700']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('label'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['for' => 'first_name','value' => ''.e(__('First Name')).'']); ?>
+<?php $component->withAttributes(['for' => 'first_name','value' => ''.e(__('First Name')).'','class' => 'text-sm font-medium text-gray-700']); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginald8ba2b4c22a13c55321e34443c386276)): ?>
@@ -163,16 +207,23 @@
 <?php $component = $__componentOriginald8ba2b4c22a13c55321e34443c386276; ?>
 <?php unset($__componentOriginald8ba2b4c22a13c55321e34443c386276); ?>
 <?php endif; ?>
-            <?php if (isset($component)) { $__componentOriginalc2fcfa88dc54fee60e0757a7e0572df1 = $component; } ?>
+                    <div class="mt-1 relative rounded-md shadow-sm">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                        </div>
+                        <?php if (isset($component)) { $__componentOriginalc2fcfa88dc54fee60e0757a7e0572df1 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginalc2fcfa88dc54fee60e0757a7e0572df1 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input','data' => ['id' => 'first_name','type' => 'text','class' => 'mt-1 block w-full','wire:model' => 'state.first_name','required' => true,'autocomplete' => 'name']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input','data' => ['id' => 'first_name','type' => 'text','class' => 'pl-10 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm','wire:model' => 'state.first_name','required' => true,'autocomplete' => 'given-name','placeholder' => 'Enter your first name']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('input'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['id' => 'first_name','type' => 'text','class' => 'mt-1 block w-full','wire:model' => 'state.first_name','required' => true,'autocomplete' => 'name']); ?>
+<?php $component->withAttributes(['id' => 'first_name','type' => 'text','class' => 'pl-10 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm','wire:model' => 'state.first_name','required' => true,'autocomplete' => 'given-name','placeholder' => 'Enter your first name']); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginalc2fcfa88dc54fee60e0757a7e0572df1)): ?>
@@ -183,7 +234,8 @@
 <?php $component = $__componentOriginalc2fcfa88dc54fee60e0757a7e0572df1; ?>
 <?php unset($__componentOriginalc2fcfa88dc54fee60e0757a7e0572df1); ?>
 <?php endif; ?>
-            <?php if (isset($component)) { $__componentOriginalf94ed9c5393ef72725d159fe01139746 = $component; } ?>
+                    </div>
+                    <?php if (isset($component)) { $__componentOriginalf94ed9c5393ef72725d159fe01139746 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginalf94ed9c5393ef72725d159fe01139746 = $attributes; } ?>
 <?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input-error','data' => ['for' => 'first_name','class' => 'mt-2']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('input-error'); ?>
@@ -203,18 +255,20 @@
 <?php $component = $__componentOriginalf94ed9c5393ef72725d159fe01139746; ?>
 <?php unset($__componentOriginalf94ed9c5393ef72725d159fe01139746); ?>
 <?php endif; ?>
-        </div>
-        <div class="col-span-6 sm:col-span-4">
-            <?php if (isset($component)) { $__componentOriginald8ba2b4c22a13c55321e34443c386276 = $component; } ?>
+                </div>
+
+                <!-- Middle Name -->
+                <div class="relative w-full">
+                    <?php if (isset($component)) { $__componentOriginald8ba2b4c22a13c55321e34443c386276 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginald8ba2b4c22a13c55321e34443c386276 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.label','data' => ['for' => 'middle_name','value' => ''.e(__('Middle Name')).'']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.label','data' => ['for' => 'middle_name','value' => ''.e(__('Middle Name')).'','class' => 'text-sm font-medium text-gray-700']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('label'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['for' => 'middle_name','value' => ''.e(__('Middle Name')).'']); ?>
+<?php $component->withAttributes(['for' => 'middle_name','value' => ''.e(__('Middle Name')).'','class' => 'text-sm font-medium text-gray-700']); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginald8ba2b4c22a13c55321e34443c386276)): ?>
@@ -225,16 +279,23 @@
 <?php $component = $__componentOriginald8ba2b4c22a13c55321e34443c386276; ?>
 <?php unset($__componentOriginald8ba2b4c22a13c55321e34443c386276); ?>
 <?php endif; ?>
-            <?php if (isset($component)) { $__componentOriginalc2fcfa88dc54fee60e0757a7e0572df1 = $component; } ?>
+                    <div class="mt-1 relative rounded-md shadow-sm">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                        </div>
+                        <?php if (isset($component)) { $__componentOriginalc2fcfa88dc54fee60e0757a7e0572df1 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginalc2fcfa88dc54fee60e0757a7e0572df1 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input','data' => ['id' => 'middle_name','type' => 'text','class' => 'mt-1 block w-full','wire:model' => 'state.middle_name','required' => true,'autocomplete' => 'name']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input','data' => ['id' => 'middle_name','type' => 'text','class' => 'pl-10 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm','wire:model' => 'state.middle_name','autocomplete' => 'additional-name','placeholder' => 'Enter your middle name (optional)']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('input'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['id' => 'middle_name','type' => 'text','class' => 'mt-1 block w-full','wire:model' => 'state.middle_name','required' => true,'autocomplete' => 'name']); ?>
+<?php $component->withAttributes(['id' => 'middle_name','type' => 'text','class' => 'pl-10 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm','wire:model' => 'state.middle_name','autocomplete' => 'additional-name','placeholder' => 'Enter your middle name (optional)']); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginalc2fcfa88dc54fee60e0757a7e0572df1)): ?>
@@ -245,7 +306,8 @@
 <?php $component = $__componentOriginalc2fcfa88dc54fee60e0757a7e0572df1; ?>
 <?php unset($__componentOriginalc2fcfa88dc54fee60e0757a7e0572df1); ?>
 <?php endif; ?>
-            <?php if (isset($component)) { $__componentOriginalf94ed9c5393ef72725d159fe01139746 = $component; } ?>
+                    </div>
+                    <?php if (isset($component)) { $__componentOriginalf94ed9c5393ef72725d159fe01139746 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginalf94ed9c5393ef72725d159fe01139746 = $attributes; } ?>
 <?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input-error','data' => ['for' => 'middle_name','class' => 'mt-2']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('input-error'); ?>
@@ -265,18 +327,21 @@
 <?php $component = $__componentOriginalf94ed9c5393ef72725d159fe01139746; ?>
 <?php unset($__componentOriginalf94ed9c5393ef72725d159fe01139746); ?>
 <?php endif; ?>
-        </div>
-        <div class="col-span-6 sm:col-span-4">
-            <?php if (isset($component)) { $__componentOriginald8ba2b4c22a13c55321e34443c386276 = $component; } ?>
+                </div>
+            </div>
+
+            <!-- Last Name -->
+            <div class="relative">
+                <?php if (isset($component)) { $__componentOriginald8ba2b4c22a13c55321e34443c386276 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginald8ba2b4c22a13c55321e34443c386276 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.label','data' => ['for' => 'family_name','value' => ''.e(__('Last Name')).'']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.label','data' => ['for' => 'family_name','value' => ''.e(__('Last Name')).'','class' => 'text-sm font-medium text-gray-700']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('label'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['for' => 'family_name','value' => ''.e(__('Last Name')).'']); ?>
+<?php $component->withAttributes(['for' => 'family_name','value' => ''.e(__('Last Name')).'','class' => 'text-sm font-medium text-gray-700']); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginald8ba2b4c22a13c55321e34443c386276)): ?>
@@ -287,16 +352,23 @@
 <?php $component = $__componentOriginald8ba2b4c22a13c55321e34443c386276; ?>
 <?php unset($__componentOriginald8ba2b4c22a13c55321e34443c386276); ?>
 <?php endif; ?>
-            <?php if (isset($component)) { $__componentOriginalc2fcfa88dc54fee60e0757a7e0572df1 = $component; } ?>
+                <div class="mt-1 relative rounded-md shadow-sm">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                    </div>
+                    <?php if (isset($component)) { $__componentOriginalc2fcfa88dc54fee60e0757a7e0572df1 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginalc2fcfa88dc54fee60e0757a7e0572df1 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input','data' => ['id' => 'family_name','type' => 'text','class' => 'mt-1 block w-full','wire:model' => 'state.family_name','required' => true,'autocomplete' => 'name']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input','data' => ['id' => 'family_name','type' => 'text','class' => 'pl-10 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm','wire:model' => 'state.family_name','required' => true,'autocomplete' => 'family-name','placeholder' => 'Enter your last name']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('input'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['id' => 'family_name','type' => 'text','class' => 'mt-1 block w-full','wire:model' => 'state.family_name','required' => true,'autocomplete' => 'name']); ?>
+<?php $component->withAttributes(['id' => 'family_name','type' => 'text','class' => 'pl-10 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm','wire:model' => 'state.family_name','required' => true,'autocomplete' => 'family-name','placeholder' => 'Enter your last name']); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginalc2fcfa88dc54fee60e0757a7e0572df1)): ?>
@@ -307,7 +379,8 @@
 <?php $component = $__componentOriginalc2fcfa88dc54fee60e0757a7e0572df1; ?>
 <?php unset($__componentOriginalc2fcfa88dc54fee60e0757a7e0572df1); ?>
 <?php endif; ?>
-            <?php if (isset($component)) { $__componentOriginalf94ed9c5393ef72725d159fe01139746 = $component; } ?>
+                </div>
+                <?php if (isset($component)) { $__componentOriginalf94ed9c5393ef72725d159fe01139746 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginalf94ed9c5393ef72725d159fe01139746 = $attributes; } ?>
 <?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input-error','data' => ['for' => 'family_name','class' => 'mt-2']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('input-error'); ?>
@@ -327,20 +400,21 @@
 <?php $component = $__componentOriginalf94ed9c5393ef72725d159fe01139746; ?>
 <?php unset($__componentOriginalf94ed9c5393ef72725d159fe01139746); ?>
 <?php endif; ?>
+            </div>
         </div>
 
         <!-- Email -->
-        <div class="col-span-6 sm:col-span-4">
+        <div class="col-span-4 sm:col-span-4">
             <?php if (isset($component)) { $__componentOriginald8ba2b4c22a13c55321e34443c386276 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginald8ba2b4c22a13c55321e34443c386276 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.label','data' => ['for' => 'email','value' => ''.e(__('Email')).'']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.label','data' => ['for' => 'email','value' => ''.e(__('Email Address')).'','class' => 'text-sm font-medium text-gray-700']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('label'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['for' => 'email','value' => ''.e(__('Email')).'']); ?>
+<?php $component->withAttributes(['for' => 'email','value' => ''.e(__('Email Address')).'','class' => 'text-sm font-medium text-gray-700']); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginald8ba2b4c22a13c55321e34443c386276)): ?>
@@ -351,16 +425,23 @@
 <?php $component = $__componentOriginald8ba2b4c22a13c55321e34443c386276; ?>
 <?php unset($__componentOriginald8ba2b4c22a13c55321e34443c386276); ?>
 <?php endif; ?>
-            <?php if (isset($component)) { $__componentOriginalc2fcfa88dc54fee60e0757a7e0572df1 = $component; } ?>
+            <div class="mt-1 relative rounded-md shadow-sm">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path>
+                    </svg>
+                </div>
+                <?php if (isset($component)) { $__componentOriginalc2fcfa88dc54fee60e0757a7e0572df1 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginalc2fcfa88dc54fee60e0757a7e0572df1 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input','data' => ['id' => 'email','type' => 'email','class' => 'mt-1 block w-full','wire:model' => 'state.email','required' => true,'autocomplete' => 'username']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input','data' => ['id' => 'email','type' => 'email','class' => 'pl-10 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm','wire:model' => 'state.email','required' => true,'autocomplete' => 'username','placeholder' => 'Enter your email address']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('input'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['id' => 'email','type' => 'email','class' => 'mt-1 block w-full','wire:model' => 'state.email','required' => true,'autocomplete' => 'username']); ?>
+<?php $component->withAttributes(['id' => 'email','type' => 'email','class' => 'pl-10 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm','wire:model' => 'state.email','required' => true,'autocomplete' => 'username','placeholder' => 'Enter your email address']); ?>
 <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginalc2fcfa88dc54fee60e0757a7e0572df1)): ?>
@@ -371,6 +452,7 @@
 <?php $component = $__componentOriginalc2fcfa88dc54fee60e0757a7e0572df1; ?>
 <?php unset($__componentOriginalc2fcfa88dc54fee60e0757a7e0572df1); ?>
 <?php endif; ?>
+            </div>
             <?php if (isset($component)) { $__componentOriginalf94ed9c5393ef72725d159fe01139746 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginalf94ed9c5393ef72725d159fe01139746 = $attributes; } ?>
 <?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.input-error','data' => ['for' => 'email','class' => 'mt-2']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
@@ -393,40 +475,80 @@
 <?php endif; ?>
 
             <!--[if BLOCK]><![endif]--><?php if(Laravel\Fortify\Features::enabled(Laravel\Fortify\Features::emailVerification()) && ! $this->user->hasVerifiedEmail()): ?>
-                <p class="text-sm mt-2">
-                    <?php echo e(__('Your email address is unverified.')); ?>
+                <div class="mt-3 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                      d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                                      clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-yellow-800">
+                                <?php echo e(__('Email Verification Required')); ?>
 
+                            </h3>
+                            <div class="mt-2 text-sm text-yellow-700">
+                                <p><?php echo e(__('Your email address is unverified.')); ?></p>
+                            </div>
+                            <div class="mt-3">
+                                <button type="button"
+                                        class="bg-yellow-50 text-yellow-800 font-medium text-sm hover:bg-yellow-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 border border-yellow-300 rounded-md px-3 py-2 transition-colors duration-200"
+                                        wire:click.prevent="sendEmailVerification">
+                                    <?php echo e(__('Click here to re-send the verification email.')); ?>
 
-                    <button type="button" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" wire:click.prevent="sendEmailVerification">
-                        <?php echo e(__('Click here to re-send the verification email.')); ?>
-
-                    </button>
-                </p>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <!--[if BLOCK]><![endif]--><?php if($this->verificationLinkSent): ?>
-                    <p class="mt-2 font-medium text-sm text-green-600">
-                        <?php echo e(__('A new verification link has been sent to your email address.')); ?>
+                    <div class="mt-3 p-4 bg-green-50 border border-green-200 rounded-md">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <svg class="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                          clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium text-green-800">
+                                    <?php echo e(__('A new verification link has been sent to your email address.')); ?>
 
-                    </p>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
             <?php endif; ?><!--[if ENDBLOCK]><![endif]-->
         </div>
      <?php $__env->endSlot(); ?>
 
      <?php $__env->slot('actions', null, []); ?> 
-        <?php if (isset($component)) { $__componentOriginala665a74688c74e9ee80d4fedd2b98434 = $component; } ?>
+        <div class="flex items-center justify-end space-x-4">
+            <?php if (isset($component)) { $__componentOriginala665a74688c74e9ee80d4fedd2b98434 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginala665a74688c74e9ee80d4fedd2b98434 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.action-message','data' => ['class' => 'me-3','on' => 'saved']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.action-message','data' => ['class' => 'text-sm text-green-600 font-medium','on' => 'saved']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('action-message'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['class' => 'me-3','on' => 'saved']); ?>
-            <?php echo e(__('Saved.')); ?>
+<?php $component->withAttributes(['class' => 'text-sm text-green-600 font-medium','on' => 'saved']); ?>
+                <div class="flex items-center">
+                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                              clip-rule="evenodd"></path>
+                    </svg>
+                    <?php echo e(__('Profile Updated Successfully!')); ?>
 
-         <?php echo $__env->renderComponent(); ?>
+                </div>
+             <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginala665a74688c74e9ee80d4fedd2b98434)): ?>
 <?php $attributes = $__attributesOriginala665a74688c74e9ee80d4fedd2b98434; ?>
@@ -437,19 +559,25 @@
 <?php unset($__componentOriginala665a74688c74e9ee80d4fedd2b98434); ?>
 <?php endif; ?>
 
-        <?php if (isset($component)) { $__componentOriginald0f1fd2689e4bb7060122a5b91fe8561 = $component; } ?>
+            <?php if (isset($component)) { $__componentOriginald0f1fd2689e4bb7060122a5b91fe8561 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginald0f1fd2689e4bb7060122a5b91fe8561 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.button','data' => ['wire:loading.attr' => 'disabled','wire:target' => 'photo']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.button','data' => ['wire:loading.attr' => 'disabled','wire:target' => 'photo','class' => 'inline-flex items-center px-6 py-3 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring focus:ring-indigo-300 disabled:opacity-25 transition ease-in-out duration-150']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('button'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['wire:loading.attr' => 'disabled','wire:target' => 'photo']); ?>
-            <?php echo e(__('Save')); ?>
-
-         <?php echo $__env->renderComponent(); ?>
+<?php $component->withAttributes(['wire:loading.attr' => 'disabled','wire:target' => 'photo','class' => 'inline-flex items-center px-6 py-3 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring focus:ring-indigo-300 disabled:opacity-25 transition ease-in-out duration-150']); ?>
+                <svg wire:loading wire:target="photo" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none"
+                     viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span wire:loading.remove wire:target="photo"><?php echo e(__('Save Changes')); ?></span>
+                <span wire:loading wire:target="photo"><?php echo e(__('Saving...')); ?></span>
+             <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginald0f1fd2689e4bb7060122a5b91fe8561)): ?>
 <?php $attributes = $__attributesOriginald0f1fd2689e4bb7060122a5b91fe8561; ?>
@@ -459,6 +587,7 @@
 <?php $component = $__componentOriginald0f1fd2689e4bb7060122a5b91fe8561; ?>
 <?php unset($__componentOriginald0f1fd2689e4bb7060122a5b91fe8561); ?>
 <?php endif; ?>
+        </div>
      <?php $__env->endSlot(); ?>
  <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>

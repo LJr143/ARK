@@ -24,4 +24,24 @@ class ViewController
     {
         return view('ark.admin.reminders.manage-reminder', compact('reminder'));
     }
+
+    public function payment()
+    {
+        return view('ark.admin.Payment.index');
+    }
+
+    public function transactions()
+    {
+        return view ('ark.admin.Transaction.index');
+    }
+
+    public function accountSettings()
+    {
+        return view('ark.settings.profile-settings');
+    }
+
+    public function computationalRequest()
+    {
+        return view('ark.admin.request.index');
+    }
 }
