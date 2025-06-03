@@ -27,7 +27,7 @@ class ViewController
 
     public function payment()
     {
-        return view('ark.admin.Payment.index');
+        return view('ark.admin.payment.index');
     }
 
     public function transactions()
