@@ -36,9 +36,9 @@ return new class extends Migration
             $table->string('username')->nullable();
             $table->string('password')->nullable();
             $table->longText('google_id')->nullable();
-            $table->string('temp_password')->nullable(); // Temporary storage for generated password
-            $table->boolean('is_approved')->default(false); // Track approval status
-            $table->timestamp('credentials_sent_at')->nullable(); // When credentials were emailed
+            $table->string('temp_password')->nullable();
+            $table->boolean('is_approved')->default(false);
+            $table->timestamp('credentials_sent_at')->nullable();
             $table->rememberToken();
             $table->foreignId('current_team_id')->nullable();
             $table->string('profile_photo_path', 2048)->nullable();

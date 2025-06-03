@@ -1,5 +1,4 @@
 <?php
-// app/Services/PayPalService.php
 
 namespace App\Services;
 
@@ -90,6 +89,7 @@ class PayPalService
             if (isset($result['status']) && $result['status'] === 'COMPLETED') {
                 // Update transaction record
                 $transaction = Transaction::where('external_transaction_id', $orderId)->first();
+
                 if ($transaction) {
                     $transaction->update([
                         'status' => 'completed',
@@ -98,7 +98,6 @@ class PayPalService
                         'completed_at' => now()
                     ]);
 
-                    // Create payment record in your existing payments table
                     $payment = Payment::create([
                         'user_id' => $userId,
                         'transaction_id' => $transaction->id,
@@ -106,16 +105,16 @@ class PayPalService
                         'identification_number' => $result['payer']['payer_id'] ?? $orderId
                     ]);
 
+
                     return [
                         'success' => true,
-                        'payment' => $payment,
                         'transaction' => $transaction,
                         'paypal_result' => $result
                     ];
                 }
             }
 
-            return ['success' => false, 'message' => 'Payment not completed'];
+            return ['success' => false, 'message' => $result['message'] ?? 'Payment not completed'];
 
         } catch (\Exception $e) {
             return ['success' => false, 'message' => $e->getMessage()];

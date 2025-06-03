@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -19,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'check.superadmin' =>\App\Http\Middleware\SuperAdminChecker::class,
             'admin.auth' => \App\Http\Middleware\AdminAuth::class,
             'member.auth' => \App\Http\Middleware\MemberAuth::class,
+            'user.status' => \App\Http\Middleware\CheckUserStatus::class,
         ]);
         $middleware->web(append: [
             \App\Http\Middleware\FlashFailedLoginToast::class,
@@ -27,4 +29,6 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
+    })->withSchedule(function (Schedule $schedule) {
+        $schedule->command('fiscal-year:check')->everyMinute();
     })->create();

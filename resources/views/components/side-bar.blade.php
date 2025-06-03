@@ -69,12 +69,12 @@
 
         <!-- Reminders -->
         <li>
-            <a href="{{ route('reminders.index') }}"
+            <a href="{{ route('reminders.index')  }}"
                class="flex items-center p-3 rounded-xl transition-all duration-200 group
-                                          {{ request()->routeIs('reminders.*') ? 'nav-item-active' : 'nav-item-hover' }}">
+                                          {{ request()->routeIs('reminders.*') || request()->routeIs('manage.reminder') ? 'nav-item-active' : 'nav-item-hover' }}">
                 <div class="flex-shrink-0">
                     <svg
-                        class="w-5 h-5 {{ request()->routeIs('reminders.*') ? 'text-blue-600 icon-active' : 'text-gray-500 group-hover:text-gray-700' }}"
+                        class="w-5 h-5 {{ request()->routeIs('reminders.*') || request()->routeIs('manage.reminder') ? 'text-blue-600 icon-active' : 'text-gray-500 group-hover:text-gray-700' }}"
                         viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M12 5.83301C12 4.77214 11.5786 3.75473 10.8284 3.00458C10.0783 2.25444 9.06087 1.83301 8 1.83301C6.93913 1.83301 5.92172 2.25444 5.17157 3.00458C4.42143 3.75473 4 4.77214 4 5.83301C4 10.4997 2 11.833 2 11.833H14C14 11.833 12 10.4997 12 5.83301Z"
@@ -87,7 +87,7 @@
                     </svg>
                 </div>
                 <span class="ml-3 font-medium transition-all duration-300 overflow-hidden whitespace-nowrap
-                                                 {{ request()->routeIs('reminders.*') ? 'text-gray-800' : 'text-gray-600 group-hover:text-gray-800' }}"
+                                                 {{ request()->routeIs('reminders.*') || request()->routeIs('manage.reminder') ? 'text-gray-800' : 'text-gray-600 group-hover:text-gray-800' }}"
                       :class="{'lg:w-0 lg:opacity-0': !sidebarOpen, 'w-auto opacity-100': sidebarOpen}">Reminders</span>
             </a>
         </li>
@@ -97,17 +97,17 @@
             <li>
                 <a href="{{ route('members.index') }}"
                    class="flex items-center p-3 rounded-xl transition-all duration-200 group
-                                          {{ request()->routeIs('members*') ? 'nav-item-active' : 'nav-item-hover' }}">
+                                          {{ request()->routeIs('members.index') ? 'nav-item-active' : 'nav-item-hover' }}">
                     <div class="flex-shrink-0">
                         <svg
-                            class="w-5 h-5 {{ request()->routeIs('members*') ? 'text-blue-600 icon-active' : 'text-gray-500 group-hover:text-gray-700' }}"
+                            class="w-5 h-5 {{ request()->routeIs('members.index') ? 'text-blue-600 icon-active' : 'text-gray-500 group-hover:text-gray-700' }}"
                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                   d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                         </svg>
                     </div>
                     <span class="ml-3 font-medium transition-all duration-300 overflow-hidden whitespace-nowrap
-                                                 {{ request()->routeIs('members*') ? 'text-gray-800' : 'text-gray-600 group-hover:text-gray-800' }}"
+                                                 {{ request()->routeIs('members.index') ? 'text-gray-800' : 'text-gray-600 group-hover:text-gray-800' }}"
                           :class="{'lg:w-0 lg:opacity-0': !sidebarOpen, 'w-auto opacity-100': sidebarOpen}">Members</span>
                 </a>
             </li>
@@ -148,17 +148,18 @@
 
             <!-- Dues -->
             <li>
-                <a href="#"
-                   class="flex items-center p-3 rounded-xl transition-all duration-200 nav-item-hover group">
+                <a href="{{ route('membership-fee.dues') }}"
+                   class="flex items-center p-3 rounded-xl transition-all duration-200 nav-item-hover group
+                   {{ request()->routeIs('membership-fee.dues') ? 'nav-item-active' : 'nav-item-hover' }}">
                     <div class="flex-shrink-0">
-                        <svg class="w-5 h-5 text-gray-500 group-hover:text-gray-700" fill="none"
+                        <svg class="w-5 h-5 {{ request()->routeIs('membership-fee.dues') ? 'text-blue-600 icon-active' : 'text-gray-500 group-hover:text-gray-700' }}" fill="none"
                              stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                   d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                         </svg>
                     </div>
                     <span
-                        class="ml-3 font-medium text-gray-600 group-hover:text-gray-800 transition-all duration-300 overflow-hidden whitespace-nowrap"
+                        class="ml-3 font-medium text-gray-600 group-hover:text-gray-800 transition-all duration-300 overflow-hidden whitespace-nowrap {{ request()->routeIs('membership-fee.dues') ? 'text-gray-800' : 'text-gray-600 group-hover:text-gray-800' }}"
                         :class="{'lg:w-0 lg:opacity-0': !sidebarOpen, 'w-auto opacity-100': sidebarOpen}">Dues</span>
                 </a>
             </li>

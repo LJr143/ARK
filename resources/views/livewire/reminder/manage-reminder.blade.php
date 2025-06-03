@@ -262,164 +262,6 @@
 
             {{-- Tab Content --}}
             <div class="p-4 lg:p-6">
-                <!-- Request Computation Modal -->
-                @if($showComputationRequestModal)
-                    <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-                        <div
-                            class="relative top-10 mx-auto p-5 border w-1/3 shadow-lg rounded-md bg-white max-h-[90vh] overflow-y-auto">
-                            <div class="mt-3">
-                                <h3 class="text-lg font-medium text-gray-900 mb-4 text-center">Request Computation
-                                    Breakdown</h3>
-
-                                <div class="text-sm text-gray-500 mb-4 text-center">
-                                    {{ now()->format('M j, Y') }}<br>
-                                    {{ now()->format('H:i') }}
-                                </div>
-
-                                <!-- Member Information Section -->
-                                <div class="mb-6">
-                                    <h4 class="text-md font-medium text-gray-800 mb-3 text-center">Member
-                                        Information</h4>
-
-                                    <div class="space-y-3 text-sm">
-                                        <div class="flex justify-between">
-                                            <span class="text-gray-600">Name</span>
-                                            <span class="font-medium">
-                                                {{ isset($memberData['first_name'], $memberData['family_name']) ?
-                                                    $memberData['first_name'] . ' ' . ($memberData['middle_name'] ?? '') . ' ' . $memberData['family_name'] :
-                                                    'Error' }}
-                                            </span>
-
-                                        </div>
-
-                                        <div class="flex justify-between">
-                                            <span class="text-gray-600">PRC#</span>
-                                            <span
-                                                class="font-medium">{{ $memberData['prc_registration_number'] ?? 'Error' }}</span>
-                                        </div>
-
-                                        <div class="flex justify-between">
-                                            <span class="text-gray-600">Membership date</span>
-                                            <span
-                                                class="font-medium">{{ $memberData['membership_date'] ?? '24-Apr-2023' }}</span>
-                                        </div>
-
-                                        <div class="flex justify-between">
-                                            <span class="text-gray-600">Chapter Member</span>
-                                            <span
-                                                class="font-medium">{{ $memberData['current_chapter'] ?? 'Error' }}</span>
-                                        </div>
-
-                                        <div class="flex justify-between">
-                                            <span class="text-gray-600">E-mail Address</span>
-                                            <span class="font-medium">{{ $memberData['email'] ?? 'Error' }}</span>
-                                        </div>
-
-                                        <div class="flex justify-between">
-                                            <span class="text-gray-600">Mobile number</span>
-                                            <span class="font-medium">{{ $memberData['mobile'] ?? 'Error' }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Additional Message Section -->
-                                <div class="mb-6">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                                        Additional Message (Optional)
-                                    </label>
-                                    <textarea
-                                        wire:model="additionalMessage"
-                                        rows="4"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm"
-                                        placeholder="Type your message here..."></textarea>
-                                </div>
-
-                                <!-- Agreement Section -->
-                                <div class="mb-6">
-                                    <h4 class="text-sm font-medium text-gray-800 mb-2">Please review before
-                                        submitting</h4>
-                                    <p class="text-xs text-gray-600 mb-3">
-                                        This request includes personal information that will be used by the
-                                        administrator to verify your identity and process your request.
-                                    </p>
-
-                                    <label class="flex items-start space-x-2">
-                                        <input
-                                            type="checkbox"
-                                            wire:model.live="agreementAccepted"
-                                            class="mt-1 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                                        <span class="text-xs text-gray-700">
-                            I understand and agree to submit my personal information for this request.
-                        </span>
-                                    </label>
-                                </div>
-
-                                <!-- Loading State -->
-                                @if($submittingRequest)
-                                    <div class="mb-4">
-                                        <div class="flex items-center justify-center">
-                                            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-500"
-                                                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                                        stroke-width="4"></circle>
-                                                <path class="opacity-75" fill="currentColor"
-                                                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                            </svg>
-                                            <span>Submitting request...</span>
-                                        </div>
-                                    </div>
-                                @endif
-
-                                <!-- Success/Error Results -->
-                                @if($requestResult && !$submittingRequest)
-                                    <div class="mb-4 p-4 border rounded-lg">
-                                        @if(isset($requestResult['error']) && $requestResult['error'])
-                                            <div class="text-red-600 text-center">
-                                                <h4 class="font-medium">Error occurred:</h4>
-                                                <p class="text-sm">{{ $requestResult['message'] }}</p>
-                                            </div>
-                                        @else
-                                            <div class="text-green-600 text-center">
-                                                <h4 class="font-medium">Request Submitted Successfully!</h4>
-                                                <p class="text-sm">{{ $requestResult['message'] ?? 'Your computation breakdown request has been submitted and will be processed soon.' }}</p>
-                                                @if(isset($requestResult['reference_number']))
-                                                    <p class="text-sm mt-2">Reference Number:
-                                                        <strong>{{ $requestResult['reference_number'] }}</strong></p>
-                                                @endif
-                                            </div>
-                                        @endif
-                                    </div>
-                                @endif
-
-                                <!-- Action Buttons -->
-                                <div class="flex justify-center space-x-3">
-                                    @if(!$requestResult || $submittingRequest)
-                                        <button
-                                            wire:click="submitComputationRequest"
-                                            @if($submittingRequest || !$agreementAccepted) disabled @endif
-                                            class="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium">
-                                            @if($submittingRequest)
-                                                Submitting...
-                                            @else
-                                                Submit Request
-                                            @endif
-                                        </button>
-                                    @endif
-
-                                    <button
-                                        wire:click="closeComputationModal"
-                                        class="px-6 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 text-sm font-medium">
-                                        @if($requestResult && !$submittingRequest)
-                                            Close
-                                        @else
-                                            Cancel
-                                        @endif
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @endif
 
                 {{-- Recipients Tab --}}
                 @if($activeMainTab === 'recipients')
@@ -728,7 +570,7 @@
                                                                     <input type="text" wire:model="editableFields.title"
                                                                            class="w-full px-4 py-2 bg-white bg-opacity-90 text-gray-900 rounded-lg border border-white border-opacity-30 focus:ring-2 focus:ring-white focus:ring-opacity-50">
                                                                 @else
-                                                                    <h1 class="text-3xl lg:text-4xl font-bold mb-2">{{ $reminderDetails['title'] }}</h1>
+                                                                    <h1 class="text-2xl lg:text-3xl font-bold mb-2">{{ $reminderDetails['title'] }}</h1>
                                                                 @endif
                                                             </div>
                                                             <div
@@ -770,37 +612,6 @@
                                                             </button>
                                                         @endif
                                                     @endcan
-
-                                                    @if(auth()->user()->hasRole('member') && $reminder->category->name == 'Deadline')
-                                                            @php
-                                                                $existingRequest = \App\Models\ComputationRequest::where('member_id', auth()->id())
-                                                                                    ->where('status', 'pending')
-                                                                                    ->first();
-                                                            @endphp
-                                                            @if ($existingRequest)
-                                                                <p>You already have a pending computation request.</p>
-                                                            @else
-                                                            <button
-                                                                wire:click="openComputationModal"
-                                                                wire:loading.attr="disabled"
-                                                                wire:loading.class="opacity-75 cursor-not-allowed"
-                                                                class="status-badge px-6 py-6 bg-white text-gray-800 rounded-xl hover:bg-opacity-90 transition-all duration-300 flex items-center gap-2 font-medium shadow-lg"
-                                                            >
-                                                                <!-- Default state content -->
-                                                                <span wire:loading.class="hidden">
-                                                                            <i class="fas fa-calculator"></i>
-                                                                            <span>Request Computation Breakdown</span>
-                                                                        </span>
-
-                                                                <!-- Loading state content -->
-                                                                <span wire:loading wire:target="openComputationModal"
-                                                                      class="hidden">
-                                                                        <i class="fas fa-spinner fa-spin"></i>
-                                                                        <span>Processing...</span>
-                                                                    </span>
-                                                            </button>
-                                                            @endif
-                                                    @endif
                                                 </div>
                                             </div>
                                         </div>
@@ -994,38 +805,216 @@
 
                                         <!-- Sidebar -->
                                         <div class="space-y-6">
-                                            <!-- Quick Stats -->
-                                            <div class="glass-effect rounded-2xl p-6 card-hover">
-                                                <h3 class="text-lg font-semibold text-gray-800 mb-4">Quick Stats</h3>
-                                                <div class="space-y-4">
-                                                    <div
-                                                        class="flex items-center justify-between p-3 bg-blue-50 rounded-xl">
-                                                        <div class="flex items-center gap-3">
-                                                            <i class="fas fa-users text-blue-600"></i>
-                                                            <span class="text-gray-700">Recipients</span>
-                                                        </div>
-                                                        <span class="font-bold text-blue-600">247</span>
-                                                    </div>
+                                            @if(auth()->user()->hasRole('member') && $reminder->category->name == 'Deadline')
+                                                @php
+                                                    $existingRequest = \App\Models\ComputationRequest::where('member_id', auth()->id())
+                                                                                        ->where('status', 'pending')
+                                                                                        ->first();
+                                                @endphp
 
-                                                    <div
-                                                        class="flex items-center justify-between p-3 bg-green-50 rounded-xl">
-                                                        <div class="flex items-center gap-3">
-                                                            <i class="fas fa-check-circle text-green-600"></i>
-                                                            <span class="text-gray-700">Delivered</span>
-                                                        </div>
-                                                        <span class="font-bold text-green-600">245</span>
-                                                    </div>
+                                                <div
+                                                    class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 lg:p-8">
+                                                    @if ($existingRequest)
+                                                        <!-- Existing Request State -->
+                                                        <div class="text-center py-8">
+                                                            <div
+                                                                class="mx-auto w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-4">
+                                                                <svg class="w-8 h-8 text-amber-600" fill="none"
+                                                                     stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round"
+                                                                          stroke-linejoin="round"
+                                                                          stroke-width="2"
+                                                                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                                </svg>
+                                                            </div>
+                                                            <h3 class="text-lg font-semibold text-gray-900 mb-2">
+                                                                Request Already Submitted</h3>
+                                                            <p class="text-sm text-gray-600 mb-6 max-w-md mx-auto">
+                                                                You already have a pending computation request.
+                                                                Please wait for the administrator to process
+                                                                your request.
+                                                            </p>
 
-                                                    <div
-                                                        class="flex items-center justify-between p-3 bg-yellow-50 rounded-xl">
-                                                        <div class="flex items-center gap-3">
-                                                            <i class="fas fa-clock text-yellow-600"></i>
-                                                            <span class="text-gray-700">Pending</span>
+                                                            <!-- Status Badge -->
+                                                            <div
+                                                                class="inline-flex items-center gap-2 px-4 py-2 bg-amber-50 border border-amber-200 rounded-full">
+                                                                <div
+                                                                    class="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></div>
+                                                                <span
+                                                                    class="text-sm font-medium text-amber-800">Pending Review</span>
+                                                            </div>
                                                         </div>
-                                                        <span class="font-bold text-yellow-600">2</span>
+                                                    @else
+                                                        <!-- New Request State -->
+                                                        <div class="text-center mb-8">
+                                                            <div
+                                                                class="mx-auto w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
+                                                                <svg class="w-8 h-8 text-indigo-600" fill="none"
+                                                                     stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round"
+                                                                          stroke-linejoin="round"
+                                                                          stroke-width="2"
+                                                                          d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                                                </svg>
+                                                            </div>
+                                                            <h3 class="text-lg font-semibold text-gray-900 mb-2">
+                                                                Request Computation Breakdown</h3>
+                                                            <p class="text-sm text-gray-600 max-w-md mx-auto mb-6">
+                                                                Submit a request to get a detailed breakdown of
+                                                                your dues computation. This will help you
+                                                                understand your payment obligations.
+                                                            </p>
+                                                        </div>
+
+                                                        <!-- Action Buttons -->
+                                                        <div class="space-y-4">
+                                                            <!-- Primary Action Button -->
+                                                            <button
+                                                                wire:click="openComputationModal"
+                                                                wire:loading.attr="disabled"
+                                                                wire:loading.class="opacity-75 cursor-not-allowed"
+                                                                class="group w-full relative overflow-hidden bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-200"
+                                                            >
+                                                                <div
+                                                                    class="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+                                                                <div
+                                                                    class="relative px-6 py-4 flex items-center justify-center gap-3">
+                        <span wire:loading.remove wire:target="openComputationModal" class="flex items-center gap-3">
+                            <svg class="w-5 h-5 transform group-hover:rotate-12 transition-transform duration-300"
+                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M9 5h6m-3 0v14m-4-7h8m-8 4h8"/>
+                            </svg>
+                            <span class="text-base font-semibold">Request Computation Breakdown</span>
+                        </span>
+                                                                    <span wire:loading
+                                                                          wire:target="openComputationModal"
+                                                                          class="flex items-center gap-3">
+                            <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M4 12a8 8 0 0116 0 8 8 0 01-16 0z"/>
+                            </svg>
+                            <span class="text-base font-semibold">Processing Request...</span>
+                        </span>
+                                                                </div>
+                                                            </button>
+
+                                                            <!-- Secondary Action Button -->
+                                                            {{--                                                            <button--}}
+                                                            {{--                                                                wire:click="openViewModal"--}}
+                                                            {{--                                                                wire:loading.attr="disabled"--}}
+                                                            {{--                                                                wire:loading.class="opacity-75 cursor-not-allowed"--}}
+                                                            {{--                                                                class="group w-full bg-white border-2 border-gray-200 text-gray-700 rounded-xl shadow-sm hover:shadow-md hover:border-indigo-300 hover:text-indigo-700 transform hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-gray-200"--}}
+                                                            {{--                                                            >--}}
+                                                            {{--                                                                <div--}}
+                                                            {{--                                                                    class="px-6 py-3 flex items-center justify-center gap-3">--}}
+                                                            {{--                                                                    <span wire:loading.remove--}}
+                                                            {{--                                                                          wire:target="openViewModal"--}}
+                                                            {{--                                                                          class="flex items-center gap-3">--}}
+                                                            {{--                                                                        <svg--}}
+                                                            {{--                                                                            class="w-5 h-5 transform group-hover:scale-110 transition-transform duration-300"--}}
+                                                            {{--                                                                            fill="none" stroke="currentColor"--}}
+                                                            {{--                                                                            viewBox="0 0 24 24">--}}
+                                                            {{--                                                                            <path stroke-linecap="round"--}}
+                                                            {{--                                                                                  stroke-linejoin="round"--}}
+                                                            {{--                                                                                  stroke-width="2"--}}
+                                                            {{--                                                                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>--}}
+                                                            {{--                                                                            <path stroke-linecap="round"--}}
+                                                            {{--                                                                                  stroke-linejoin="round"--}}
+                                                            {{--                                                                                  stroke-width="2"--}}
+                                                            {{--                                                                                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>--}}
+                                                            {{--                                                                        </svg>--}}
+                                                            {{--                                                                        <span class="text-sm font-medium">View Existing Requests</span>--}}
+                                                            {{--                                                                    </span>--}}
+                                                            {{--                                                                    <span wire:loading--}}
+                                                            {{--                                                                          wire:target="openViewModal"--}}
+                                                            {{--                                                                          class="flex items-center gap-3">--}}
+                                                            {{--                                                                        <svg class="w-5 h-5 animate-spin" fill="none"--}}
+                                                            {{--                                                                             stroke="currentColor" viewBox="0 0 24 24">--}}
+                                                            {{--                                                                            <path stroke-linecap="round"--}}
+                                                            {{--                                                                                  stroke-linejoin="round"--}}
+                                                            {{--                                                                                  stroke-width="2"--}}
+                                                            {{--                                                                                  d="M4 12a8 8 0 0116 0 8 8 0 01-16 0z"/>--}}
+                                                            {{--                                                                        </svg>--}}
+                                                            {{--                                                                        <span--}}
+                                                            {{--                                                                            class="text-sm font-medium">Loading...</span>--}}
+                                                            {{--                                                                    </span>--}}
+                                                            {{--                                                                </div>--}}
+                                                            {{--                                                            </button>--}}
+                                                        </div>
+
+                                                        <!-- Help Text -->
+                                                        <div
+                                                            class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                                                            <div class="flex items-start gap-3">
+                                                                <svg
+                                                                    class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5"
+                                                                    fill="none" stroke="currentColor"
+                                                                    viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round"
+                                                                          stroke-linejoin="round"
+                                                                          stroke-width="2"
+                                                                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                                </svg>
+                                                                <div class="text-sm text-blue-800">
+                                                                    <p class="font-medium mb-1">What happens
+                                                                        next?</p>
+                                                                    <ul class="space-y-1 text-blue-700">
+                                                                        <li>• Your request will be reviewed by
+                                                                            an administrator
+                                                                        </li>
+                                                                        <li>• You'll receive a detailed
+                                                                            computation breakdown
+                                                                        </li>
+                                                                        <li>• Processing typically takes 1-2
+                                                                            business days
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            @else
+                                                <!-- Unauthorized State -->
+                                                <div
+                                                    class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                                                    <div class="text-center py-8">
+                                                        <div
+                                                            class="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                                                            <svg class="w-8 h-8 text-red-600" fill="none"
+                                                                 stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round"
+                                                                      stroke-linejoin="round" stroke-width="2"
+                                                                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                                                            </svg>
+                                                        </div>
+                                                        <h3 class="text-lg font-semibold text-gray-900 mb-2">
+                                                            Access Restricted</h3>
+                                                        <p class="text-sm text-gray-600 max-w-md mx-auto">
+                                                            You are not authorized to request a computation
+                                                            breakdown. This feature is only available for active
+                                                            members with deadline reminders.
+                                                        </p>
+
+                                                        <!-- Contact Support -->
+                                                        <div
+                                                            class="mt-6 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                                                            <div
+                                                                class="flex items-center justify-center gap-2 text-sm text-gray-600">
+                                                                <svg class="w-4 h-4" fill="none"
+                                                                     stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round"
+                                                                          stroke-linejoin="round"
+                                                                          stroke-width="2"
+                                                                          d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                                </svg>
+                                                                <span>Need help? Contact support for assistance.</span>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            @endif
 
                                             <!-- Attachments Section -->
                                             <div class="glass-effect rounded-2xl p-6 card-hover">
@@ -1214,11 +1203,6 @@
                         <h3 class="text-lg font-medium text-gray-900 mb-2">No reminders found</h3>
                         <p class="text-gray-500 mb-6 max-w-sm mx-auto">Create your first reminder to get started with
                             member notifications.</p>
-                        {{--                        <button wire:click="setMainTab('manage')"--}}
-                        {{--                                class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center space-x-2 mx-auto transition-colors duration-200">--}}
-                        {{--                            <i class="fas fa-plus"></i>--}}
-                        {{--                            <span>Create First Reminder</span>--}}
-                        {{--                        </button>--}}
                     </div>
                 @endif
             </div>

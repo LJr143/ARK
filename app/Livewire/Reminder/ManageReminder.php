@@ -24,6 +24,7 @@ class ManageReminder extends Component
     public $showSendModal = false;
     public $showComputationRequestModal = false;
     public $memberData = [];
+    public $requestData = [];
     public $additionalMessage = '';
     public $agreementAccepted = false;
     public $submittingRequest = false;
@@ -56,6 +57,8 @@ class ManageReminder extends Component
         'sms' => false,
         'app' => true
     ];
+
+    public $viewRequestModal = 'false';
 
     public function mount(Reminder $reminder)
     {

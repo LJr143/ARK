@@ -277,7 +277,7 @@ class NotificationService
         return "Don't forget: {$reminder->title} starts on " . Carbon::parse($reminder->start_datetime)->format('F j, Y h:i A');
     }
 
-    private function logNotificationActivity(Reminder $reminder, array $results)
+    private function logNotificationActivity(Reminder $reminder, array $results): void
     {
         Log::info("Reminder notification results for Reminder ID {$reminder->id}", $results);
     }

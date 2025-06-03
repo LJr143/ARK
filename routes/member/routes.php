@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 /**
  * Member Authentication Routes
  */
-Route::group(['middleware' => ['check.superadmin','redirect.auth']], function () {
+Route::group(['middleware' => ['check.superadmin', 'user.status','redirect.auth']], function () {
     Route::get('/', [LoginController::class, 'login'])->name('member.login');
     Route::post('/', [LoginController::class, 'authenticate'])->name('member.login.post')->middleware('throttle:5,1');
 });

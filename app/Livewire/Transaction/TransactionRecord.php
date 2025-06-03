@@ -2,7 +2,9 @@
 
 namespace App\Livewire\Transaction;
 
+use AllowDynamicProperties;
 use App\Exports\MembersExport;
+use App\Models\Transaction;
 use App\Models\User;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -14,21 +16,16 @@ class TransactionRecord extends Component
     use WithPagination, WithFileUploads;
 
     public $search = '';
+    public $statusFilter = '';
     public $showModal = false;
     public $showViewModal = false;
-    public $editMode = false;
-    public $member_id;
-
-    public $first_name = '';
-    public $family_name = '';
-    public $middle_name = '';
-    public $prc_registration_number = '';
-    public $email = '';
-    public $mobile = '';
-    public $status;
-    public $current_chapter;
     public $payment_date;
     public $updated_at;
+    public $transactionDetails = [];
+    protected $queryString = [
+        'search' => ['except' => ''],
+        'statusFilter' => ['except' => ''],
+    ];
 
     public function mount(): void
     {
@@ -37,34 +34,32 @@ class TransactionRecord extends Component
 
     public function render()
     {
-        $members = User::where('first_name', 'like', '%' . $this->search . '%')
-            ->orWhere('middle_name', 'like', '%' . $this->search . '%')
-            ->orWhere('family_name', 'like', '%' . $this->search . '%')
-            ->orWhere('email', 'like', '%' . $this->search . '%')
-            ->orWhere('prc_registration_number', 'like', '%' . $this->search . '%')
+        $transactions = Transaction::query()
+            ->when($this->search, function($query) {
+                $searchTerm = '%' . $this->search . '%';
+                $query->where(function($q) use ($searchTerm) {
+                    $q->where('id', 'like', $searchTerm)
+                        ->orWhere('transaction_reference', 'like', $searchTerm)
+                        ->orWhere('external_transaction_id', 'like', $searchTerm)
+                        ->orWhere('payment_method', 'like', $searchTerm)
+                        ->orWhere('amount', 'like', $searchTerm)
+                        ->orWhere('status', 'like', $searchTerm);
+                });
+            })
+            ->when($this->statusFilter, function($query) {
+                $query->where('status', $this->statusFilter);
+            })
+            ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        return view('livewire.transaction.transaction-record', compact('members'));
+        return view('livewire.transaction.transaction-record', compact('transactions'));
     }
 
-    public function openModal(): void
-    {
-        $this->resetForm();
-        $this->editMode = false;
-        $this->showModal = true;
-    }
-
-    public function openEditModal($id): void
-    {
-        $this->extracted($id);
-
-        $this->editMode = true;
-        $this->showModal = true;
-    }
 
     public function openViewModal($id): void
     {
-        $this->extracted($id);
+        $this->transactionDetails = Transaction::find($id)->toArray();
+//        $this->transactionDetails['payment_date'] = $this->transactionDetails
 
         $this->showViewModal = true;
     }
@@ -73,46 +68,6 @@ class TransactionRecord extends Component
     {
         $this->showModal = false;
         $this->showViewModal = false;
-        $this->resetForm();
-    }
-
-    public function save(): void
-    {
-        $rules = $this->rules;
-
-        if ($this->editMode) {
-            $rules['email'] = 'required|email|unique:users,email,' . $this->member_id;
-            $rules['prc_registration_number'] = 'required|string|max:50|unique:users,prc_registration_number,' . $this->member_id;
-        }
-
-        $this->validate($rules);
-
-        $data = [
-            'first_name' => $this->first_name,
-            'middle_name' => $this->middle_name,
-            'family_name' => $this->family_name,
-            'prc_registration_number' => $this->prc_registration_number,
-            'email' => $this->email,
-            'mobile' => $this->mobile,
-            'status' => $this->status,
-            'current_chapter' => $this->current_chapter,
-        ];
-
-        if ($this->editMode) {
-            User::findOrFail($this->member_id)->update($data);
-            session()->flash('message', 'Member updated successfully!');
-        } else {
-            User::create($data);
-            session()->flash('message', 'Member added successfully!');
-        }
-
-        $this->closeModal();
-    }
-
-    public function delete($id): void
-    {
-        User::findOrFail($id)->delete();
-        session()->flash('message', 'Member deleted successfully!');
     }
 
     public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse
@@ -120,44 +75,22 @@ class TransactionRecord extends Component
         return Excel::download(new MembersExport, 'members.xlsx');
     }
 
-    public function resetForm(): void
-    {
-        $this->first_name = '';
-        $this->middle_name = '';
-        $this->family_name = '';
-        $this->prc_registration_number = '';
-        $this->email = '';
-        $this->mobile = '';
-        $this->status = '';
-        $this->current_chapter = '';
-        $this->payment_date = now()->format('Y-m-d H:i:s');
-        $this->member_id = null;
-        $this->resetValidation();
-    }
 
     public function updatingSearch(): void
     {
         $this->resetPage();
     }
 
-    /**
-     * @param $id
-     * @return void
-     */
-    public function extracted($id): void
+    public function updatingStatusFilter(): void
     {
-        $member = User::findOrFail($id);
-        $this->member_id = $member->id;
-        $this->first_name = $member->first_name;
-        $this->middle_name = $member->middle_name;
-        $this->family_name = $member->family_name;
-        $this->prc_registration_number = $member->prc_registration_number;
-        $this->email = $member->email;
-        $this->mobile = $member->mobile;
-        $this->status = $member->status;
-        $this->current_chapter = $member->current_chapter;
-        $this->payment_date = $member->created_at->format('Y-m-d H:i:s');
-        $this->updated_at = $member->updated_at->format('Y-m-d H:i:s');
+        $this->resetPage();
+    }
+
+    public function clearFilters(): void
+    {
+        $this->search = '';
+        $this->statusFilter = '';
+        $this->resetPage();
     }
 
 }

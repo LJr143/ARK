@@ -5,6 +5,8 @@ namespace App\Livewire\Member;
 use AllowDynamicProperties;
 use App\Exports\MembersTemplateExport;
 use App\Models\User;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
@@ -20,7 +22,7 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-#[AllowDynamicProperties] class MemberManagement extends Component
+class MemberManagement extends Component
 {
     use WithPagination, WithFileUploads;
 
@@ -118,11 +120,25 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
     public function save(): void
     {
-        $rules = $this->rules;
+        // Define base rules
+        $rules = [
+            'first_name' => 'required|string|max:255',
+            'family_name' => 'required|string|max:255',
+            'middle_name' => 'nullable|string|max:255',
+            'prc_registration_number' => 'required|string|max:50',
+            'email' => 'required|email',
+            'mobile' => 'required|string|max:20',
+            'status' => 'required|in:active,pending,deactivated,inactive',
+            'current_chapter' => 'required|string|max:255',
+        ];
 
+        // Add unique validation rules conditionally
         if ($this->editMode) {
-            $rules['email'] = 'required|email|unique:users,email,' . $this->member_id;
-            $rules['prc_registration_number'] = 'required|string|max:50|unique:users,prc_registration_number,' . $this->member_id;
+            $rules['email'] .= '|unique:users,email,' . $this->member_id;
+            $rules['prc_registration_number'] .= '|unique:users,prc_registration_number,' . $this->member_id;
+        } else {
+            $rules['email'] .= '|unique:users,email';
+            $rules['prc_registration_number'] .= '|unique:users,prc_registration_number';
         }
 
         $this->validate($rules);
@@ -139,7 +155,8 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
         ];
 
         if ($this->editMode) {
-            User::findOrFail($this->member_id)->update($data);
+            $member = User::findOrFail($this->member_id);
+            $member->update($data);
             session()->flash('message', 'Member updated successfully!');
         } else {
             User::create($data);
@@ -147,6 +164,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
         }
 
         $this->closeModal();
+        $this->resetPage(); // Reset pagination to show the updated record
     }
 
     public function delete($id): void
@@ -340,7 +358,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
      * @param $id
      * @return void
      */
-    public function extracted($id): void
+    public function extracted($id)
     {
         $member = User::findOrFail($id);
         $this->member_id = $member->id;
@@ -354,5 +372,63 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
         $this->current_chapter = $member->current_chapter;
         $this->date_added = $member->created_at->format('Y-m-d H:i:s');
         $this->updated_at = $member->updated_at->format('Y-m-d H:i:s');
+    }
+
+    public function approveApplication($id)
+    {
+        $application = User::findOrFail($id);
+        $password = Str::random(10);
+
+        $user = User::firstOrCreate(
+            ['email' => $application->email],
+            [
+                'name' => $application->first_name . ' ' . $application->family_name,
+                'password' => bcrypt($password),
+                'is_approved' => true,
+
+            ]
+        );
+
+        try {
+            Mail::send('emails.membership.credentials', [
+                'user' => $user,
+                'password' => $password
+            ], function ($message) use ($user) {
+                $message->to($user->email)
+                    ->subject('Your UAP Membership Account Credentials');
+            });
+        } catch (\Exception $e) {
+            \Log::error('Email sending failed: ' . $e->getMessage());
+            return back()->with('error', 'Approved but failed to send email: ' . $e->getMessage());
+        }
+
+        $application->update(['status' => 'approved', 'id' => $user->id, 'is_approved'=> true, 'password' => bcrypt($password)]);
+        return back()->with('success', 'Application approved and credentials sent.');
+    }
+
+    public function rejectApplication($id)
+    {
+        $application = User::findOrFail($id);
+
+        try {
+            // Send rejection email before deleting
+            Mail::send('emails.membership.rejection', [
+                'name' => $application->first_name,
+                'email' => $application->email,
+                'date' => now()->format('F j, Y'),
+            ], function ($message) use ($application) {
+                $message->to($application->email)
+                    ->subject('Your UAP Membership Application Status');
+            });
+
+            // Delete the account
+            $application->delete();
+
+            session()->flash('message', 'Application rejected and account removed successfully.');
+
+        } catch (\Exception $e) {
+            \Log::error('Rejection failed: ' . $e->getMessage());
+            return back()->with('error', 'Rejection failed: ' . $e->getMessage());
+        }
     }
 }

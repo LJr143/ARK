@@ -27,7 +27,7 @@ class ViewController
 
     public function payment()
     {
-        return view('ark.admin.Payment.index');
+        return view('ark.admin.payment.index');
     }
 
     public function transactions()
@@ -43,5 +43,20 @@ class ViewController
     public function computationalRequest()
     {
         return view('ark.admin.request.index');
+    }
+
+    public function notifications()
+    {
+        return view('ark.notifications.index');
+    }
+
+    public function requestHistory()
+    {
+        return view('ark.request.index');
+    }
+
+    public function membershipDues()
+    {
+        return view('ark.due.index');
     }
 }

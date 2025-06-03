@@ -69,14 +69,14 @@ class MembershipController extends Controller
                     'family_name' => 'required|string|max:255',
                     'first_name' => 'required|string|max:255',
                     'middle_name' => 'nullable|string|max:255',
-                    'birthdate' => 'required|date',
+                    'birthdate' => 'required|date', //TODO: VALIDATION RULES AT LEAST 20
                     'birthplace' => 'required|string|max:255',
                     'sex' => 'required|in:Male,Female,Other',
                     'civil_status' => 'required|in:Single,Married,Divorced,Widowed',
                     'permanent_address' => 'required|string',
                     'telephone' => 'nullable|string|max:20',
                     'fax' => 'nullable|string|max:20',
-                    'mobile' => 'required|string|max:20',
+                    'mobile' => 'required|string|max:11', //TODO: MOBILE NUMBER FORMAT
                     'email' => 'required|email|unique:users,email',
                     'facebook_id' => 'nullable|string|max:255',
                     'twitter_id' => 'nullable|string|max:255',
@@ -103,9 +103,9 @@ class MembershipController extends Controller
                 break;
             case 3:
                 $rules = [
-                    'prc_registration_number' => 'required|string|max:255',
+                    'prc_registration_number' => 'required|string|max:255', //TODO: LIMITATION  TO STANDARD PRC NUMBER
                     'prc_date_issued' => 'required|date',
-                    'prc_valid_until' => 'required|date',
+                    'prc_valid_until' => 'required|date', //TODO: MATCH WITH BIRTHDATE
                     'expertise' => 'required|string',
                     'years_of_practice' => 'required|integer|min:0',
                     'practice_type' => 'required|in:Private,Government,Academe,Mixed',

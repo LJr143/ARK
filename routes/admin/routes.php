@@ -15,7 +15,7 @@ use App\Http\Controllers\View\ViewController;
 /**
  *  ADMIN PROTECTED ROUTES
  */
-Route::middleware(['admin.auth'])->prefix('admin')->group(function () {
+Route::middleware(['user.status','admin.auth'])->prefix('admin')->group(function () {
     Route::get('/members', [MemberManagement::class, 'index' ])->name('members.index');
     Route::get('/membership/pending', [MembershipApprovalController::class, 'pendingApplications'])->name('admin.membership.pending');
     Route::post('/membership/{id}/approve', [MembershipApprovalController::class, 'approveApplication'])->name('admin.membership.approve');

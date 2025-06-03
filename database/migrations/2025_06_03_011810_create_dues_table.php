@@ -13,6 +13,14 @@ return new class extends Migration
     {
         Schema::create('dues', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('member_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('fiscal_year_id')->constrained('fiscal_years');
+            $table->decimal('amount', 10, 2);
+            $table->decimal('penalty_amount', 10, 2)->default(0);
+            $table->date('payment_date')->nullable();
+            $table->date('due_date');
+            $table->enum('status', ['paid', 'unpaid', 'partial'])->default('unpaid');
+            $table->string('transaction_reference')->nullable();
             $table->timestamps();
         });
     }

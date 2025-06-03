@@ -551,8 +551,8 @@
                             </div>
 
                             <!-- Footer -->
-                            <div class="p-3 bg-gray-50 text-center border-t" x-show="filteredNotifications.length >= 20">
-                                <button class="text-sm text-blue-600 hover:text-blue-800 font-medium">
+                            <div class="p-3 bg-gray-50 text-center border-t" x-show="filteredNotifications.length >= 1">
+                                <button wire:navigate href="{{ route('notifications.details.index') }}" class="text-sm text-blue-600 hover:text-blue-800 font-medium">
                                     View all notifications
                                 </button>
                             </div>

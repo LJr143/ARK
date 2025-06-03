@@ -110,7 +110,6 @@ class ComputationRequestNotificationService
 
     private function getAdminUsers()
     {
-        // Adjust this query based on your user roles structure
         return User::where('role', 'admin')
             ->orWhere('is_admin', true)
             ->get();

@@ -2,85 +2,95 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ComputationRequestReply;
+use App\Services\PayPalService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Stripe\Stripe;
-use Stripe\PaymentIntent;
-use Stripe\Exception\CardException;
+use App\Models\Due;
+use App\Models\Transaction;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\DB;
 
 class PaymentController extends Controller
 {
-    public function __construct()
-    {
-        Stripe::setApiKey(config('stripe.stripe_secret'));
-    }
-
-    public function showPaymentForm()
-    {
-        return view('payment.form');
-    }
-
-    public function createPaymentIntent(Request $request)
+    public function success(Request $request)
     {
         try {
-            $paymentIntent = PaymentIntent::create([
-                'amount' => $request->amount * 100, // Convert to cents
-                'currency' => 'php',
-                'automatic_payment_methods' => [
-                    'enabled' => true,
-                ],
-                'metadata' => [
-                    'user_id' => auth()->id() ?? 'guest',
-                    'order_id' => $request->order_id ?? null,
-                ],
-            ]);
+            $orderId = $request->input('token');
+            $transactionId = Session::get('pending_payment_transaction_id');
+            $dueIds = Session::get('pending_payment_due_ids', []);
 
-            return response()->json([
-                'client_secret' => $paymentIntent->client_secret,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
-    }
-
-    public function handlePaymentSuccess(Request $request)
-    {
-        $paymentIntentId = $request->payment_intent;
-
-        // Debug: Log the payment intent ID
-        \Log::info('Payment Intent ID: ' . $paymentIntentId);
-
-        if (!$paymentIntentId) {
-            return redirect()->route('payment.form')
-                ->with('error', 'No payment intent ID provided.');
-        }
-
-        try {
-            $paymentIntent = PaymentIntent::retrieve($paymentIntentId);
-
-            // Debug: Log the payment status
-            \Log::info('Payment Status: ' . $paymentIntent->status);
-
-            if ($paymentIntent->status === 'succeeded') {
-                // Handle successful payment
-                // Save to database, send confirmation email, etc.
-
-                return view('payment.success')->with('success', 'Payment successful!');
-            } else {
-                return redirect()->route('payment.form')
-                    ->with('error', 'Payment was not successful. Status: ' . $paymentIntent->status);
+            if (!$orderId || !$transactionId || empty($dueIds)) {
+                return redirect()->route('request.history')
+                    ->with('error', 'Invalid payment session. Please contact support.');
             }
-        } catch (\Exception $e) {
-            // Debug: Log the actual error
-            \Log::error('Payment verification error: ' . $e->getMessage());
 
-            return redirect()->route('payment.form')
-                ->with('error', 'Payment verification failed: ' . $e->getMessage());
+            DB::transaction(function () use ($orderId, $transactionId, $dueIds) {
+                $paypalService = new PayPalService();
+                $result = $paypalService->captureOrder($orderId, auth()->id());
+
+                if ($result['success']) {
+                    // Get the transaction to get the transaction_reference
+                    $transaction = Transaction::find($transactionId);
+
+                    if (!$transaction) {
+                        throw new \Exception('Transaction record not found');
+                    }
+
+                    // Get the computation reply
+                    $reply = ComputationRequestReply::whereHas('computationRequest', function($q) {
+                        $q->where('member_id', auth()->id());
+                    })
+                        ->whereJsonContains('computation_data->dues', function($query) use ($dueIds) {
+                            $query->whereIn('id', $dueIds);
+                        })
+                        ->latest()
+                        ->first();
+
+                    // Update dues with transaction reference and mark as paid
+                    Due::whereIn('id', $dueIds)
+                        ->where('member_id', auth()->id())
+                        ->update([
+                            'status' => 'paid',
+                            'payment_date' => now(),
+                            'transaction_reference' => $transaction->transaction_reference
+                        ]);
+
+                    // Update computation_data if reply exists
+                    if ($reply && $reply->computation_data) {
+                        $computationData = $reply->computation_data;
+
+                        // Update status and transaction reference for each due in computation_data
+                        foreach ($computationData['dues'] as &$due) {
+                            if (in_array($due['id'], $dueIds)) {
+                                $due['status'] = 'paid';
+                                $due['transaction_reference'] = $transaction->transaction_reference;
+                            }
+                        }
+
+                        $reply->update(['computation_data' => $computationData]);
+                    }
+
+                    // Clear session
+                    Session::forget(['pending_payment_due_ids', 'pending_payment_transaction_id']);
+                } else {
+                    throw new \Exception($result['message'] ?? 'Payment capture failed');
+                }
+            });
+
+            return redirect()->route('request.history')
+                ->with('success', 'Payment completed successfully!');
+
+        } catch (\Exception $e) {
+            return redirect()->route('request.history')
+                ->with('error', 'Payment processing error: ' . $e->getMessage());
         }
     }
 
-    public function paymentSuccess()
+    public function cancel()
     {
-        return view('payment.success');
+        Session::forget(['pending_payment_due_ids', 'pending_payment_transaction_id']);
+        return redirect()->route('request.history')
+            ->with('info', 'Payment was cancelled.');
     }
 }

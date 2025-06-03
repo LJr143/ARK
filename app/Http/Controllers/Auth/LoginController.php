@@ -64,11 +64,6 @@ class LoginController extends Controller
     }
 
 
-    //TODO: ADMIN LOGIN
-
-    //TODO: ADMIN AUTHENTICATION
-
-
     /**
      * Handle Google Login
      */

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Transaction extends Model
@@ -35,5 +36,10 @@ class Transaction extends Model
     public function payment(): HasOne
     {
         return $this->hasOne(Payment::class, 'transaction_id');
+    }
+
+    public function dues(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Due::class, 'transaction_reference', 'transaction_reference');
     }
 }
