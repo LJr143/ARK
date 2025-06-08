@@ -50,6 +50,10 @@ class MembershipController extends Controller
 
         if(!$this->isSuperAdminExists()){
             $user->assignRole('superadmin');
+            $user->update([
+                'status' => 'approved',
+                'is_approved' => true,
+            ]);
             $user->notify(new MembershipCredentialsNotification($password));
         }else{
             $user->assignRole('member');

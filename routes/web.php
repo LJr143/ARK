@@ -44,6 +44,7 @@ Route::middleware(['auth:sanctum', 'user.status'])->group(function () {
 
     Route::get('/paypal/success', [PaymentController::class, 'success'])->name('paypal.success');
     Route::get('/paypal/cancel', [PaymentController::class, 'cancel'])->name('paypal.cancel');
+    Route::get('/settings/account-settings', [ViewController::class, 'accountSettings'])->name('admin.settings.account.settings');
 
 });
 

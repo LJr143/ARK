@@ -22,7 +22,6 @@ Route::middleware(['user.status','admin.auth'])->prefix('admin')->group(function
     Route::post('/membership/{id}/reject', [MembershipApprovalController::class, 'rejectApplication'])->name('admin.membership.reject');
     Route::get('/membership/payment', [ViewController::class, 'payment'])->name('admin.membership.payment');
     Route::get('/membership/transactions', [ViewController::class, 'transactions'])->name('admin.membership.transactions');
-    Route::get('/settings/account-settings', [ViewController::class, 'accountSettings'])->name('admin.settings.account.settings');
     Route::get('/request/computational-request', [ViewController::class, 'computationalRequest'])->name('admin.request.computational.request');
 
 });
