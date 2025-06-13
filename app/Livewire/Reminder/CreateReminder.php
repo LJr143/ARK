@@ -123,7 +123,7 @@ class CreateReminder extends Component
             'title' => 'required|string|max:255',
             'category' => 'required|exists:reminder_categories,id',
             'location' => 'required|string|max:255',
-            'reminder_start' => 'required|date|before_or_equal:reminder_end',
+            'reminder_start' => 'required|date',
             'reminder_end' => 'required|date|after_or_equal:reminder_start',
         ]);
 

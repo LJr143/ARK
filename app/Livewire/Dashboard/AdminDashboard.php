@@ -63,7 +63,7 @@ use Livewire\Component;
         // $this->paidMembers = Payment::whereBetween('created_at', [$this->startDate, $this->endDate])->count();
 
         // Placeholder values for demonstration
-        $this->paidDues = 10;
+        $this->paidDues = 100;
         $this->unpaidDues = 100;
         $this->totalDues = 1000;
         $this->paidMembers = 1;
@@ -119,6 +119,7 @@ use Livewire\Component;
         }
 
         $this->submittingRequest = false;
+        $this->closeComputationModal();
     }
 
     private function resetComputationForm(): void
@@ -164,7 +165,7 @@ use Livewire\Component;
     private function notifyAdminsOfComputationRequest(): void
     {
         $admins = \App\Models\User::whereHas('roles', function ($query) {
-            $query->where('name', 'superadmin');
+            $query->where('name', 'superadmin')->where('name', 'admin');
         })->get();
 
         // Ensure all required fields exist with fallbacks

@@ -50,24 +50,31 @@
             background: rgba(0, 0, 0, 0.3);
         }
 
-        /* Smooth transitions for main content */
         .main-content-transition {
             transition: margin-left 300ms ease-in-out;
         }
+
+        .scrollable-main-content {
+            overflow-y: auto;
+            height: calc(100vh - 3.5rem);
+        }
     </style>
 
-    <!-- Styles -->
     @livewireStyles
 </head>
-<body class="font-poppins antialiased" x-data="{ sidebarOpen: window.innerWidth >= 1024 }" x-init="
-        window.addEventListener('resize', () => {
-            if (window.innerWidth >= 1024) {
-                sidebarOpen = true;
-            } else {
-                sidebarOpen = false;
-            }
-        })
-    ">
+<body class="font-poppins antialiased"
+      x-data="{
+          sidebarOpen: $persist(window.innerWidth >= 1024)
+      }"
+      x-init="
+          window.addEventListener('resize', () => {
+              if (window.innerWidth >= 1024) {
+                  sidebarOpen = true;
+              } else {
+                  sidebarOpen = false;
+              }
+          })
+      ">
 <x-banner/>
 
 <!-- Main Layout Container -->
@@ -87,28 +94,25 @@
              style="display: none;">
         </div>
 
-
-        <div x-data="{ sidebarOpen: $persist(true) }">
-            <!-- Improved Sidebar -->
-            @if(isset($sidebar))
-                <aside
-                    class="fixed inset-y-0 left-0 lg:relative min-h-full bg-white z-50 max-w-[290px] sidebar-shadow transition-all duration-300 ease-in-out transform"
-                    :class="{
-                'w-72 translate-x-0': sidebarOpen,
-                '-translate-x-full w-20 lg:translate-x-0 lg:w-20': !sidebarOpen,
-                'lg:w-72': sidebarOpen
-            }">
-                    {{ $sidebar }}
-                </aside>
-            @endif
-        </div>
+        <!-- Improved Sidebar -->
+        @if(isset($sidebar))
+            <aside
+                class="fixed inset-y-0 left-0 lg:relative min-h-full bg-white z-50 max-w-[290px] sidebar-shadow transition-all duration-300 ease-in-out transform"
+                :class="{
+                    'w-72 translate-x-0': sidebarOpen,
+                    '-translate-x-full w-20 lg:translate-x-0 lg:w-20': !sidebarOpen,
+                    'lg:w-72': sidebarOpen
+                }">
+                {{ $sidebar }}
+            </aside>
+        @endif
 
         <!-- Primary Content Section -->
-        <div class="flex-1 flex flex-col main-content-transition"
+        <div class="flex-1 flex flex-col main-content-transition scrollable-main-content"
              :class="{
-                     'lg:ml-72': sidebarOpen && typeof $sidebar !== 'undefined',
-                     'lg:ml-20': !sidebarOpen && typeof $sidebar !== 'undefined'
-                 }">
+                 'lg:ml-72': sidebarOpen && typeof $sidebar !== 'undefined',
+                 'lg:ml-20': !sidebarOpen && typeof $sidebar !== 'undefined'
+             }">
 
             <!-- Page Header (Conditional) -->
             @if(isset($header))

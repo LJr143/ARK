@@ -560,7 +560,7 @@
                     </div>
                 </div>
 
-                <!-- Settings Dropdown (keeping your existing code) -->
+                <!-- Settings Dropdown  -->
                 <div class="ms-3 relative">
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
@@ -593,8 +593,8 @@
                                 {{ __('Manage Account') }}
                             </div>
 
-                            <x-dropdown-link href="{{ route('profile.show') }}">
-                                {{ __('Profile') }}
+                            <x-dropdown-link href="{{ route('admin.settings.account.settings') }}">
+                                {{ __('Settings') }}
                             </x-dropdown-link>
 
                             @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
@@ -619,38 +619,25 @@
                 </div>
             </div>
 
-            <!-- Hamburger (keeping your existing code) -->
+            <!-- Hamburger-->
             <div class="-me-2 flex items-center sm:hidden">
                 <button @click="open = ! open"
                         class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
-                    <svg class="size-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex"
-                              stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M4 6h16M4 12h16M4 18h16"/>
-                        <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round"
-                              stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
+                    <img class="size-8 rounded-full object-cover"
+                         src="{{ Auth::user()->profile_photo_path ? asset('storage/' . Auth::user()->profile_photo_path) : Auth::user()->profile_photo_url }}"
+                         alt="{{ Auth::user()->first_name }}"/>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Responsive navigation menu (keeping your existing code) -->
+    <!-- Responsive navigation menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
-        <div class="pt-4 pb-1 border-t border-gray-200">
+        <div class="pt-8 pb-1border-gray-200">
             <div class="flex items-center px-4">
-                @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
-                    <div class="shrink-0 me-3">
-                        <img class="size-10 rounded-full object-cover" src="{{ Auth::user()->profile_photo_path }}"
-                             alt="{{ Auth::user()->first_name }}"/>
-                    </div>
-                @endif
-
                 <div>
                     <div>
-                        <div class="font-medium text-base text-gray-800">{{ Auth::user()->first_name }}</div>
-                        <div class="font-medium text-base text-gray-800">{{ Auth::user()->middle_name }}</div>
-                        <div class="font-medium text-base text-gray-800">{{ Auth::user()->family_name }}</div>
+                        <div class="font-medium text-base text-gray-800">{{ Auth::user()->first_name . ' ' . Auth::user()->middle_name ?? ' '  . ' ' . Auth::user()->family_name }}</div>
                     </div>
                     <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
                 </div>
@@ -658,8 +645,8 @@
 
             <div class="mt-3 space-y-1">
                 <!-- Account Management -->
-                <x-responsive-nav-link href="{{ route('profile.show') }}" :active="request()->routeIs('profile.show')">
-                    {{ __('Profile') }}
+                <x-responsive-nav-link href="{{ route('admin.settings.account.settings') }}" :active="request()->routeIs('admin.settings.account.settings')">
+                    {{ __('Settings') }}
                 </x-responsive-nav-link>
 
                 @if (Laravel\Jetstream\Jetstream::hasApiFeatures())

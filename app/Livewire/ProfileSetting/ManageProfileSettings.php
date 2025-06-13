@@ -118,12 +118,9 @@ class ManageProfileSettings extends Component
         }
 
         $user = User::findOrFail($userId);
-        $user->syncRoles([]);
-        $this->users = User::with('roles')
-            ->whereHas('roles', function ($query) {
-                $query->whereIn('name', ['superadmin', 'admin']);
-            })->get();
-        session()->flash('message', 'Role removed successfully.');
+        $user->syncRoles(['member']);
+        $this->users = User::with('roles')->get();
+        session()->flash('message', 'User roles updated to member successfully.');
     }
 
     public function configureRole($roleName): void

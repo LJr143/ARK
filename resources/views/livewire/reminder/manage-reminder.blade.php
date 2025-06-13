@@ -53,17 +53,9 @@
 
                         {{-- Desktop Navigation --}}
                         <nav class="hidden lg:flex space-x-8 mt-6">
-                            <button wire:click="setMainTab('list')"
-                                    class="transition-colors duration-200 {{ $activeMainTab === 'list' ? 'text-white border-b-2 border-blue-600 pb-2 font-semibold' : 'text-black hover:text-gray-700 pb-2 font-medium' }}">
-                                <i class="fas fa-list mr-2"></i>List
-                            </button>
-                            <button wire:click="setMainTab('manage')"
-                                    class="transition-colors duration-200 {{ $activeMainTab === 'manage' ? 'text-white border-b-2 border-blue-600 pb-2 font-semibold' : 'text-black hover:text-gray-700 pb-2 font-medium' }}">
-                                <i class="fas fa-cog mr-2"></i>Manage Reminder
-                            </button>
                             <button wire:click="setMainTab('recipients')"
                                     class="transition-colors duration-200 {{ $activeMainTab === 'recipients' ? 'text-white border-b-2 border-blue-600 pb-2 font-semibold' : 'text-black hover:text-gray-700 pb-2 font-medium' }}">
-                                <i class="fas fa-users mr-2"></i>Recipients
+                                <i class="fas fa-users mr-2"></i>Recipients and Reminder Details
                             </button>
                         </nav>
 
@@ -107,31 +99,6 @@
                     <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
                         <div class="mt-3 text-center">
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Send Reminder</h3>
-
-                            <!-- Notification Method Selection -->
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Notification Methods</label>
-                                <div class="space-y-2">
-                                    <label class="flex items-center">
-                                        <input type="checkbox"
-                                               wire:model="selectedNotificationMethods.email"
-                                               class="rounded border-gray-300">
-                                        <span class="ml-2">Email</span>
-                                    </label>
-                                    <label class="flex items-center">
-                                        <input type="checkbox"
-                                               wire:model="selectedNotificationMethods.sms"
-                                               class="rounded border-gray-300">
-                                        <span class="ml-2">SMS</span>
-                                    </label>
-                                    <label class="flex items-center">
-                                        <input type="checkbox"
-                                               wire:model="selectedNotificationMethods.app"
-                                               class="rounded border-gray-300">
-                                        <span class="ml-2">App Notification</span>
-                                    </label>
-                                </div>
-                            </div>
 
                             <!-- Loading State -->
                             @if($sendingNotification)
@@ -270,44 +237,63 @@
                         @if($activeSubTab === 'members')
                             @if($members->count() > 0)
                                 {{-- Stats Cards --}}
-                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                                    <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-lg p-4 text-white">
-                                        <div class="flex items-center justify-between">
-                                            <div>
-                                                <p class="text-green-100 text-sm">Paid</p>
-                                                <p class="text-2xl font-bold">{{ $members->where('payment_status', 'paid')->count() }}</p>
+                                @php
+                                    $cards = [
+                                        [
+                                            'show' => $reminder->category->name === 'Deadline',
+                                            'color' => 'from-green-500 to-green-600',
+                                            'text' => 'text-green-100',
+                                            'icon' => 'fa-check-circle',
+                                            'iconColor' => 'text-green-200',
+                                            'label' => 'Paid',
+                                            'count' => $members->where('payment_status', 'paid')->count()
+                                        ],
+                                        [
+                                            'show' => $reminder->category->name === 'Deadline',
+                                            'color' => 'from-yellow-500 to-yellow-600',
+                                            'text' => 'text-yellow-100',
+                                            'icon' => 'fa-clock',
+                                            'iconColor' => 'text-yellow-200',
+                                            'label' => 'Unpaid',
+                                            'count' => $members->where('payment_status', 'unpaid')->count()
+                                        ],
+                                        [
+                                            'show' => $reminder->category->name === 'Deadline',
+                                            'color' => 'from-red-500 to-red-600',
+                                            'text' => 'text-red-100',
+                                            'icon' => 'fa-exclamation-triangle',
+                                            'iconColor' => 'text-red-200',
+                                            'label' => 'Overdue',
+                                            'count' => $members->where('payment_status', 'overdue')->count()
+                                        ],
+                                        [
+                                            'show' => true, // Always show total
+                                            'color' => 'from-blue-500 to-blue-600',
+                                            'text' => 'text-blue-100',
+                                            'icon' => 'fa-users',
+                                            'iconColor' => 'text-blue-200',
+                                            'label' => 'Total',
+                                            'count' => $members->count()
+                                        ]
+                                    ];
+                                @endphp
+
+                                <div class="grid grid-cols-1 gap-4 mb-6
+                                @if($reminder->category->name === 'Deadline') sm:grid-cols-2 lg:grid-cols-4 @else sm:grid-cols-1 @endif">
+                                    @foreach($cards as $card)
+                                        @if($card['show'])
+                                            <div
+                                                class="bg-gradient-to-r {{ $card['color'] }} rounded-lg p-4 text-white">
+                                                <div class="flex items-center justify-between">
+                                                    <div>
+                                                        <p class="{{ $card['text'] }} text-sm">{{ $card['label'] }}</p>
+                                                        <p class="text-2xl font-bold">{{ $card['count'] }}</p>
+                                                    </div>
+                                                    <i class="fas {{ $card['icon'] }} text-2xl {{ $card['iconColor'] }}"></i>
+                                                </div>
                                             </div>
-                                            <i class="fas fa-check-circle text-2xl text-green-200"></i>
-                                        </div>
-                                    </div>
-                                    <div
-                                        class="bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg p-4 text-white">
-                                        <div class="flex items-center justify-between">
-                                            <div>
-                                                <p class="text-yellow-100 text-sm">Unpaid</p>
-                                                <p class="text-2xl font-bold">{{ $members->where('payment_status', 'unpaid')->count() }}</p>
-                                            </div>
-                                            <i class="fas fa-clock text-2xl text-yellow-200"></i>
-                                        </div>
-                                    </div>
-                                    <div class="bg-gradient-to-r from-red-500 to-red-600 rounded-lg p-4 text-white">
-                                        <div class="flex items-center justify-between">
-                                            <div>
-                                                <p class="text-red-100 text-sm">Overdue</p>
-                                                <p class="text-2xl font-bold">{{ $members->where('payment_status', 'overdue')->count() }}</p>
-                                            </div>
-                                            <i class="fas fa-exclamation-triangle text-2xl text-red-200"></i>
-                                        </div>
-                                    </div>
-                                    <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-4 text-white">
-                                        <div class="flex items-center justify-between">
-                                            <div>
-                                                <p class="text-blue-100 text-sm">Total</p>
-                                                <p class="text-2xl font-bold">{{ $members->count() }}</p>
-                                            </div>
-                                            <i class="fas fa-users text-2xl text-blue-200"></i>
-                                        </div>
-                                    </div>
+                                        @endif
+                                    @endforeach
                                 </div>
 
                                 {{-- Members Table --}}
@@ -349,9 +335,11 @@
                                                 <th class="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                     Member
                                                 </th>
-                                                <th class="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                    Payment Status
-                                                </th>
+                                                {{--                                                @if($reminder->category->name == 'Deadline')--}}
+                                                {{--                                                    <th class="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">--}}
+                                                {{--                                                        Payment Status--}}
+                                                {{--                                                    </th>--}}
+                                                {{--                                                @endif--}}
                                                 <th class="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                     Contact Details
                                                 </th>
@@ -377,12 +365,14 @@
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td class="px-4 lg:px-6 py-4 whitespace-nowrap">
-                                                        <span
-                                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $this->getPaymentStatusBadgeClass($member['payment_status']) }}">
-                                                            {{ ucfirst($member['payment_status']) }}
-                                                        </span>
-                                                    </td>
+                                                    {{--                                                    @if($reminder->category->name == 'Deadline')--}}
+                                                    {{--                                                    <td class="px-4 lg:px-6 py-4 whitespace-nowrap">--}}
+                                                    {{--                                                        <span--}}
+                                                    {{--                                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $this->getPaymentStatusBadgeClass($member['payment_status']) }}">--}}
+                                                    {{--                                                            {{ ucfirst($member['payment_status']) }}--}}
+                                                    {{--                                                        </span>--}}
+                                                    {{--                                                    </td>--}}
+                                                    {{--                                                    @endif--}}
                                                     <td class="px-4 lg:px-6 py-4 whitespace-nowrap">
                                                         <div class="text-sm text-gray-900">{{ $member['email'] }}</div>
                                                         <div class="text-sm text-gray-500">{{ $member['phone'] }}</div>
@@ -555,6 +545,50 @@
                                                 .attachment-item:hover .delete-btn {
                                                     opacity: 1;
                                                 }
+
+                                                .message-details-pre {
+                                                    background: rgba(255, 255, 255, 0.95);
+                                                    border-radius: 0.5rem;
+                                                    padding: 1rem;
+                                                    margin: 0;
+                                                    max-height: 300px;
+                                                    overflow-y: auto;
+                                                    transition: all 0.3s ease;
+                                                }
+
+                                                .message-details-pre:hover {
+                                                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+                                                }
+
+                                                .message-details-textarea {
+                                                    background: rgba(255, 255, 255, 0.95);
+                                                    border-radius: 0.5rem;
+                                                    padding: 1rem;
+                                                    transition: all 0.3s ease;
+                                                    resize: vertical; /* Allow vertical resizing only */
+                                                    min-height: 100px;
+                                                    max-height: 300px;
+                                                }
+
+                                                .message-details-textarea:focus {
+                                                    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+                                                }
+
+                                                .message-details-pre::-webkit-scrollbar,
+                                                .message-details-textarea::-webkit-scrollbar {
+                                                    width: 8px;
+                                                }
+
+                                                .message-details-pre::-webkit-scrollbar-thumb,
+                                                .message-details-textarea::-webkit-scrollbar-thumb {
+                                                    background: rgba(59, 130, 246, 0.3);
+                                                    border-radius: 4px;
+                                                }
+
+                                                .message-details-pre::-webkit-scrollbar-thumb:hover,
+                                                .message-details-textarea::-webkit-scrollbar-thumb:hover {
+                                                    background: rgba(59, 130, 246, 0.5);
+                                                }
                                             </style>
                                             <div
                                                 class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
@@ -723,10 +757,13 @@
                                                     <div
                                                         class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border-l-4 border-blue-500 mb-4">
                                                         @if($isEditing)
-                                                            <textarea wire:model="editableFields.description" rows="4"
-                                                                      class="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"></textarea>
+                                                            <textarea wire:model="editableFields.description" rows="6"
+                                                                      class="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 font-mono text-gray-700 resize-vertical"
+                                                                      style="white-space: pre-wrap; font-size: 0.95rem;"></textarea>
                                                         @else
-                                                            <p class="text-gray-700 leading-relaxed mb-4">{{ $reminderDetails['description'] }}</p>
+                                                            <pre
+                                                                class="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg font-mono text-gray-700 overflow-x-auto"
+                                                                style="white-space: pre-wrap; font-size: 0.95rem;">{{ $reminderDetails['description'] }}</pre>
                                                         @endif
                                                     </div>
 

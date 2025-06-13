@@ -562,7 +562,7 @@
                     </div>
                 </div>
 
-                <!-- Settings Dropdown (keeping your existing code) -->
+                <!-- Settings Dropdown  -->
                 <div class="ms-3 relative">
                     <?php if (isset($component)) { $__componentOriginaldf8083d4a852c446488d8d384bbc7cbe = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginaldf8083d4a852c446488d8d384bbc7cbe = $attributes; } ?>
@@ -608,15 +608,15 @@
 
                             <?php if (isset($component)) { $__componentOriginal68cb1971a2b92c9735f83359058f7108 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal68cb1971a2b92c9735f83359058f7108 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.dropdown-link','data' => ['href' => ''.e(route('profile.show')).'']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.dropdown-link','data' => ['href' => ''.e(route('admin.settings.account.settings')).'']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('dropdown-link'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['href' => ''.e(route('profile.show')).'']); ?>
-                                <?php echo e(__('Profile')); ?>
+<?php $component->withAttributes(['href' => ''.e(route('admin.settings.account.settings')).'']); ?>
+                                <?php echo e(__('Settings')); ?>
 
                              <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
@@ -697,38 +697,25 @@
                 </div>
             </div>
 
-            <!-- Hamburger (keeping your existing code) -->
+            <!-- Hamburger-->
             <div class="-me-2 flex items-center sm:hidden">
                 <button @click="open = ! open"
                         class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
-                    <svg class="size-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex"
-                              stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M4 6h16M4 12h16M4 18h16"/>
-                        <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round"
-                              stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
+                    <img class="size-8 rounded-full object-cover"
+                         src="<?php echo e(Auth::user()->profile_photo_path ? asset('storage/' . Auth::user()->profile_photo_path) : Auth::user()->profile_photo_url); ?>"
+                         alt="<?php echo e(Auth::user()->first_name); ?>"/>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Responsive navigation menu (keeping your existing code) -->
+    <!-- Responsive navigation menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
-        <div class="pt-4 pb-1 border-t border-gray-200">
+        <div class="pt-8 pb-1border-gray-200">
             <div class="flex items-center px-4">
-                <?php if(Laravel\Jetstream\Jetstream::managesProfilePhotos()): ?>
-                    <div class="shrink-0 me-3">
-                        <img class="size-10 rounded-full object-cover" src="<?php echo e(Auth::user()->profile_photo_path); ?>"
-                             alt="<?php echo e(Auth::user()->first_name); ?>"/>
-                    </div>
-                <?php endif; ?>
-
                 <div>
                     <div>
-                        <div class="font-medium text-base text-gray-800"><?php echo e(Auth::user()->first_name); ?></div>
-                        <div class="font-medium text-base text-gray-800"><?php echo e(Auth::user()->middle_name); ?></div>
-                        <div class="font-medium text-base text-gray-800"><?php echo e(Auth::user()->family_name); ?></div>
+                        <div class="font-medium text-base text-gray-800"><?php echo e(Auth::user()->first_name . ' ' . Auth::user()->middle_name ?? ' '  . ' ' . Auth::user()->family_name); ?></div>
                     </div>
                     <div class="font-medium text-sm text-gray-500"><?php echo e(Auth::user()->email); ?></div>
                 </div>
@@ -738,15 +725,15 @@
                 <!-- Account Management -->
                 <?php if (isset($component)) { $__componentOriginald69b52d99510f1e7cd3d80070b28ca18 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginald69b52d99510f1e7cd3d80070b28ca18 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.responsive-nav-link','data' => ['href' => ''.e(route('profile.show')).'','active' => request()->routeIs('profile.show')]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.responsive-nav-link','data' => ['href' => ''.e(route('admin.settings.account.settings')).'','active' => request()->routeIs('admin.settings.account.settings')]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
 <?php $component->withName('responsive-nav-link'); ?>
 <?php if ($component->shouldRender()): ?>
 <?php $__env->startComponent($component->resolveView(), $component->data()); ?>
 <?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
 <?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
 <?php endif; ?>
-<?php $component->withAttributes(['href' => ''.e(route('profile.show')).'','active' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(request()->routeIs('profile.show'))]); ?>
-                    <?php echo e(__('Profile')); ?>
+<?php $component->withAttributes(['href' => ''.e(route('admin.settings.account.settings')).'','active' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(request()->routeIs('admin.settings.account.settings'))]); ?>
+                    <?php echo e(__('Settings')); ?>
 
                  <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>

@@ -45,26 +45,26 @@ class Index extends Component
 
         if ($notification && !$notification->read_at) {
             $notification->markAsRead();
-            $this->emitSelf('notificationRead');
+            $this->dispatch('notificationRead');
         }
     }
 
     public function markAllAsRead()
     {
         Auth::user()->unreadNotifications->markAsRead();
-        $this->emitSelf('notificationRead');
+        $this->dispatch('notificationRead');
     }
 
     public function deleteNotification($id)
     {
         Auth::user()->notifications()->where('id', $id)->delete();
-        $this->emitSelf('notificationDeleted');
+        $this->dispatch('notificationDeleted');
     }
 
     public function clearAll()
     {
         Auth::user()->notifications()->delete();
-        $this->emitSelf('notificationDeleted');
+        $this->dispatch('notificationDeleted');
     }
 
     public function loadMore()

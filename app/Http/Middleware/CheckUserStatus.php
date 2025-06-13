@@ -10,7 +10,7 @@ class CheckUserStatus
 {
     public function handle(Request $request, Closure $next)
     {
-        $auth = Auth::guard();
+        $auth = Auth::guard('web');
 
         if ($auth->check()) {
             $user = $auth->user();

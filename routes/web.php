@@ -23,8 +23,9 @@ Route::get('login', function () {
 Route::get('/login', fn() => redirect('/'))->name('login');
 Route::get('login/google', [LoginController::class, 'redirectToGoogle'])->name('login.google');
 Route::get('login/google/callback', [LoginController::class, 'handleGoogleCallback']);
-Route::get('/pending-approval', [PendingApprovalController::class, 'index'])
-    ->name('pending-approval');
+Route::get('/pending-approval', [PendingApprovalController::class, 'index'])->name('pending-approval');
+Route::get('/registration/success', function () {return view('ark.admin.auth.success');})->name('member.registration.success');
+
 
 
 Route::middleware(['auth:sanctum', 'user.status'])->group(function () {

@@ -5,7 +5,7 @@
          class="h-6 w-6 transition-transform duration-200 group-hover:scale-110"
          fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              :d="sidebarOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'"/>
+              :d="sidebarOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'" d=""/>
     </svg>
 </button>
 
@@ -93,6 +93,20 @@
         </li>
 
         @if(auth()->user()->hasAnyRole(['admin', 'superadmin']))
+            <!-- Section Divider -->
+            <li class="py-2">
+                <div class="border-t border-gray-200 transition-all duration-300"
+                     :class="{'lg:opacity-0': !sidebarOpen, 'opacity-100': sidebarOpen}"></div>
+            </li>
+
+            <!-- Financial Section Header -->
+            <li class="transition-all duration-300"
+                :class="{'lg:opacity-0 lg:h-0 overflow-hidden': !sidebarOpen, 'opacity-100 h-auto': sidebarOpen}">
+                <div class="px-3 py-2">
+                    <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Financial</h3>
+                </div>
+            </li>
+
             <!-- Members -->
             <li>
                 <a href="{{ route('members.index') }}"
@@ -110,20 +124,6 @@
                                                  {{ request()->routeIs('members.index') ? 'text-gray-800' : 'text-gray-600 group-hover:text-gray-800' }}"
                           :class="{'lg:w-0 lg:opacity-0': !sidebarOpen, 'w-auto opacity-100': sidebarOpen}">Members</span>
                 </a>
-            </li>
-
-            <!-- Section Divider -->
-            <li class="py-2">
-                <div class="border-t border-gray-200 transition-all duration-300"
-                     :class="{'lg:opacity-0': !sidebarOpen, 'opacity-100': sidebarOpen}"></div>
-            </li>
-
-            <!-- Financial Section Header -->
-            <li class="transition-all duration-300"
-                :class="{'lg:opacity-0 lg:h-0 overflow-hidden': !sidebarOpen, 'opacity-100 h-auto': sidebarOpen}">
-                <div class="px-3 py-2">
-                    <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Financial</h3>
-                </div>
             </li>
 
             <!-- Payments -->

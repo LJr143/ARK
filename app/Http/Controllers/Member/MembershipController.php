@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Member;
 
 use App\Models\User;
 use App\Notifications\MembershipCredentialsNotification;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Hash;
@@ -25,6 +26,7 @@ class MembershipController extends Controller
     {
         return Role::where('name', 'superadmin')->whereHas('users')->exists();
     }
+
     public function saveStep(Request $request, $step)
     {
         $rules = $this->getValidationRules($step);
@@ -40,7 +42,6 @@ class MembershipController extends Controller
             return redirect()->route('membership.form', ['step' => $step + 1]);
         }
 
-        // Final step - save to database
         $memberData['status'] = 'pending';
         $memberData['username'] = $memberData['email'];
         $memberData['password'] = Hash::make($password);
@@ -48,20 +49,27 @@ class MembershipController extends Controller
 
         $user = User::create($memberData);
 
-        if(!$this->isSuperAdminExists()){
+        if (!$this->isSuperAdminExists()) {
             $user->assignRole('superadmin');
             $user->update([
                 'status' => 'approved',
                 'is_approved' => true,
             ]);
             $user->notify(new MembershipCredentialsNotification($password));
-        }else{
+        } else {
             $user->assignRole('member');
         }
 
         $request->session()->forget('member_data');
 
-        return redirect()->route('member.login');
+        // Flash success message to session
+        $request->session()->flash('registration_success', [
+            'title' => "You're all set!",
+            'message' => "Thanks for signing up. We've sent your temporary password to your email. " .
+                "Check your inbox (or spam folder—just in case) and log in when you're ready!"
+        ]);
+
+        return redirect()->route('member.registration.success');
     }
 
     protected function getValidationRules($step)
@@ -73,14 +81,27 @@ class MembershipController extends Controller
                     'family_name' => 'required|string|max:255',
                     'first_name' => 'required|string|max:255',
                     'middle_name' => 'nullable|string|max:255',
-                    'birthdate' => 'required|date', //TODO: VALIDATION RULES AT LEAST 20
-                    'birthplace' => 'required|string|max:255',
-                    'sex' => 'required|in:Male,Female,Other',
-                    'civil_status' => 'required|in:Single,Married,Divorced,Widowed',
-                    'permanent_address' => 'required|string',
+                    'birthdate' => [
+                        'required',
+                        'date',
+                        function ($attribute, $value, $fail) {
+                            $minAge = 22;
+                            $birthdate = new DateTime($value);
+                            $today = new DateTime();
+                            $age = $today->diff($birthdate)->y;
+
+                            if ($age < $minAge) {
+                                $fail("You must be at least {$minAge} years old.");
+                            }
+                        },
+                    ],
+                    'birthplace' => 'nullable|string|max:255',
+                    'sex' => 'nullable|in:Male,Female,Other',
+                    'civil_status' => 'nullable|in:Single,Married,Divorced,Widowed',
+                    'permanent_address' => 'nullable|string',
                     'telephone' => 'nullable|string|max:20',
                     'fax' => 'nullable|string|max:20',
-                    'mobile' => 'required|string|max:11', //TODO: MOBILE NUMBER FORMAT
+                    'mobile' => 'required|numeric|max:11',
                     'email' => 'required|email|unique:users,email',
                     'facebook_id' => 'nullable|string|max:255',
                     'twitter_id' => 'nullable|string|max:255',
@@ -95,7 +116,7 @@ class MembershipController extends Controller
                     'company_telephone' => 'nullable|string|max:20',
                     'company_fax' => 'nullable|string|max:20',
                     'designation' => 'nullable|string|max:255',
-                    'school_graduated' => 'required|string|max:255',
+                    'school_graduated' => 'nullable|string|max:255',
                     'year_graduated' => 'required|integer|min:1900|max:' . date('Y'),
                     'honors' => 'nullable|string|max:255',
                     'post_graduate_school' => 'nullable|string|max:255',
@@ -107,13 +128,13 @@ class MembershipController extends Controller
                 break;
             case 3:
                 $rules = [
-                    'prc_registration_number' => 'required|string|max:255', //TODO: LIMITATION  TO STANDARD PRC NUMBER
+                    'prc_registration_number' => 'required|numeric',
                     'prc_date_issued' => 'required|date',
                     'prc_valid_until' => 'required|date', //TODO: MATCH WITH BIRTHDATE
-                    'expertise' => 'required|string',
-                    'years_of_practice' => 'required|integer|min:0',
-                    'practice_type' => 'required|in:Private,Government,Academe,Mixed',
-                    'services_rendered' => 'required|string',
+                    'expertise' => 'nullable|string',
+                    'years_of_practice' => 'nullable|integer|min:0',
+                    'practice_type' => 'nullable|in:Private,Government,Academe,Mixed',
+                    'services_rendered' => 'nullable|string',
                     'cpe_seminars_attended' => 'nullable|string',
                 ];
                 break;

@@ -426,7 +426,7 @@
                                             placeholder="Search for recipients..."
                                             wire:model.live="recipientSearch"
                                             x-on:focus="isOpen = true"
-                                            x-on:blur="setTimeout(() => isOpen = false, 200)"
+                                            x-on:blur="setTimeout(() => isOpen = false, 100)"
                                         >
 
                                         <div

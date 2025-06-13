@@ -15,7 +15,7 @@
              console.log('Received show-role-modal event');
              showRoleModal = true;
          });
-     " >
+     ">
     <div class="max-w-12xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Page Header -->
         <div class="mb-8">
@@ -30,7 +30,7 @@
                     <button
                         @click="activeTab = 'general'"
                         :class="activeTab === 'general' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-                        class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200"
                     >
                         <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor"
                              viewBox="0 0 24 24">
@@ -39,32 +39,36 @@
                         </svg>
                         General Settings
                     </button>
-                    <button
-                        @click="activeTab = 'roles'"
-                        :class="activeTab === 'roles' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-                        class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                    >
-                        <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor"
-                             viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                        </svg>
-                        Manage Roles
-                    </button>
-                    <button
-                        @click="activeTab = 'admin'"
-                        :class="activeTab === 'admin' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-                        class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                    >
-                        <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor"
-                             viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        </svg>
-                        Admin Settings
-                    </button>
+                    @can('manage-role')
+                        <button
+                            @click="activeTab = 'roles'"
+                            :class="activeTab === 'roles' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                            class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 "
+                        >
+                            <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                            </svg>
+                            Manage Roles
+                        </button>
+                    @endcan
+                    @can('admin-setting')
+                        <button
+                            @click="activeTab = 'admin'"
+                            :class="activeTab === 'admin' ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                            class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 "
+                        >
+                            <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            Admin Settings
+                        </button>
+                    @endcan
                 </nav>
             </div>
         </div>
@@ -171,8 +175,10 @@
                                     class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 >
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor"
+                                         viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                     </svg>
                                 </div>
                             </div>
@@ -180,7 +186,8 @@
                             <button @click="showAddMemberModal = true; $wire.resetForm()"
                                     class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center whitespace-nowrap">
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                 </svg>
                                 Assign Admin Role
                             </button>
@@ -224,10 +231,18 @@
                                         <table class="min-w-full divide-y divide-gray-200">
                                             <thead class="bg-gray-50">
                                             <tr>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Member</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Member
+                                                </th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Email
+                                                </th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Role
+                                                </th>
+                                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Actions
+                                                </th>
                                             </tr>
                                             </thead>
                                             <tbody class="bg-white divide-y divide-gray-200">
@@ -241,8 +256,10 @@
                                                                      alt="{{ $user->first_name . ' ' . $user->family_name }}">
                                                             </div>
                                                             <div class="ml-4">
-                                                                <div class="text-sm font-medium text-gray-900">{{ $user->first_name . ' ' . ($user->middle_name ? $user->middle_name . ' ' : '') . $user->family_name }}</div>
-                                                                <div class="text-sm text-gray-500">{{ $user->position ?? 'No position' }}</div>
+                                                                <div
+                                                                    class="text-sm font-medium text-gray-900">{{ $user->first_name . ' ' . ($user->middle_name ? $user->middle_name . ' ' : '') . $user->family_name }}</div>
+                                                                <div
+                                                                    class="text-sm text-gray-500">{{ $user->position ?? 'No position' }}</div>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -256,28 +273,35 @@
                                                 </span>
                                                     </td>
                                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-{{--                                                        <button wire:click="editMember({{ $user->id }})"--}}
-{{--                                                                class="text-blue-600 hover:text-blue-900 mr-3 inline-flex items-center">--}}
-{{--                                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">--}}
-{{--                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>--}}
-{{--                                                            </svg>--}}
-{{--                                                            Edit--}}
-{{--                                                        </button>--}}
+                                                        {{--                                                        <button wire:click="editMember({{ $user->id }})"--}}
+                                                        {{--                                                                class="text-blue-600 hover:text-blue-900 mr-3 inline-flex items-center">--}}
+                                                        {{--                                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">--}}
+                                                        {{--                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>--}}
+                                                        {{--                                                            </svg>--}}
+                                                        {{--                                                            Edit--}}
+                                                        {{--                                                        </button>--}}
                                                         <button wire:click="removeMember({{ $user->id }})"
                                                                 class="text-red-600 hover:text-red-900 inline-flex items-center"
                                                                 x-data="{ loading: false }"
                                                                 @click="loading = true"
                                                                 wire:loading.attr="disabled">
                                                                 <span x-show="!loading" class="flex">
-                                                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                                    <svg class="w-4 h-4 mr-1" fill="none"
+                                                                         stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round"
+                                                                              stroke-linejoin="round" stroke-width="2"
+                                                                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                                                     </svg>
                                                                     Remove
                                                                 </span>
                                                             <span x-show="loading" class="inline-flex items-center">
-                                                        <svg class="animate-spin -ml-1 mr-1 h-4 w-4 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                        <svg class="animate-spin -ml-1 mr-1 h-4 w-4 text-red-600"
+                                                             xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                             viewBox="0 0 24 24">
+                                                            <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                                    stroke="currentColor" stroke-width="4"></circle>
+                                                            <path class="opacity-75" fill="currentColor"
+                                                                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                                         </svg>
                                                         Removing...
                                                     </span>
@@ -305,23 +329,28 @@
                                     </div>
                                     <div class="space-y-4">
                                         @forelse(\Spatie\Permission\Models\Role::all() as $role)
-                                            <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow duration-200">
+                                            <div
+                                                class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow duration-200">
                                                 <div class="flex items-center justify-between">
                                                     <div>
                                                         <h5 class="font-medium text-gray-900 capitalize">{{ $role->name }}</h5>
-                                                        <p class="text-sm text-gray-500">{{ $role->permissions->count() }} permissions assigned</p>
+                                                        <p class="text-sm text-gray-500">{{ $role->permissions->count() }}
+                                                            permissions assigned</p>
                                                     </div>
                                                     <button wire:click="configureRole('{{ $role->name }}')"
                                                             class="text-blue-600 hover:text-blue-800 text-sm font-medium inline-flex items-center">
                                                         Configure
-                                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor"
+                                                             viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                  stroke-width="2" d="M9 5l7 7-7 7"></path>
                                                         </svg>
                                                     </button>
                                                 </div>
                                             </div>
                                         @empty
-                                            <div class="bg-white border border-gray-200 rounded-lg p-6 text-center text-gray-500">
+                                            <div
+                                                class="bg-white border border-gray-200 rounded-lg p-6 text-center text-gray-500">
                                                 No roles found. Create your first role to get started.
                                             </div>
                                         @endforelse
@@ -336,14 +365,19 @@
                                             + Add New Permission
                                         </button>
                                     </div>
-                                    <div class="bg-white border border-gray-200 rounded-lg p-4 max-h-[500px] overflow-y-auto shadow-inner">
+                                    <div
+                                        class="bg-white border border-gray-200 rounded-lg p-4 max-h-[500px] overflow-y-auto shadow-inner">
                                         @forelse(\Spatie\Permission\Models\Permission::all() as $permission)
-                                            <div class="flex items-center justify-between py-3 px-4 bg-white hover:bg-gray-50 rounded-lg transition-colors duration-150">
+                                            <div
+                                                class="flex items-center justify-between py-3 px-4 bg-white hover:bg-gray-50 rounded-lg transition-colors duration-150">
                                                 <div>
-                                                    <span class="text-sm font-medium text-gray-700">{{ $permission->name }}</span>
-                                                    <p class="text-xs text-gray-500 mt-1">Used by {{ $permission->roles_count }} roles</p>
+                                                    <span
+                                                        class="text-sm font-medium text-gray-700">{{ $permission->name }}</span>
+                                                    <p class="text-xs text-gray-500 mt-1">Used
+                                                        by {{ $permission->roles_count }} roles</p>
                                                 </div>
-                                                <span class="text-xs text-gray-500 bg-gray-100 px-2.5 py-1 rounded-full">
+                                                <span
+                                                    class="text-xs text-gray-500 bg-gray-100 px-2.5 py-1 rounded-full">
                                             {{ $permission->guard_name }}
                                         </span>
                                             </div>
@@ -359,16 +393,20 @@
 
                         <!-- Admin Settings Tab -->
                         <div x-show="roleTab === 'admin'" class="mt-6">
-                            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-6 border border-blue-100">
+                            <div
+                                class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-6 border border-blue-100">
                                 <div class="flex items-start">
                                     <div class="flex-shrink-0 pt-0.5">
-                                        <svg class="h-6 w-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                        <svg class="h-6 w-6 text-blue-500" fill="none" stroke="currentColor"
+                                             viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
                                         </svg>
                                     </div>
                                     <div class="ml-4">
                                         <h4 class="text-lg font-medium text-blue-900 mb-2">Admin Role Settings</h4>
-                                        <p class="text-blue-700 text-sm">Configure permissions for admin users. Any member assigned as an admin can access the following features:</p>
+                                        <p class="text-blue-700 text-sm">Configure permissions for admin users. Any
+                                            member assigned as an admin can access the following features:</p>
                                     </div>
                                 </div>
                             </div>
@@ -387,11 +425,13 @@
                                     @endphp
 
                                     @foreach($adminPermissions as $permission)
-                                        <div class="flex items-center p-3 hover:bg-gray-50 rounded-lg transition-colors duration-150">
+                                        <div
+                                            class="flex items-center p-3 hover:bg-gray-50 rounded-lg transition-colors duration-150">
                                             <input type="checkbox" checked
                                                    class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
                                             <label class="ml-3 text-sm text-gray-700">{{ $permission }}</label>
-                                            <span class="ml-auto text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                                            <span
+                                                class="ml-auto text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
                                         Admin only
                                     </span>
                                         </div>
@@ -611,7 +651,8 @@
                     <button @click="showAddMemberModal = false; $wire.resetForm()"
                             class="text-gray-400 hover:text-gray-600 rounded-full p-1 hover:bg-gray-100">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
                     </button>
                 </div>
@@ -632,12 +673,15 @@
                                        placeholder="Search by name or email"
                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                 <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor"
+                                         viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                     </svg>
                                 </div>
                             </div>
-                            @error('searchQuery') <span class="text-red-600 text-xs mt-1">{{ $message }}</span> @enderror
+                            @error('searchQuery') <span
+                                class="text-red-600 text-xs mt-1">{{ $message }}</span> @enderror
 
                             <!-- Search Results Dropdown -->
                             <div x-show="$wire.searchQuery.length >= 2"
@@ -650,7 +694,8 @@
                                              src="{{ $user->profile_photo_path ? asset('storage/' . $user->profile_photo_path) : $user->profile_photo_url }}"
                                              alt="{{ $user->name }}">
                                         <div>
-                                            <div class="text-sm font-medium text-gray-900">{{ $user->first_name }} {{ $user->family_name }}</div>
+                                            <div
+                                                class="text-sm font-medium text-gray-900">{{ $user->first_name }} {{ $user->family_name }}</div>
                                             <div class="text-xs text-gray-500">{{ $user->email }}</div>
                                         </div>
                                     </div>
@@ -680,7 +725,8 @@
                                     <span class="text-sm text-gray-500">No user selected</span>
                                 @endif
                             </div>
-                            @error('selectedUserId') <span class="text-red-600 text-xs mt-1">{{ $message }}</span> @enderror
+                            @error('selectedUserId') <span
+                                class="text-red-600 text-xs mt-1">{{ $message }}</span> @enderror
                         </div>
 
                         <!-- Role Selection -->
@@ -692,7 +738,8 @@
                                 <option value="superadmin">Superadmin</option>
                                 <option value="admin">Admin</option>
                             </select>
-                            @error('newMember.role') <span class="text-red-600 text-xs mt-1">{{ $message }}</span> @enderror
+                            @error('newMember.role') <span
+                                class="text-red-600 text-xs mt-1">{{ $message }}</span> @enderror
                         </div>
 
                         <!-- Form Actions -->
@@ -709,9 +756,12 @@
                                     <span x-text="$wire.editingMember ? 'Update Role' : 'Assign Role'"></span>
                                 </span>
                                 <span wire:loading>
-                                    <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                                stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor"
+                                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                     </svg>
                                     Processing...
                                 </span>
@@ -744,7 +794,8 @@
                     <button @click="showRoleModal = false"
                             class="text-gray-400 hover:text-gray-600 rounded-full p-1 hover:bg-gray-100">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
                     </button>
                 </div>
@@ -756,8 +807,10 @@
                                    placeholder="Search permissions..."
                                    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor"
+                                     viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                 </svg>
                             </div>
                         </div>
@@ -766,7 +819,8 @@
                     <div class="max-h-[500px] overflow-y-auto border border-gray-200 rounded-lg">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
                             @forelse(\Spatie\Permission\Models\Permission::all() as $permission)
-                                <div class="flex items-center p-3 bg-white hover:bg-gray-50 rounded-lg border border-gray-100 transition-colors duration-150">
+                                <div
+                                    class="flex items-center p-3 bg-white hover:bg-gray-50 rounded-lg border border-gray-100 transition-colors duration-150">
                                     <input type="checkbox"
                                            wire:model="selectedPermissions.{{ $permission->id }}"
                                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
@@ -794,9 +848,12 @@
                                 wire:loading.attr="disabled">
                             <span wire:loading.remove>Save Changes</span>
                             <span wire:loading>
-                                <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                            stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
                                 Saving...
                             </span>

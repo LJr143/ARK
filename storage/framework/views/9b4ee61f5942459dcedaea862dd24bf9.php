@@ -78,25 +78,32 @@ unset($__defined_vars); ?>
             background: rgba(0, 0, 0, 0.3);
         }
 
-        /* Smooth transitions for main content */
         .main-content-transition {
             transition: margin-left 300ms ease-in-out;
         }
+
+        .scrollable-main-content {
+            overflow-y: auto;
+            height: calc(100vh - 3.5rem);
+        }
     </style>
 
-    <!-- Styles -->
     <?php echo \Livewire\Mechanisms\FrontendAssets\FrontendAssets::styles(); ?>
 
 </head>
-<body class="font-poppins antialiased" x-data="{ sidebarOpen: window.innerWidth >= 1024 }" x-init="
-        window.addEventListener('resize', () => {
-            if (window.innerWidth >= 1024) {
-                sidebarOpen = true;
-            } else {
-                sidebarOpen = false;
-            }
-        })
-    ">
+<body class="font-poppins antialiased"
+      x-data="{
+          sidebarOpen: $persist(window.innerWidth >= 1024)
+      }"
+      x-init="
+          window.addEventListener('resize', () => {
+              if (window.innerWidth >= 1024) {
+                  sidebarOpen = true;
+              } else {
+                  sidebarOpen = false;
+              }
+          })
+      ">
 <?php if (isset($component)) { $__componentOriginalff9615640ecc9fe720b9f7641382872b = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginalff9615640ecc9fe720b9f7641382872b = $attributes; } ?>
 <?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.banner','data' => []] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
@@ -135,29 +142,26 @@ unset($__defined_vars); ?>
              style="display: none;">
         </div>
 
+        <!-- Improved Sidebar -->
+        <?php if(isset($sidebar)): ?>
+            <aside
+                class="fixed inset-y-0 left-0 lg:relative min-h-full bg-white z-50 max-w-[290px] sidebar-shadow transition-all duration-300 ease-in-out transform"
+                :class="{
+                    'w-72 translate-x-0': sidebarOpen,
+                    '-translate-x-full w-20 lg:translate-x-0 lg:w-20': !sidebarOpen,
+                    'lg:w-72': sidebarOpen
+                }">
+                <?php echo e($sidebar); ?>
 
-        <div x-data="{ sidebarOpen: $persist(true) }">
-            <!-- Improved Sidebar -->
-            <?php if(isset($sidebar)): ?>
-                <aside
-                    class="fixed inset-y-0 left-0 lg:relative min-h-full bg-white z-50 max-w-[290px] sidebar-shadow transition-all duration-300 ease-in-out transform"
-                    :class="{
-                'w-72 translate-x-0': sidebarOpen,
-                '-translate-x-full w-20 lg:translate-x-0 lg:w-20': !sidebarOpen,
-                'lg:w-72': sidebarOpen
-            }">
-                    <?php echo e($sidebar); ?>
-
-                </aside>
-            <?php endif; ?>
-        </div>
+            </aside>
+        <?php endif; ?>
 
         <!-- Primary Content Section -->
-        <div class="flex-1 flex flex-col main-content-transition"
+        <div class="flex-1 flex flex-col main-content-transition scrollable-main-content"
              :class="{
-                     'lg:ml-72': sidebarOpen && typeof $sidebar !== 'undefined',
-                     'lg:ml-20': !sidebarOpen && typeof $sidebar !== 'undefined'
-                 }">
+                 'lg:ml-72': sidebarOpen && typeof $sidebar !== 'undefined',
+                 'lg:ml-20': !sidebarOpen && typeof $sidebar !== 'undefined'
+             }">
 
             <!-- Page Header (Conditional) -->
             <?php if(isset($header)): ?>

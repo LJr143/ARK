@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('middle_name')->nullable();
             $table->date('birthdate')->nullable();
             $table->string('birthplace')->nullable();
-            $table->enum('sex', ['Male', 'Female', 'Other']);
+            $table->enum('sex', ['Male', 'Female', 'Other'])->nullable();
             $table->enum('civil_status', ['Single', 'Married', 'Divorced', 'Widowed']);
             $table->text('permanent_address')->nullable();
             $table->string('telephone')->nullable();
@@ -61,8 +61,8 @@ return new class extends Migration
 
             // PRC Information
             $table->string('prc_registration_number');
-            $table->date('prc_date_issued');
-            $table->date('prc_valid_until');
+            $table->date('prc_date_issued')->nullable();
+            $table->date('prc_valid_until')->nullable();
 
             // Expertise Information
             $table->text('expertise')->nullable();

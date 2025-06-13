@@ -29,6 +29,8 @@ class PermissionSeeder extends Seeder
             'membership-registration',
             'edit-member',
             'delete-member',
+            'manage-role',
+            'admin-setting'
         ];
 
         foreach ($permissions as $permission) {
