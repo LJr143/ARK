@@ -64,10 +64,6 @@
                         <div class="mb-4 sm:mb-0">
                             <h2 class="text-lg font-medium text-gray-900">
                                 <span x-text="notifications.total"></span> Notifications
-{{--                                <span x-show="unreadCount > 0"--}}
-{{--                                      class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">--}}
-{{--                                <span x-text="unreadCount"></span> unread--}}
-{{--                            </span>--}}
                             </h2>
                         </div>
 
@@ -109,32 +105,39 @@
 
                             <!-- Action buttons -->
                             <div class="flex space-x-2">
-                                <button wire:click="markAllAsRead" wire:loading.attr="disabled" x-show="unreadCount > 0"
+                                <button wire:click="markAllAsRead"
+                                        wire:loading.attr="disabled"
+                                        wire:target="markAllAsRead"
+                                        x-show="unreadCount > 0"
                                         class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                    <span wire:loading.remove>Mark All Read</span>
-                                    <span wire:loading>
-                                    <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                                stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor"
-                                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
-                                </span>
+                                    <span wire:loading.remove wire:target="markAllAsRead">Mark All Read</span>
+                                    <span wire:loading wire:target="markAllAsRead">
+                                        <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                                    stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor"
+                                                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        Loading...
+                                    </span>
                                 </button>
-                                <button wire:click="clearAll" wire:loading.attr="disabled"
+                                <button wire:click="clearAll"
+                                        wire:loading.attr="disabled"
+                                        wire:target="clearAll"
                                         x-show="notifications.total > 0"
                                         class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                                    <span wire:loading.remove>Clear All</span>
-                                    <span wire:loading>
-                                    <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                                stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor"
-                                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
-                                </span>
+                                    <span wire:loading.remove wire:target="clearAll">Clear All</span>
+                                    <span wire:loading wire:target="clearAll">
+                                        <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                                    stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor"
+                                                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        Loading...
+                                    </span>
                                 </button>
                             </div>
                         </div>
@@ -146,7 +149,6 @@
                      style="max-height: calc(100vh - 250px); overflow-y: auto;">
                     @forelse($notifications as $notification)
                         @php
-                            // Reuse your notification style logic from the header
                             $notificationStyles = [
                                 'reminder' => ['icon' => '🔔', 'color' => 'blue', 'bgColor' => 'bg-blue-50 border-l-blue-400'],
                                 'urgent' => ['icon' => '⚠️', 'color' => 'red', 'bgColor' => 'bg-red-50 border-l-red-400'],
@@ -302,7 +304,6 @@
     @push('scripts')
         <script>
             document.addEventListener('livewire:load', function () {
-                // Listen for new notifications if using Echo
                 @if(config('broadcasting.default'))
                 window.Echo.private(`user.{{ auth()->id() }}`)
                     .listen('.notification.created', (data) => {
