@@ -64,10 +64,10 @@
                         <div class="mb-4 sm:mb-0">
                             <h2 class="text-lg font-medium text-gray-900">
                                 <span x-text="notifications.total"></span> Notifications
-                                <span x-show="unreadCount > 0"
-                                      class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                <span x-text="unreadCount"></span> unread
-                            </span>
+{{--                                <span x-show="unreadCount > 0"--}}
+{{--                                      class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">--}}
+{{--                                <span x-text="unreadCount"></span> unread--}}
+{{--                            </span>--}}
                             </h2>
                         </div>
 
