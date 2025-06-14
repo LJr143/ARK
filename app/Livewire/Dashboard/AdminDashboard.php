@@ -106,9 +106,9 @@ use Livewire\Component;
         });
 
         // 2. Calculate unpaid dues and unpaid members
-        $unpaidDues = $allDues->where('status', 'unpaid');
-        $this->unpaidMembers = $unpaidDues->groupBy('member_id')->count();
-        $this->unpaidDues = $unpaidDues->sum(function($due) {
+        $this->unpaidDues = $allDues->where('status', 'unpaid');
+        $this->unpaidMembers = $this->unpaidDues->groupBy('member_id')->count();
+        $this->unpaidDues = $this->unpaidDues->sum(function($due) {
             return $due->amount + $due->penalty_amount;
         });
 
