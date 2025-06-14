@@ -113,6 +113,8 @@ use Livewire\Component;
 
         // 5. Calculate unpaid dues (ensure it's never negative)
         $this->unpaidDues = max(0, $this->totalDues - $this->paidDues);
+
+        $this->dispatch('dataUpdated');
     }
 
     public function toggleDataView(): void
