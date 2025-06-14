@@ -5,6 +5,7 @@
     <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
 
     <title><?php echo e(config('app.name', 'ARK:Auto Reminder Kit')); ?></title>
+    <link rel="shortcut icon" href="<?php echo e(asset('storage/logo/ark-logo-bg-none.ico')); ?>">
 
     <!-- Fonts -->
     <link rel="shortcut icon" href="<?php echo e(asset('storage/pmsAssets/icon_img.png')); ?>">

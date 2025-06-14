@@ -101,7 +101,7 @@ class MembershipController extends Controller
                     'permanent_address' => 'nullable|string',
                     'telephone' => 'nullable|string|max:20',
                     'fax' => 'nullable|string|max:20',
-                    'mobile' => 'required|numeric|max:11',
+                    'mobile' => 'required|digits:11',
                     'email' => 'required|email|unique:users,email',
                     'facebook_id' => 'nullable|string|max:255',
                     'twitter_id' => 'nullable|string|max:255',
