@@ -59,7 +59,7 @@ class TransactionRecord extends Component
     public function openViewModal($id): void
     {
         $this->transactionDetails = Transaction::find($id)->toArray();
-//        $this->transactionDetails['payment_date'] = $this->transactionDetails
+        $this->transactionDetails['payment_date'] = $this->transactionDetails->dues->payment_date ?? '';
 
         $this->showViewModal = true;
     }
