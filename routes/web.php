@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PendingApprovalController;
+use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\ReminderController;
 use App\Http\Controllers\View\ViewController;
 use App\Models\Transaction;
@@ -46,6 +47,35 @@ Route::middleware(['auth:sanctum', 'user.status'])->group(function () {
     Route::get('/paypal/success', [PaymentController::class, 'success'])->name('paypal.success');
     Route::get('/paypal/cancel', [PaymentController::class, 'cancel'])->name('paypal.cancel');
     Route::get('/settings/account-settings', [ViewController::class, 'accountSettings'])->name('admin.settings.account.settings');
+
+
+    // View receipt in HTML format (for screenshots)
+    Route::get('/receipt/{payment}/show', [ReceiptController::class, 'show'])->name('receipt.show');
+
+    // Download receipt as PDF
+    Route::get('/receipt/{payment}/download', [ReceiptController::class, 'download'])->name('receipt.download');
+
+    // View receipt as PDF in browser
+    Route::get('/receipt/{payment}/view', [ReceiptController::class, 'view'])->name('receipt.view');
+
+    // Get receipt by transaction reference
+    Route::get('/receipt/transaction/{transactionReference}', [ReceiptController::class, 'showByTransaction'])->name('receipt.show.transaction');
+
+    // Download receipt by transaction reference
+    Route::get('/receipt/transaction/{transactionReference}/download', [ReceiptController::class, 'downloadByTransaction'])->name('receipt.download.transaction');
+
+    // Get receipt summary (for AJAX)
+    Route::get('/receipt/{payment}/summary', [ReceiptController::class, 'summary'])->name('receipt.summary');
+
+    // List user receipts
+    Route::get('/receipts', [ReceiptController::class, 'userReceipts'])->name('receipts.index');
+    Route::get('/receipts/user/{user}', [ReceiptController::class, 'userReceipts'])->name('receipts.user');
+
+    // Bulk download receipts
+    Route::post('/receipts/bulk-download', [ReceiptController::class, 'bulkDownload'])->name('receipts.bulk.download');
+
+    // Email receipt
+    Route::post('/receipt/{payment}/email', [ReceiptController::class, 'email'])->name('receipt.email');
 
 });
 
