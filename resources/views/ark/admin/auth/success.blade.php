@@ -5,12 +5,14 @@
             <svg class="mx-auto h-12 w-12 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
             </svg>
-            <h2 class="mt-2 text-2xl font-bold text-gray-900">You're all set!</h2>
+            <h2 class="mt-2 text-2xl font-bold text-gray-900">Registration sent ! </h2>
         </div>
 
         <div class="text-center">
             <p class="text-gray-600 mb-6">
-                Thanks for signing up. We've sent your temporary password to your email.
+                Thanks for signing up. The admin will review your registration. Upon approval, you will receive your log
+                in credentials via email. Please check your inbox or spam folder. Note that the approval process may
+                take 1–2 business days.
                 Check your inbox (or spam folder—just in case) and log in when you're ready!
             </p>
 
