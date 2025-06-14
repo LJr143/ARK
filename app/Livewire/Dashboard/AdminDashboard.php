@@ -121,7 +121,6 @@ use Livewire\Component;
     {
         $this->showAllData = !$this->showAllData;
         $this->loadData();
-        $this->dispatch('dataUpdated');
     }
 
     public function openComputationModal(): void
