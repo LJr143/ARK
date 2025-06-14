@@ -77,12 +77,7 @@ use Livewire\Component;
 
         if (!$currentFiscalYear) {
             // Reset all values if no fiscal year is active
-            $this->paidDues = 0;
-            $this->unpaidDues = 0;
-            $this->totalDues = 0;
-            $this->paidMembers = 0;
-            $this->unpaidMembers = 0;
-            $this->totalMembers = 0;
+            $this->resetDuesValues();
             return;
         }
 
@@ -105,23 +100,40 @@ use Livewire\Component;
             $paidDuesQuery->where('member_id', $this->currentUser->id);
         }
 
-        $this->paidDues = $paidDuesQuery->get();
+        $paidDues = $paidDuesQuery->get();
+
         // Count unique members who have paid
-        $this->paidMembers = $this->paidDues->groupBy('member_id')->count();
+        $this->paidMembers = $paidDues->groupBy('member_id')->count();
 
         // Sum all paid amounts (base amount + penalties)
-        $this->paidDues = $this->paidDues->sum(function($due) {
+        $this->paidDues = $paidDues->sum(function($due) {
             return $due->amount + $due->penalty_amount;
         });
 
-        // 3. Calculate unpaid members
-        $this->unpaidMembers = max(0, $this->totalMembers - $this->paidMembers);
+        // 3. Get members who have dues records (either paid or unpaid)
+        $membersWithDues = \App\Models\Due::where('fiscal_year_id', $currentFiscalYear->id)
+            ->pluck('member_id')
+            ->unique()
+            ->count();
 
-        // 4. Calculate total expected dues from fiscal year membership fee
-        $this->totalDues = $this->totalMembers * $currentFiscalYear->membership_fee;
+        // 4. Calculate unpaid members - only count members who actually have dues records
+        $this->unpaidMembers = max(0, $membersWithDues - $this->paidMembers);
 
-        // 5. Calculate unpaid dues (ensure it's never negative)
+        // 5. Calculate total expected dues - only for members who have dues records
+        $this->totalDues = $membersWithDues * $currentFiscalYear->membership_fee;
+
+        // 6. Calculate unpaid dues (ensure it's never negative)
         $this->unpaidDues = max(0, $this->totalDues - $this->paidDues);
+    }
+
+    private function resetDuesValues(): void
+    {
+        $this->paidDues = 0;
+        $this->unpaidDues = 0;
+        $this->totalDues = 0;
+        $this->paidMembers = 0;
+        $this->unpaidMembers = 0;
+        $this->totalMembers = 0;
     }
 
     public function toggleDataView(): void
