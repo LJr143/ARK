@@ -96,12 +96,12 @@ use Livewire\Component;
             $paidDuesQuery->where('member_id', $this->currentUser->id);
         }
 
-        $paidDues = $paidDuesQuery->get();
+        $this->paidDues = $paidDuesQuery->get();
         // Count unique members who have paid
-        $this->paidMembers = $paidDues->groupBy('member_id')->count();
+        $this->paidMembers = $this->paidDues->groupBy('member_id')->count();
 
         // Sum all paid amounts (base amount + penalties)
-        $this->paidDues = $paidDues->sum(function($due) {
+        $this->paidDues = $this->paidDues->sum(function($due) {
             return $due->amount + $due->penalty_amount;
         });
 
@@ -114,7 +114,7 @@ use Livewire\Component;
         // 5. Calculate unpaid dues (ensure it's never negative)
         $this->unpaidDues = max(0, $this->totalDues - $this->paidDues);
 
-//        $this->dispatch('dataUpdated');
+        $this->dispatch('dataUpdated');
     }
 
     public function toggleDataView(): void
