@@ -180,4 +180,22 @@
             });
         });
     </script>
+    <script>
+        document.addEventListener('livewire:initialized', () => {
+            Livewire.on('open-print-receipt', (event) => {
+                const printWindow = window.open(event.url, '_blank');
+                if (printWindow) {
+                    printWindow.onload = function() {
+                        printWindow.print();
+                    };
+                } else {
+                    alert('Please allow popups for this website to print the receipt.');
+                }
+            });
+
+            Livewire.on('open-receipt', (url) => {
+                window.open(url, '_blank');
+            });
+        });
+    </script>
 </div>

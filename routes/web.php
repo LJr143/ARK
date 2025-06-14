@@ -4,7 +4,6 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PendingApprovalController;
-use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\ReminderController;
 use App\Http\Controllers\View\ViewController;
 use App\Models\Transaction;
@@ -48,37 +47,20 @@ Route::middleware(['auth:sanctum', 'user.status'])->group(function () {
     Route::get('/paypal/cancel', [PaymentController::class, 'cancel'])->name('paypal.cancel');
     Route::get('/settings/account-settings', [ViewController::class, 'accountSettings'])->name('admin.settings.account.settings');
 
+    Route::get('/receipt/{paymentId}/print', function ($paymentId) {
+        $receiptService = app(ReceiptService::class);
+        return $receiptService->generatePrintReceipt($paymentId);
+    })->name('receipt.print');
 
-    // View receipt in HTML format (for screenshots)
-    Route::get('/receipt/{payment}/show', [ReceiptController::class, 'show'])->name('receipt.show');
+    Route::get('/receipt/{paymentId}/show', function ($paymentId) {
+        $receiptService = app(ReceiptService::class);
+        return $receiptService->viewReceipt($paymentId);
+    })->name('receipt.show');
 
-    // Download receipt as PDF
-    Route::get('/receipt/{payment}/download', [ReceiptController::class, 'download'])->name('receipt.download');
-
-    // View receipt as PDF in browser
-    Route::get('/receipt/{payment}/view', [ReceiptController::class, 'view'])->name('receipt.view');
-
-    // Get receipt by transaction reference
-    Route::get('/receipt/transaction/{transactionReference}', [ReceiptController::class, 'showByTransaction'])->name('receipt.show.transaction');
-
-    // Download receipt by transaction reference
-    Route::get('/receipt/transaction/{transactionReference}/download', [ReceiptController::class, 'downloadByTransaction'])->name('receipt.download.transaction');
-
-    // Get receipt summary (for AJAX)
-    Route::get('/receipt/{payment}/summary', [ReceiptController::class, 'summary'])->name('receipt.summary');
-
-    // List user receipts
-    Route::get('/receipts', [ReceiptController::class, 'userReceipts'])->name('receipts.index');
-    Route::get('/receipts/user/{user}', [ReceiptController::class, 'userReceipts'])->name('receipts.user');
-
-    // Bulk download receipts
-    Route::post('/receipts/bulk-download', [ReceiptController::class, 'bulkDownload'])->name('receipts.bulk.download');
-
-    // Email receipt
-    Route::post('/receipt/{payment}/email', [ReceiptController::class, 'email'])->name('receipt.email');
+    Route::get('/receipt/{paymentId}/download', function ($paymentId) {
+        $receiptService = app(ReceiptService::class);
+        return $receiptService->downloadReceipt($paymentId);
+    })->name('receipt.download');
 
 });
-
-Route::get('/public/receipt/{payment}/{token?}', [ReceiptController::class, 'show'])->name('receipt.public.show');
-Route::get('/public/receipt/{payment}/download/{token?}', [ReceiptController::class, 'download'])->name('receipt.public.download');
 

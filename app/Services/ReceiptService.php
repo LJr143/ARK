@@ -5,9 +5,9 @@ namespace App\Services;
 use App\Models\Payment;
 use App\Models\Transaction;
 use App\Models\Due;
+use Barryvdh\DomPDF\PDF;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
-use PhpOffice\PhpSpreadsheet\Writer\Pdf;
 
 class ReceiptService
 {
@@ -79,6 +79,34 @@ class ReceiptService
     }
 
     /**
+     * Generate print-friendly receipt HTML
+     */
+    public function generatePrintReceipt($paymentId)
+    {
+        $payment = Payment::with(['user', 'transaction'])->find($paymentId);
+
+        if (!$payment) {
+            throw new \Exception('Payment not found');
+        }
+
+        $transaction = $payment->transaction;
+        $user = $payment->user;
+        $dues = Due::where('transaction_reference', $transaction->transaction_reference)->get();
+
+        $receiptData = [
+            'receipt_number' => $this->generateReceiptNumber($transaction),
+            'payment' => $payment,
+            'transaction' => $transaction,
+            'user' => $user,
+            'dues' => $dues,
+            'generated_at' => now(),
+            'company_info' => $this->getCompanyInfo(),
+        ];
+
+        return view('receipts.payment-receipt-print', $receiptData)->render();
+    }
+
+    /**
      * Generate unique receipt number
      */
     private function generateReceiptNumber($transaction)
@@ -101,7 +129,7 @@ class ReceiptService
             'phone' => config('receipt.company_phone', '+1234567890'),
             'email' => config('receipt.company_email', 'info@company.com'),
             'website' => config('app.url', 'www.company.com'),
-            'logo' => config('receipt.company_logo', null), // Path to logo
+            'logo' => config('receipt.company_logo', null),
         ];
     }
 
