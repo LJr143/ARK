@@ -646,11 +646,11 @@
             }
         }
 
-        document.addEventListener('livewire:navigated', function() {
+        document.addEventListener('livewire:navigated', function () {
             waitForApexCharts(initCharts);
         });
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             waitForApexCharts(initCharts);
         });
 
@@ -662,7 +662,7 @@
         });
 
         function initCharts() {
-            console.log('Initializing charts...');
+            console.log('Initializing charts...'); // Debug log
 
             // Check if ApexCharts is available
             if (typeof ApexCharts === 'undefined') {
@@ -670,231 +670,227 @@
                 return;
             }
 
-            // Get current data from Livewire
-            const chartData = getChartDataFromLivewire();
+            // Initialize charts with current data
+            const paidDues = @json($paidDues);
+            const unpaidDues = @json($unpaidDues);
+            const paidMembers = @json($paidMembers);
+            const unpaidMembers = @json($unpaidMembers);
+            const totalMembers = @json($totalMembers);
+            const totalDues = @json($totalDues);
+
+            console.log('Chart data:', {paidDues, unpaidDues, paidMembers, unpaidMembers, totalMembers, totalDues}); // Debug log
 
             // Only initialize charts if there's data to display
-            if (chartData.totalDues === 0 && chartData.totalMembers === 0) {
+            if (totalDues === 0 && totalMembers === 0) {
                 console.log('No data to display');
+                // Clear any existing charts
                 destroyAllCharts();
                 return;
             }
 
-            createOrUpdateCharts(chartData);
-        }
-
-        function getChartDataFromLivewire() {
-            return {
-                paidDues: @json($paidDues),
-                unpaidDues: @json($unpaidDues),
-                paidMembers: @json($paidMembers),
-                unpaidMembers: @json($unpaidMembers),
-                totalMembers: @json($totalMembers),
-                totalDues: @json($totalDues)
-            };
-        }
-
-        function createOrUpdateCharts(data) {
-            const { paidDues, unpaidDues, paidMembers, unpaidMembers, totalMembers, totalDues } = data;
-            const efficiencyRate = totalMembers > 0 ? Math.round((paidMembers / totalMembers) * 100) : 0;
-
-            // Overview Chart
+            // Overview Chart (Area Chart)
             const overviewElement = document.querySelector("#overviewChart");
             if (overviewElement && totalDues > 0) {
-                const overviewOptions = getOverviewChartOptions(paidDues, unpaidDues);
-                updateOrCreateChart('overview', overviewElement, overviewOptions);
+                console.log('Creating overview chart');
+                const overviewOptions = {
+                    series: [{
+                        name: 'Paid Dues',
+                        data: generateMonthlyData(paidDues)
+                    }, {
+                        name: 'Unpaid Dues',
+                        data: generateMonthlyData(unpaidDues)
+                    }],
+                    chart: {
+                        height: 320,
+                        type: 'area',
+                        toolbar: {show: false}
+                    },
+                    colors: ['#10b981', '#ef4444'],
+                    dataLabels: {enabled: false},
+                    stroke: {curve: 'smooth', width: 3},
+                    xaxis: {
+                        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                    },
+                    yaxis: {
+                        labels: {
+                            formatter: function (val) {
+                                return '₱' + val.toLocaleString()
+                            }
+                        }
+                    },
+                    fill: {
+                        type: 'gradient',
+                        gradient: {
+                            shadeIntensity: 1,
+                            opacityFrom: 0.7,
+                            opacityTo: 0.3,
+                        }
+                    },
+                    grid: {strokeDashArray: 3},
+                    legend: {position: 'top'}
+                };
+
+                if (overviewChart) overviewChart.destroy();
+                overviewChart = new ApexCharts(overviewElement, overviewOptions);
+                overviewChart.render();
             }
 
-            // Status Chart
+            // Status Chart (Donut Chart)
             const statusElement = document.querySelector("#statusChart");
             if (statusElement && totalMembers > 0) {
-                const statusOptions = getStatusChartOptions(paidMembers, unpaidMembers, totalMembers);
-                updateOrCreateChart('status', statusElement, statusOptions);
+                console.log('Creating status chart');
+                const statusOptions = {
+                    series: [paidMembers, unpaidMembers],
+                    chart: {
+                        height: 320,
+                        type: 'donut',
+                    },
+                    labels: ['Paid Members', 'Unpaid Members'],
+                    colors: ['#10b981', '#ef4444'],
+                    plotOptions: {
+                        pie: {
+                            donut: {
+                                size: '70%',
+                                labels: {
+                                    show: true,
+                                    total: {
+                                        show: true,
+                                        label: 'Total Members',
+                                        formatter: function (w) {
+                                            return totalMembers.toString()
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    dataLabels: {
+                        enabled: true,
+                        formatter: function (val, opts) {
+                            return opts.w.config.series[opts.seriesIndex] + ' Members'
+                        }
+                    },
+                    legend: {position: 'bottom'}
+                };
+
+                if (statusChart) statusChart.destroy();
+                statusChart = new ApexCharts(statusElement, statusOptions);
+                statusChart.render();
             }
 
-            // Efficiency Chart
+            // Collection Efficiency Chart
             const efficiencyElement = document.querySelector("#efficiencyChart");
             if (efficiencyElement && totalMembers > 0) {
-                const efficiencyOptions = getEfficiencyChartOptions(efficiencyRate);
-                updateOrCreateChart('efficiency', efficiencyElement, efficiencyOptions);
+                console.log('Creating efficiency chart');
+                const efficiencyRate = totalMembers > 0 ? Math.round((paidMembers / totalMembers) * 100) : 0;
+                const efficiencyOptions = {
+                    series: [efficiencyRate],
+                    chart: {
+                        height: 192,
+                        type: 'radialBar',
+                    },
+                    plotOptions: {
+                        radialBar: {
+                            hollow: {
+                                size: '60%',
+                            },
+                            dataLabels: {
+                                name: {
+                                    fontSize: '16px',
+                                },
+                                value: {
+                                    fontSize: '22px',
+                                    formatter: function (val) {
+                                        return val + '%'
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    colors: ['#10b981'],
+                    labels: ['Efficiency'],
+                };
+
+                if (efficiencyChart) efficiencyChart.destroy();
+                efficiencyChart = new ApexCharts(efficiencyElement, efficiencyOptions);
+                efficiencyChart.render();
             }
 
             // Trend Chart
             const trendElement = document.querySelector("#trendChart");
             if (trendElement && totalDues > 0) {
-                const trendOptions = getTrendChartOptions(paidDues);
-                updateOrCreateChart('trend', trendElement, trendOptions);
+                console.log('Creating trend chart');
+                const trendOptions = {
+                    series: [{
+                        name: 'Collections',
+                        data: generateTrendData(paidDues)
+                    }],
+                    chart: {
+                        height: 192,
+                        type: 'line',
+                        sparkline: {enabled: true}
+                    },
+                    colors: ['#3b82f6'],
+                    stroke: {curve: 'smooth', width: 3},
+                    markers: {size: 4}
+                };
+
+                if (trendChart) trendChart.destroy();
+                trendChart = new ApexCharts(trendElement, trendOptions);
+                trendChart.render();
             }
-        }
-
-        function updateOrCreateChart(chartName, element, options) {
-            if (window[`${chartName}Chart`]) {
-                // Update existing chart
-                window[`${chartName}Chart`].updateOptions(options);
-                window[`${chartName}Chart`].updateSeries(options.series);
-            } else {
-                // Create new chart
-                window[`${chartName}Chart`] = new ApexCharts(element, options);
-                window[`${chartName}Chart`].render();
-            }
-        }
-
-        function getOverviewChartOptions(paidDues, unpaidDues) {
-            return {
-                series: [{
-                    name: 'Paid Dues',
-                    data: generateMonthlyData(paidDues)
-                }, {
-                    name: 'Unpaid Dues',
-                    data: generateMonthlyData(unpaidDues)
-                }],
-                chart: {
-                    height: 320,
-                    type: 'area',
-                    toolbar: { show: false }
-                },
-                colors: ['#10b981', '#ef4444'],
-                dataLabels: { enabled: false },
-                stroke: { curve: 'smooth', width: 3 },
-                xaxis: {
-                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-                },
-                yaxis: {
-                    labels: {
-                        formatter: function(val) {
-                            return '₱' + val.toLocaleString();
-                        }
-                    }
-                },
-                fill: {
-                    type: 'gradient',
-                    gradient: {
-                        shadeIntensity: 1,
-                        opacityFrom: 0.7,
-                        opacityTo: 0.3,
-                    }
-                },
-                grid: { strokeDashArray: 3 },
-                legend: { position: 'top' }
-            };
-        }
-
-        function getStatusChartOptions(paidMembers, unpaidMembers, totalMembers) {
-            return {
-                series: [paidMembers, unpaidMembers],
-                chart: {
-                    height: 320,
-                    type: 'donut',
-                },
-                labels: ['Paid Members', 'Unpaid Members'],
-                colors: ['#10b981', '#ef4444'],
-                plotOptions: {
-                    pie: {
-                        donut: {
-                            size: '70%',
-                            labels: {
-                                show: true,
-                                total: {
-                                    show: true,
-                                    label: 'Total Members',
-                                    formatter: function() {
-                                        return totalMembers.toString();
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                dataLabels: {
-                    enabled: true,
-                    formatter: function(val, opts) {
-                        return opts.w.config.series[opts.seriesIndex] + ' Members';
-                    }
-                },
-                legend: { position: 'bottom' }
-            };
-        }
-
-        function getEfficiencyChartOptions(efficiencyRate) {
-            return {
-                series: [efficiencyRate],
-                chart: {
-                    height: 192,
-                    type: 'radialBar',
-                },
-                plotOptions: {
-                    radialBar: {
-                        hollow: {
-                            size: '60%',
-                        },
-                        dataLabels: {
-                            name: {
-                                fontSize: '16px',
-                            },
-                            value: {
-                                fontSize: '22px',
-                                formatter: function(val) {
-                                    return val + '%';
-                                }
-                            }
-                        }
-                    }
-                },
-                colors: ['#10b981'],
-                labels: ['Efficiency'],
-            };
-        }
-
-        function getTrendChartOptions(paidDues) {
-            return {
-                series: [{
-                    name: 'Collections',
-                    data: generateTrendData(paidDues)
-                }],
-                chart: {
-                    height: 192,
-                    type: 'line',
-                    sparkline: { enabled: true }
-                },
-                colors: ['#3b82f6'],
-                stroke: { curve: 'smooth', width: 3 },
-                markers: { size: 4 }
-            };
         }
 
         function destroyAllCharts() {
-            ['overview', 'status', 'efficiency', 'trend'].forEach(chartName => {
-                if (window[`${chartName}Chart`]) {
-                    window[`${chartName}Chart`].destroy();
-                    window[`${chartName}Chart`] = null;
-                }
-            });
+            if (overviewChart) {
+                overviewChart.destroy();
+                overviewChart = null;
+            }
+            if (statusChart) {
+                statusChart.destroy();
+                statusChart = null;
+            }
+            if (efficiencyChart) {
+                efficiencyChart.destroy();
+                efficiencyChart = null;
+            }
+            if (trendChart) {
+                trendChart.destroy();
+                trendChart = null;
+            }
         }
 
         function updateCharts() {
-            const chartData = getChartDataFromLivewire();
-            createOrUpdateCharts(chartData);
+            // This function will be called when Livewire updates the data
+            setTimeout(() => {
+                destroyAllCharts();
+                initCharts();
+            }, 100);
         }
 
         function generateMonthlyData(baseAmount) {
+            // Generate realistic monthly distribution based on base amount
             const months = 12;
             const data = [];
             for (let i = 0; i < months; i++) {
-                const variation = 0.7 + (Math.random() * 0.6);
+                const variation = 0.7 + (Math.random() * 0.6); // 70% to 130% of base
                 data.push(Math.round((baseAmount / months) * variation));
             }
             return data;
         }
 
         function generateTrendData(baseAmount = null) {
+            // Generate trend data for the last 10 periods
             const data = [];
             if (baseAmount && baseAmount > 0) {
+                // Generate realistic trend based on actual data
                 const baseValue = baseAmount / 10;
                 for (let i = 0; i < 10; i++) {
-                    const variation = 0.6 + (Math.random() * 0.8);
+                    const variation = 0.6 + (Math.random() * 0.8); // 60% to 140% variation
                     data.push(Math.round(baseValue * variation));
                 }
             } else {
+                // Generate random trend data when no base amount
                 for (let i = 0; i < 10; i++) {
                     data.push(Math.floor(Math.random() * 100) + 20);
                 }
