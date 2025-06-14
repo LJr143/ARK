@@ -621,6 +621,33 @@
 
             <!-- Hamburger-->
             <div class="-me-2 flex items-center sm:hidden">
+                <!-- Notification Bell Button -->
+                <button @click="open = !open; if(open && (!lastFetch || Date.now() - lastFetch > 10000)) fetchNotifications()"
+                        class="relative p-2 text-gray-600 hover:text-gray-900 transition-colors duration-200 rounded-full hover:bg-gray-100">
+                    <div class="relative">
+                        <svg class="w-6 h-6 transition-transform duration-200"
+                             :class="{ 'animate-ring': loading }"
+                             fill="none"
+                             stroke="currentColor"
+                             viewBox="0 0 24 24"
+                             role="img"
+                             aria-label="Notification bell">
+                            <path stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="1.5"
+                                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                        </svg>
+
+                        <!-- Unread count badge -->
+                        <span x-show="unreadCount > 0" x-transition
+                              class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium shadow-lg"
+                              x-text="unreadCount > 99 ? '99+' : unreadCount"></span>
+
+                        <!-- Online status indicator -->
+                        <span class="absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-white"
+                              :class="isOnline ? 'bg-green-400' : 'bg-red-400'"></span>
+                    </div>
+                </button>
                 <button @click="open = ! open"
                         class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
                     <img class="size-8 rounded-full object-cover"
