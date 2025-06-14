@@ -46,12 +46,13 @@ class ManageProfileSettings extends Component
     {
         if (strlen($this->searchQuery) >= 2) {
             $this->searchedUsers = User::where(function ($query) {
-                $query->where(DB::raw("CONCAT(first_name, ' ', family_name)"), 'like', '%' . $this->searchQuery . '%')
+                $query->where(DB::raw("CONCAT(first_name, ' ', COALESCE(middle_name, ''), ' ', family_name)"), 'like', '%' . $this->searchQuery . '%')
                     ->orWhere('email', 'like', '%' . $this->searchQuery . '%')
                     ->orWhere('first_name', 'like', '%' . $this->searchQuery . '%')
                     ->orWhere('middle_name', 'like', '%' . $this->searchQuery . '%')
                     ->orWhere('family_name', 'like', '%' . $this->searchQuery . '%');
             })->take(10)->get();
+
             Log::info('Search results: ', $this->searchedUsers->toArray());
         } else {
             $this->searchedUsers = [];
