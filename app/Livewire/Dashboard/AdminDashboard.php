@@ -72,7 +72,6 @@ use Livewire\Component;
 
     private function loadData(): void
     {
-
         $currentFiscalYear = \App\Models\FiscalYear::current()->first();
 
         if (!$currentFiscalYear) {
@@ -87,7 +86,6 @@ use Livewire\Component;
 
         $baseDuesQuery = \App\Models\Due::where('fiscal_year_id', $currentFiscalYear->id);
 
-        // If not admin or not showing all data, filter by current user
         if (!$this->isAdmin || !$this->showAllData) {
             $baseDuesQuery->where('member_id', $this->currentUser->id);
         }
@@ -102,8 +100,11 @@ use Livewire\Component;
             return $due->amount + $due->penalty_amount;
         });
 
+
         $unpaidDuesQuery = clone $baseDuesQuery;
-        $unpaidDues = $unpaidDuesQuery->where('status', 'unpaid')->get();
+        $unpaidDues = $unpaidDuesQuery->where('status', 'unpaid')
+            ->whereBetween('created_at', [$this->startDate, $this->endDate])
+            ->get();
 
         $this->unpaidMembers = $unpaidDues->groupBy('member_id')->count();
         $this->unpaidDues = $unpaidDues->sum(function($due) {
