@@ -79,3 +79,6 @@ Route::middleware(['auth:sanctum', 'user.status'])->group(function () {
 
 });
 
+Route::get('/public/receipt/{payment}/{token?}', [ReceiptController::class, 'show'])->name('receipt.public.show');
+Route::get('/public/receipt/{payment}/download/{token?}', [ReceiptController::class, 'download'])->name('receipt.public.download');
+
