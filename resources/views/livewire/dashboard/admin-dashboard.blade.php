@@ -7,8 +7,10 @@
             <div class="absolute bottom-0 left-0 w-32 h-32 sm:w-48 sm:h-48 bg-white opacity-5 rounded-full translate-y-1/3 -translate-x-1/3"></div>
 
             <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 sm:gap-6">
-                    <div class="text-white">
+                <!-- Flex container for all header content -->
+                <div class="flex flex-col space-y-4 lg:space-y-0 lg:flex-row lg:justify-between lg:items-center gap-4 sm:gap-6">
+                    <!-- Title and welcome message -->
+                    <div class="text-white flex-1 min-w-0">
                         <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold mb-2 animate-fade-in-up">Dashboard</h1>
                         @if(auth()->user()->hasRole('member'))
                             <p class="text-blue-100 text-sm sm:text-base max-w-md sm:max-w-lg">Welcome back! Here's your membership overview.</p>
@@ -17,56 +19,59 @@
                         @endif
                     </div>
 
-                    <!-- Date Filter -->
-                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 sm:p-6 w-full lg:w-auto">
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
-                            <div>
-                                <label for="start-date" class="block text-sm font-medium text-blue-100 mb-1">From Date</label>
-                                <input
-                                    id="start-date"
-                                    type="date"
-                                    class="w-full rounded-lg border border-blue-300 bg-white/20 text-white placeholder-blue-200 focus:ring-2 focus:ring-blue-200 focus:border-blue-300 transition-colors duration-200 text-sm sm:text-base"
-                                    wire:model.debounce.500ms="startDate"
-                                />
+                    <!-- Right side container for filters and buttons -->
+                    <div class="w-full lg:w-auto space-y-4">
+                        <!-- Date Filter Section -->
+                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 sm:p-6">
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
+                                <div>
+                                    <label for="start-date" class="block text-sm font-medium text-blue-100 mb-1">From Date</label>
+                                    <input
+                                        id="start-date"
+                                        type="date"
+                                        class="w-full rounded-lg border border-blue-300 bg-white/20 text-white placeholder-blue-200 focus:ring-2 focus:ring-blue-200 focus:border-blue-300 transition-colors duration-200 text-sm sm:text-base"
+                                        wire:model.debounce.500ms="startDate"
+                                    />
+                                </div>
+                                <div>
+                                    <label for="end-date" class="block text-sm font-medium text-blue-100 mb-1">To Date</label>
+                                    <input
+                                        id="end-date"
+                                        type="date"
+                                        class="w-full rounded-lg border border-blue-300 bg-white/20 text-white placeholder-blue-200 focus:ring-2 focus:ring-blue-200 focus:border-blue-300 transition-colors duration-200 text-sm sm:text-base"
+                                        wire:model.debounce.500ms="endDate"
+                                    />
+                                </div>
+                                <button
+                                    wire:click="filterByDate"
+                                    wire:loading.attr="disabled"
+                                    wire:loading.class="opacity-75 cursor-not-allowed"
+                                    class="flex items-center justify-center gap-2 bg-white text-blue-700 hover:bg-blue-50 px-4 py-2 rounded-lg font-medium transition-colors duration-200 shadow-sm text-sm sm:text-base"
+                                >
+                            <span wire:loading wire:target="filterByDate" class="hidden">
+                                <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 12a8 8 0 0116 0 8 8 0 01-16 0z"/>
+                                </svg>
+                            </span>
+                                    <span wire:loading.remove wire:target="filterByDate">Filter</span>
+                                </button>
                             </div>
-                            <div>
-                                <label for="end-date" class="block text-sm font-medium text-blue-100 mb-1">To Date</label>
-                                <input
-                                    id="end-date"
-                                    type="date"
-                                    class="w-full rounded-lg border border-blue-300 bg-white/20 text-white placeholder-blue-200 focus:ring-2 focus:ring-blue-200 focus:border-blue-300 transition-colors duration-200 text-sm sm:text-base"
-                                    wire:model.debounce.500ms="endDate"
-                                />
-                            </div>
-                            <button
-                                wire:click="filterByDate"
-                                wire:loading.attr="disabled"
-                                wire:loading.class="opacity-75 cursor-not-allowed"
-                                class="flex items-center justify-center gap-2 bg-white text-blue-700 hover:bg-blue-50 px-4 py-2 rounded-lg font-medium transition-colors duration-200 shadow-sm text-sm sm:text-base"
-                            >
-                        <span wire:loading wire:target="filterByDate" class="hidden">
-                            <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 12a8 8 0 0116 0 8 8 0 01-16 0z"/>
-                            </svg>
-                        </span>
-                                <span wire:loading.remove wire:target="filterByDate">Filter</span>
-                            </button>
+                        </div>
+
+                        <!-- Admin Controls Section -->
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+                            @if($isAdmin)
+                                <button wire:click="toggleDataView"
+                                        class="px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors duration-200 border border-white/30 shadow-sm">
+                                    {{ $showAllData ? 'Show Only My Data' : 'Show All Data' }}
+                                </button>
+                                <div class="text-white text-sm bg-white/10 px-3 py-2 rounded-lg">
+                                    Viewing: {{ $showAllData ? 'All Members' : 'My Data' }}
+                                </div>
+                            @endif
                         </div>
                     </div>
-                   <div>
-                       @if($isAdmin)
-                           <button wire:click="toggleDataView" class="mb-4 px-4 py-2 bg-blue-500 text-white rounded">
-                               {{ $showAllData ? 'Show Only My Data' : 'Show All Data' }}
-                           </button>
-                       @endif
-                   </div>
-                    @if($isAdmin)
-                        <div class="mb-4 text-sm text-gray-600">
-                            Currently showing: {{ $showAllData ? 'All Members Data' : 'Only My Data' }}
-                        </div>
-                    @endif
                 </div>
-
             </div>
         </div>
 
@@ -84,7 +89,9 @@
                                 <div wire:loading.remove wire:target="filterByDate">
                                     <p class="text-2xl font-bold text-emerald-600 mt-1">
                                         ₱{{ number_format($paidDues, 2) }}</p>
+                                    @if(auth()->user()->hasAnyRole(['admin', 'superadmin']))
                                     <p class="text-sm text-gray-500 mt-1">{{ $paidMembers }} members</p>
+                                    @endif
                                 </div>
                                 <div wire:loading wire:target="filterByDate" class="mt-2 space-y-2">
                                     <div class="h-7 bg-gray-200 rounded animate-pulse"></div>
@@ -104,10 +111,12 @@
                                     <span>Payment rate</span>
                                     <span class="font-medium">{{ round(($paidMembers / $totalMembers) * 100) }}%</span>
                                 </div>
+                                @if(auth()->user()->hasAnyRole(['admin', 'superadmin']))
                                 <div class="w-full bg-gray-200 rounded-full h-2">
                                     <div class="bg-emerald-500 h-2 rounded-full"
                                          style="width: {{ ($paidMembers / $totalMembers) * 100 }}%"></div>
                                 </div>
+                                @endif
                             </div>
                         @endif
                     </div>
@@ -122,7 +131,9 @@
                                 <h3 class="text-lg font-medium text-gray-600">Unpaid Dues</h3>
                                 <div wire:loading.remove wire:target="filterByDate">
                                     <p class="text-2xl font-bold text-red-600 mt-1">₱{{ number_format($unpaidDues, 2) }}</p>
+                                    @if(auth()->user()->hasAnyRole(['admin', 'superadmin']))
                                     <p class="text-sm text-gray-500 mt-1">{{ $unpaidMembers }} members</p>
+                                    @endif
                                 </div>
                                 <div wire:loading wire:target="filterByDate" class="mt-2 space-y-2">
                                     <div class="h-7 bg-gray-200 rounded animate-pulse"></div>
@@ -161,7 +172,9 @@
                                 <div wire:loading.remove wire:target="filterByDate">
                                     <p class="text-2xl font-bold text-indigo-600 mt-1">
                                         ₱{{ number_format($totalDues, 2) }}</p>
+                                    @if(auth()->user()->hasAnyRole(['admin', 'superadmin']))
                                     <p class="text-sm text-gray-500 mt-1">{{ $totalMembers }} members</p>
+                                    @endif
                                 </div>
                                 <div wire:loading wire:target="filterByDate" class="mt-2 space-y-2">
                                     <div class="h-7 bg-gray-200 rounded animate-pulse"></div>
