@@ -120,7 +120,14 @@ use Livewire\Component;
     {
         $this->showAllData = !$this->showAllData;
         $this->loadData();
-        $this->dispatch('dataUpdated');
+        $this->dispatch('dataUpdated', [
+            'paidDues' => $this->paidDues,
+            'unpaidDues' => $this->unpaidDues,
+            'paidMembers' => $this->paidMembers,
+            'unpaidMembers' => $this->unpaidMembers,
+            'totalMembers' => $this->totalMembers,
+            'totalDues' => $this->totalDues
+        ]);
     }
 
     public function openComputationModal(): void
