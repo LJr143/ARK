@@ -11,9 +11,9 @@
         <div class="text-center">
             <p class="text-gray-600 mb-6">
                 Thanks for signing up. The admin will review your registration. Upon approval, you will receive your log
-                in credentials via email. Please check your inbox or spam folder. Note that the approval process may
+                in credentials via email. Please check your inbox or spam folder and log in when you're ready!. Note
+                that the approval process may
                 take 1–2 business days.
-                Check your inbox (or spam folder—just in case) and log in when you're ready!
             </p>
 
             <a href="{{ route('member.login') }}"
