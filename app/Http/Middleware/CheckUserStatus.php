@@ -16,17 +16,26 @@ class CheckUserStatus
             $user = $auth->user();
 
             if ($user->status === 'pending') {
-                $auth->logout();  // Use the guard's logout method
+                $auth->logout();
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
                 return redirect()->route('pending-approval');
             }
 
             if ($user->status === 'rejected') {
-                $auth->logout();  // Use the guard's logout method
+                $auth->logout();
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
                 return redirect()->route('rejected');
+            }
+
+            if ($user->status === 'inactive') {
+                $auth->logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return redirect()->route('login')
+                    ->with('error', 'Your account has been deactivated. Please contact UAP chapter admin.');
             }
         }
 
