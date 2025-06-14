@@ -39,6 +39,8 @@ use Livewire\Component;
         $this->currentUser = auth()->user();
         $this->isAdmin = $this->currentUser->hasRole(['admin', 'superadmin']);
         $this->loadData();
+        // Dispatch initial data after mount
+        $this->dispatchDataUpdate();
     }
 
     public function filterByDate(): void
@@ -49,16 +51,23 @@ use Livewire\Component;
         ]);
 
         $this->loadData();
+        $this->dispatchDataUpdate();
     }
 
     public function updatedStartDate(): void
     {
-        $this->dispatch('dataUpdated');
+        if ($this->startDate && $this->endDate) {
+            $this->loadData();
+            $this->dispatchDataUpdate();
+        }
     }
 
     public function updatedEndDate(): void
     {
-        $this->dispatch('dataUpdated');
+        if ($this->startDate && $this->endDate) {
+            $this->loadData();
+            $this->dispatchDataUpdate();
+        }
     }
 
     private function loadData(): void
@@ -113,13 +122,17 @@ use Livewire\Component;
 
         // 5. Calculate unpaid dues (ensure it's never negative)
         $this->unpaidDues = max(0, $this->totalDues - $this->paidDues);
-
     }
 
     public function toggleDataView(): void
     {
         $this->showAllData = !$this->showAllData;
         $this->loadData();
+        $this->dispatchDataUpdate();
+    }
+
+    private function dispatchDataUpdate(): void
+    {
         $this->dispatch('dataUpdated', [
             'paidDues' => $this->paidDues,
             'unpaidDues' => $this->unpaidDues,
@@ -129,7 +142,6 @@ use Livewire\Component;
             'totalDues' => $this->totalDues
         ]);
     }
-
     public function openComputationModal(): void
     {
         $this->memberData = $this->loadMemberData();

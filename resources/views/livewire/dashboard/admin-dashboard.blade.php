@@ -636,6 +636,14 @@
 
     <script>
         let overviewChart, statusChart, efficiencyChart, trendChart;
+        let currentChartData = {
+            paidDues: @json($paidDues),
+            unpaidDues: @json($unpaidDues),
+            paidMembers: @json($paidMembers),
+            unpaidMembers: @json($unpaidMembers),
+            totalMembers: @json($totalMembers),
+            totalDues: @json($totalDues)
+        };
 
         // Wait for ApexCharts to be available
         function waitForApexCharts(callback) {
@@ -656,13 +664,26 @@
 
         // Listen for Livewire updates
         document.addEventListener('livewire:init', () => {
-            Livewire.on('dataUpdated', () => {
+            Livewire.on('dataUpdated', (data) => {
+                console.log('Data updated event received:', data);
+                // Update current chart data with new values
+                if (data && data.length > 0) {
+                    const newData = data[0]; // Livewire passes data as array
+                    currentChartData = {
+                        paidDues: newData.paidDues || 0,
+                        unpaidDues: newData.unpaidDues || 0,
+                        paidMembers: newData.paidMembers || 0,
+                        unpaidMembers: newData.unpaidMembers || 0,
+                        totalMembers: newData.totalMembers || 0,
+                        totalDues: newData.totalDues || 0
+                    };
+                }
                 updateCharts();
             });
         });
 
         function initCharts() {
-            console.log('Initializing charts...'); // Debug log
+            console.log('Initializing charts with data:', currentChartData);
 
             // Check if ApexCharts is available
             if (typeof ApexCharts === 'undefined') {
@@ -670,20 +691,12 @@
                 return;
             }
 
-            // Initialize charts with current data
-            const paidDues = @json($paidDues);
-            const unpaidDues = @json($unpaidDues);
-            const paidMembers = @json($paidMembers);
-            const unpaidMembers = @json($unpaidMembers);
-            const totalMembers = @json($totalMembers);
-            const totalDues = @json($totalDues);
-
-            console.log('Chart data:', {paidDues, unpaidDues, paidMembers, unpaidMembers, totalMembers, totalDues}); // Debug log
+            // Use current chart data instead of server-side data
+            const { paidDues, unpaidDues, paidMembers, unpaidMembers, totalMembers, totalDues } = currentChartData;
 
             // Only initialize charts if there's data to display
             if (totalDues === 0 && totalMembers === 0) {
                 console.log('No data to display');
-                // Clear any existing charts
                 destroyAllCharts();
                 return;
             }
@@ -861,7 +874,7 @@
         }
 
         function updateCharts() {
-            // This function will be called when Livewire updates the data
+            console.log('Updating charts with new data:', currentChartData);
             setTimeout(() => {
                 destroyAllCharts();
                 initCharts();
@@ -869,7 +882,10 @@
         }
 
         function generateMonthlyData(baseAmount) {
-            // Generate realistic monthly distribution based on base amount
+            if (!baseAmount || baseAmount <= 0) {
+                return Array(12).fill(0);
+            }
+
             const months = 12;
             const data = [];
             for (let i = 0; i < months; i++) {
@@ -880,20 +896,15 @@
         }
 
         function generateTrendData(baseAmount = null) {
-            // Generate trend data for the last 10 periods
+            if (!baseAmount || baseAmount <= 0) {
+                return Array(10).fill(0);
+            }
+
             const data = [];
-            if (baseAmount && baseAmount > 0) {
-                // Generate realistic trend based on actual data
-                const baseValue = baseAmount / 10;
-                for (let i = 0; i < 10; i++) {
-                    const variation = 0.6 + (Math.random() * 0.8); // 60% to 140% variation
-                    data.push(Math.round(baseValue * variation));
-                }
-            } else {
-                // Generate random trend data when no base amount
-                for (let i = 0; i < 10; i++) {
-                    data.push(Math.floor(Math.random() * 100) + 20);
-                }
+            const baseValue = baseAmount / 10;
+            for (let i = 0; i < 10; i++) {
+                const variation = 0.6 + (Math.random() * 0.8); // 60% to 140% variation
+                data.push(Math.round(baseValue * variation));
             }
             return data;
         }
