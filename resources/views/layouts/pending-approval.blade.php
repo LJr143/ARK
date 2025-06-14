@@ -8,7 +8,7 @@
     <title>{{ config('app.name', 'ARK:Auto Reminder Kit') }}</title>
 
     <!-- Fonts -->
-    <link rel="shortcut icon" href="{{ asset('storage/pmsAssets/icon_img.png') }}">
+    <link rel="shortcut icon" href="{{ asset('storage/logo/ark-logo-bg-none.ico') }}">
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 

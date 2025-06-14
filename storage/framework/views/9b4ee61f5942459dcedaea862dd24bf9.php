@@ -36,6 +36,8 @@ unset($__defined_vars); ?>
 
     <title><?php echo e(config('app.name', 'Laravel')); ?></title>
 
+    <link rel="shortcut icon" href="<?php echo e(asset('storage/logo/ark-logo-bg-none.ico')); ?>">
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Poppins:400,500,600&display=swap" rel="stylesheet"/>

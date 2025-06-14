@@ -157,4 +157,9 @@ class User extends Authenticatable
     {
         return $this->belongsTo(ComputationRequest::class);
     }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
 }

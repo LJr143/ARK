@@ -60,6 +60,11 @@ class ManageReminder extends Component
 
     public $viewRequestModal = 'false';
 
+    public $searchTerm = '';
+    public $selectedUsers = [];
+    public $availableUsers = [];
+    public $showUserSearch = false;
+
     public function mount(Reminder $reminder)
     {
         if (auth()->user()->hasRole('member')) {
@@ -113,6 +118,47 @@ class ManageReminder extends Component
 
         $this->loadMembers();
     }
+
+    public function loadAvailableUsers(): void
+    {
+        // Only load users if reminder is not public
+        if ($this->reminder->recipient_type === 'public') {
+            $this->availableUsers = collect();
+            return;
+        }
+
+        $currentMemberIds = $this->members->pluck('id')->toArray();
+
+        $query = User::whereNotIn('id', $currentMemberIds);
+
+        if (!empty($this->searchTerm)) {
+            $query->where(function($q) {
+                $q->where('first_name', 'like', '%' . $this->searchTerm . '%')
+                    ->orWhere('family_name', 'like', '%' . $this->searchTerm . '%')
+                    ->orWhere('middle_name', 'like', '%' . $this->searchTerm . '%')
+                    ->orWhere('email', 'like', '%' . $this->searchTerm . '%')
+                    ->orWhere('prc_registration_number', 'like', '%' . $this->searchTerm . '%');
+            });
+        }
+
+        $this->availableUsers = $query->limit(10)->get()->map(function ($user) {
+            $nameParts = [
+                $user->family_name ?? '',
+                $user->middle_name ?? '',
+                $user->first_name ?? ''
+            ];
+
+            $fullName = trim(implode(' ', array_filter($nameParts)));
+
+            return [
+                'id' => $user->id,
+                'name' => $fullName ?: $user->name ?? 'Unknown User',
+                'email' => $user->email,
+                'prc_no' => $user->prc_registration_number ?? 'N/A',
+            ];
+        });
+    }
+
 
     private function formatFileSize($bytes)
     {
@@ -351,12 +397,100 @@ class ManageReminder extends Component
 
     public function openAddMemberModal(): void
     {
+        // Check if reminder is public
+        if ($this->reminder->recipient_type === 'public') {
+            session()->flash('error', 'Cannot add members to public reminders.');
+            return;
+        }
+
         $this->showAddMemberModal = true;
+        $this->searchTerm = '';
+        $this->selectedUsers = [];
+        $this->loadAvailableUsers();
+    }
+
+    public function updatedSearchTerm(): void
+    {
+        $this->loadAvailableUsers();
+    }
+
+    public function toggleUserSelection($userId): void
+    {
+        if (in_array($userId, $this->selectedUsers)) {
+            $this->selectedUsers = array_filter($this->selectedUsers, fn($id) => $id !== $userId);
+        } else {
+            $this->selectedUsers[] = $userId;
+        }
     }
 
     public function closeAddMemberModal(): void
     {
         $this->showAddMemberModal = false;
+        $this->searchTerm = '';
+        $this->selectedUsers = [];
+        $this->availableUsers = collect();
+    }
+
+    public function removeMember($userId): void
+    {
+        if ($this->reminder->recipient_type === 'public') {
+            session()->flash('error', 'Cannot remove members from public reminders.');
+            return;
+        }
+
+        try {
+            $removed = false;
+
+            switch ($this->reminder->recipient_type) {
+                case 'private':
+                    $removed = $this->reminder->recipients()
+                            ->where('user_id', $userId)
+                            ->delete() > 0;
+                    break;
+
+                case 'selected':
+                default:
+                    $this->reminder->customRecipients()->detach($userId);
+                    $removed = true;
+                    break;
+            }
+
+            if ($removed) {
+                $this->loadMembers();
+                session()->flash('message', 'Member removed successfully!');
+
+                // Log the activity
+                $this->logActivity('member_removed', [
+                    'user_id' => $userId,
+                    'removed_by' => auth()->user()->name
+                ]);
+            } else {
+                session()->flash('error', 'Failed to remove member.');
+            }
+
+        } catch (\Exception $e) {
+            \Log::error('Failed to remove member from reminder: ' . $e->getMessage());
+            session()->flash('error', 'Failed to remove member. Please try again.');
+        }
+    }
+
+    private function logActivity($action, $data = []): void
+    {
+        try {
+            $activityLog = $this->reminder->activity_log ?? [];
+
+            $activityLog[] = [
+                'action' => $action,
+                'data' => $data,
+                'timestamp' => now()->toISOString(),
+                'user' => auth()->user()->name,
+                'user_id' => auth()->id()
+            ];
+
+            $this->reminder->update(['activity_log' => $activityLog]);
+        } catch (\Exception $e) {
+            \Log::error('Failed to log activity: ' . $e->getMessage());
+        }
     }
 
     public function openSendModal(): void
@@ -632,8 +766,84 @@ class ManageReminder extends Component
 
     public function addMember(): void
     {
-        $this->closeAddMemberModal();
-        session()->flash('message', 'Member added successfully!');
+        if (empty($this->selectedUsers)) {
+            session()->flash('error', 'Please select at least one member to add.');
+            return;
+        }
+
+        // Check if reminder is public
+        if ($this->reminder->recipient_type === 'public') {
+            session()->flash('error', 'Cannot add members to public reminders.');
+            return;
+        }
+
+        try {
+            $addedCount = 0;
+
+            foreach ($this->selectedUsers as $userId) {
+                $user = User::find($userId);
+                if (!$user) continue;
+
+                // Check the reminder type and add accordingly
+                switch ($this->reminder->recipient_type) {
+                    case 'private':
+                        // For private reminders, add to recipients table
+                        $exists = $this->reminder->recipients()
+                            ->where('user_id', $userId)
+                            ->exists();
+
+                        if (!$exists) {
+                            $this->reminder->recipients()->create([
+                                'user_id' => $userId,
+                                'added_by' => auth()->id(),
+                                'added_at' => now()
+                            ]);
+                            $addedCount++;
+                        }
+                        break;
+
+                    case 'selected':
+                    default:
+                        // For selected reminders, add to custom recipients
+                        $exists = $this->reminder->customRecipients()
+                            ->where('id', $userId)
+                            ->exists();
+
+                        if (!$exists) {
+                            $this->reminder->customRecipients()->attach($userId, [
+                                'added_by' => auth()->id(),
+                                'created_at' => now(),
+                                'updated_at' => now()
+                            ]);
+                            $addedCount++;
+                        }
+                        break;
+                }
+            }
+
+            if ($addedCount > 0) {
+                // Reload the members list
+                $this->loadMembers();
+
+                // Close modal and show success message
+                $this->closeAddMemberModal();
+
+                $memberText = $addedCount === 1 ? 'member' : 'members';
+                session()->flash('message', "Successfully added {$addedCount} {$memberText} to the reminder!");
+
+                // Log the activity
+                $this->logActivity('members_added', [
+                    'count' => $addedCount,
+                    'added_by' => auth()->user()->name
+                ]);
+            } else {
+                session()->flash('error', 'No new members were added. They may already be part of this reminder.');
+            }
+
+        } catch (\Exception $e) {
+            \Log::error('Failed to add members to reminder: ' . $e->getMessage());
+            session()->flash('error', 'Failed to add members. Please try again.');
+        }
     }
 
     public function toggleArchive(): void

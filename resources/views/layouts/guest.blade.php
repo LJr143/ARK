@@ -5,6 +5,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'ARK:Auto Reminder Kit') }}</title>
+    <link rel="shortcut icon" href="{{ asset('storage/logo/ark-logo-bg-none.ico') }}">
 
     <!-- Fonts -->
     <link rel="shortcut icon" href="{{ asset('storage/pmsAssets/icon_img.png') }}">

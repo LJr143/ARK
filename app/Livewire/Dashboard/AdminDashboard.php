@@ -57,19 +57,48 @@ use Livewire\Component;
 
     private function loadData(): void
     {
-        // Replace with your actual data loading logic
-        // Example:
-        // $this->paidDues = Payment::whereBetween('created_at', [$this->startDate, $this->endDate])->sum('amount');
-        // $this->paidMembers = Payment::whereBetween('created_at', [$this->startDate, $this->endDate])->count();
+        // Get current fiscal year
+        $currentFiscalYear = \App\Models\FiscalYear::current()->first();
 
-        // Placeholder values for demonstration
-        $this->paidDues = 100;
-        $this->unpaidDues = 100;
-        $this->totalDues = 1000;
-        $this->paidMembers = 1;
-        $this->unpaidMembers = 9;
-        $this->totalMembers = 10;
+        if (!$currentFiscalYear) {
+            // Reset all values if no fiscal year is active
+            $this->paidDues = 0;
+            $this->unpaidDues = 0;
+            $this->totalDues = 0;
+            $this->paidMembers = 0;
+            $this->unpaidMembers = 0;
+            $this->totalMembers = 0;
+            return;
+        }
+
+        // 1. Get total active members who should pay dues
+        $this->totalMembers = User::where('status', 'approved')->count();
+
+        // 2. Calculate paid members and paid dues through the Due model
+        $paidDues = \App\Models\Due::where('fiscal_year_id', $currentFiscalYear->id)
+            ->whereIn('status', ['paid', 'partial'])
+            ->whereBetween('payment_date', [$this->startDate, $this->endDate])
+            ->get();
+
+        // Count unique members who have paid
+        $this->paidMembers = $paidDues->groupBy('member_id')->count();
+
+        // Sum all paid amounts (base amount + penalties)
+        $this->paidDues = $paidDues->sum(function($due) {
+            return $due->amount + $due->penalty_amount;
+        });
+
+        // 3. Calculate unpaid members
+        $this->unpaidMembers = max(0, $this->totalMembers - $this->paidMembers);
+
+        // 4. Calculate total expected dues from fiscal year membership fee
+        $this->totalDues = $this->totalMembers * $currentFiscalYear->membership_fee;
+
+        // 5. Calculate unpaid dues (ensure it's never negative)
+        $this->unpaidDues = max(0, $this->totalDues - $this->paidDues);
     }
+
+
 
     public function openComputationModal(): void
     {

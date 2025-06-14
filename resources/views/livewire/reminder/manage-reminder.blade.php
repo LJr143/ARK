@@ -215,13 +215,16 @@
                                     </button>
                                 @endcan
                             </nav>
-                            @can('add-member-reminder')
-                                <button wire:click="openAddMemberModal"
-                                        class="flex-shrink-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-4 py-2 rounded-lg flex items-center space-x-2 font-medium transition-colors duration-200">
-                                    <i class="fas fa-plus text-sm"></i>
-                                    <span>Add Member</span>
-                                </button>
-                            @endcan
+
+                            @if($reminder->recipient_type !== 'public')
+                                @can('add-member-reminder')
+                                    <button wire:click="openAddMemberModal"
+                                            class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                        <i class="fas fa-plus mr-2"></i>
+                                        Add First Member
+                                    </button>
+                                @endcan
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -380,6 +383,17 @@
                                                     <td class="px-4 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                                         {{ $member['date_added'] }}
                                                     </td>
+                                                    @if($reminder->recipient_type != 'public')
+                                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                            @can('remove-member-reminder')
+                                                                <button wire:click="removeMember({{ $member['id'] }})"
+                                                                        wire:confirm="Are you sure you want to remove this member from the reminder?"
+                                                                        class="text-red-600 hover:text-red-900 transition-colors duration-200">
+                                                                    <i class="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            @endcan
+                                                        </td>
+                                                    @endif
                                                 </tr>
                                             @endforeach
                                             </tbody>
@@ -1245,4 +1259,156 @@
             </div>
         </div>
     </div>
+
+    <!-- Add Member Modal -->
+    @if($showAddMemberModal)
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50"
+             x-data="{ show: @entangle('showAddMemberModal') }"
+             x-show="show"
+             x-transition:enter="ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0">
+
+            <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
+                 x-transition:enter="ease-out duration-300"
+                 x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                 x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                 x-transition:leave="ease-in duration-200"
+                 x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                 x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                 @click.away="$wire.closeAddMemberModal()">
+
+                <!-- Modal Header -->
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-semibold text-gray-900">
+                            <i class="fas fa-user-plus mr-2 text-blue-600"></i>
+                            Add Members to Reminder
+                        </h3>
+                        <button wire:click="closeAddMemberModal"
+                                class="text-gray-400 hover:text-gray-600 transition-colors">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="px-6 py-4 max-h-[70vh] overflow-y-auto">
+                    <!-- Search Input -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Search Members
+                        </label>
+                        <div class="relative">
+                            <input type="text"
+                                   wire:model.live.debounce.300ms="searchTerm"
+                                   placeholder="Search by name, email, or PRC number..."
+                                   class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-search text-gray-400"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Available Users List -->
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between text-sm text-gray-600 mb-3">
+                            <span>Available Members ({{ $availableUsers->count() }})</span>
+                            @if(count($selectedUsers) > 0)
+                                <span class="text-blue-600 font-medium">
+                            {{ count($selectedUsers) }} selected
+                        </span>
+                            @endif
+                        </div>
+
+                        @if($availableUsers->count() > 0)
+                            <div class="border border-gray-200 rounded-lg divide-y divide-gray-200 max-h-80 overflow-y-auto">
+                                @foreach($availableUsers as $user)
+                                    <div class="p-3 hover:bg-gray-50 transition-colors">
+                                        <label class="flex items-start space-x-3 cursor-pointer">
+                                            <input type="checkbox"
+                                                   wire:click="toggleUserSelection({{ $user['id'] }})"
+                                                   {{ in_array($user['id'], $selectedUsers) ? 'checked' : '' }}
+                                                   class="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex items-center justify-between">
+                                                    <div>
+                                                        <p class="text-sm font-medium text-gray-900">
+                                                            {{ $user['name'] }}
+                                                        </p>
+                                                        <p class="text-sm text-gray-600">
+                                                            {{ $user['email'] }}
+                                                        </p>
+                                                        @if($user['prc_no'] !== 'N/A')
+                                                            <p class="text-xs text-gray-500">
+                                                                PRC: {{ $user['prc_no'] }}
+                                                            </p>
+                                                        @endif
+                                                    </div>
+
+                                                    @if(in_array($user['id'], $selectedUsers))
+                                                        <div class="flex-shrink-0">
+                                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                        <i class="fas fa-check mr-1"></i>
+                                                        Selected
+                                                    </span>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <div class="text-center py-8 text-gray-500">
+                                <i class="fas fa-users text-4xl mb-4"></i>
+                                <p class="text-lg font-medium">No members found</p>
+                                <p class="text-sm">
+                                    @if(empty($searchTerm))
+                                        All eligible members are already added to this reminder.
+                                    @else
+                                        Try adjusting your search terms.
+                                    @endif
+                                </p>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
+                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+                        <div class="text-sm text-gray-600">
+                            @if(count($selectedUsers) > 0)
+                                {{ count($selectedUsers) }} member(s) selected
+                            @else
+                                No members selected
+                            @endif
+                        </div>
+
+                        <div class="flex space-x-3">
+                            <button wire:click="closeAddMemberModal"
+                                    type="button"
+                                    class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 font-medium transition-colors">
+                                Cancel
+                            </button>
+
+                            <button wire:click="addMember"
+                                    type="button"
+                                    @if(count($selectedUsers) === 0) disabled @endif
+                                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed font-medium transition-colors">
+                                <i class="fas fa-plus mr-2"></i>
+                                Add Selected Members
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>
