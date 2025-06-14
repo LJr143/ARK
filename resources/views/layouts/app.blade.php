@@ -8,7 +8,7 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
-    <link rel="shortcut icon" href="{{ asset('storage/logo/ark-logo-bg-none.ico') }}">
+    <link rel="shortcut icon" href="{{ asset('storage/logo/ark-logo-bg-none.ico') }}" type="image/x-icon">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
