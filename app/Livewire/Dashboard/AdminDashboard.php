@@ -72,11 +72,10 @@ use Livewire\Component;
 
     private function loadData(): void
     {
-        // Get current fiscal year
+
         $currentFiscalYear = \App\Models\FiscalYear::current()->first();
 
         if (!$currentFiscalYear) {
-            // Reset all values if no fiscal year is active
             $this->paidDues = 0;
             $this->unpaidDues = 0;
             $this->totalDues = 0;
@@ -86,7 +85,6 @@ use Livewire\Component;
             return;
         }
 
-        // Base query for all dues in current fiscal year
         $baseDuesQuery = \App\Models\Due::where('fiscal_year_id', $currentFiscalYear->id);
 
         // If not admin or not showing all data, filter by current user
@@ -94,7 +92,6 @@ use Livewire\Component;
             $baseDuesQuery->where('member_id', $this->currentUser->id);
         }
 
-        // 1. Get PAID dues within the date range (only paid dues have payment_date)
         $paidDuesQuery = clone $baseDuesQuery;
         $paidDues = $paidDuesQuery->whereIn('status', ['paid', 'partial'])
             ->whereBetween('payment_date', [$this->startDate, $this->endDate])
@@ -105,7 +102,6 @@ use Livewire\Component;
             return $due->amount + $due->penalty_amount;
         });
 
-        // 2. Get ALL UNPAID dues (no date filtering since they don't have payment_date)
         $unpaidDuesQuery = clone $baseDuesQuery;
         $unpaidDues = $unpaidDuesQuery->where('status', 'unpaid')->get();
 
@@ -114,7 +110,6 @@ use Livewire\Component;
             return $due->amount + $due->penalty_amount;
         });
 
-        // 3. Calculate totals
         $allDues = $paidDues->merge($unpaidDues);
         $this->totalMembers = $allDues->groupBy('member_id')->count();
         $this->totalDues = $this->paidDues + $this->unpaidDues;
