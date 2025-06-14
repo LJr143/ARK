@@ -169,7 +169,10 @@ class MemberManagement extends Component
 
     public function delete($id): void
     {
-        User::findOrFail($id)->delete();
+//        User::findOrFail($id)->delete();
+        $user = User::findOrFail($id);
+        $this->user->update('status', 'inactive');
+
         session()->flash('message', 'Member deleted successfully!');
     }
 
