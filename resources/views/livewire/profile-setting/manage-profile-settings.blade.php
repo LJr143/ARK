@@ -323,9 +323,9 @@
                                 <div>
                                     <div class="flex justify-between items-center mb-4">
                                         <h4 class="text-lg font-medium text-gray-900">Available Roles</h4>
-                                        <button class="text-sm text-blue-600 hover:text-blue-800 font-medium">
-                                            + Create New Role
-                                        </button>
+{{--                                        <button class="text-sm text-blue-600 hover:text-blue-800 font-medium">--}}
+{{--                                            + Create New Role--}}
+{{--                                        </button>--}}
                                     </div>
                                     <div class="space-y-4">
                                         @forelse(\Spatie\Permission\Models\Role::all() as $role)
@@ -361,9 +361,9 @@
                                 <div>
                                     <div class="flex justify-between items-center mb-4">
                                         <h4 class="text-lg font-medium text-gray-900">Available Permissions</h4>
-                                        <button class="text-sm text-blue-600 hover:text-blue-800 font-medium">
-                                            + Add New Permission
-                                        </button>
+{{--                                        <button class="text-sm text-blue-600 hover:text-blue-800 font-medium">--}}
+{{--                                            + Add New Permission--}}
+{{--                                        </button>--}}
                                     </div>
                                     <div
                                         class="bg-white border border-gray-200 rounded-lg p-4 max-h-[500px] overflow-y-auto shadow-inner">
@@ -439,10 +439,10 @@
                                 </div>
 
                                 <div class="mt-6 pt-6 border-t border-gray-200 flex justify-end">
-                                    <button type="button"
-                                            class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                        Save Admin Settings
-                                    </button>
+{{--                                    <button type="button"--}}
+{{--                                            class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">--}}
+{{--                                        Save Admin Settings--}}
+{{--                                    </button>--}}
                                 </div>
                             </div>
                         </div>
