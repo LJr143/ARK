@@ -86,33 +86,36 @@ use Livewire\Component;
             return;
         }
 
-        // Base query for members with dues in current fiscal year
-        $duesQuery = \App\Models\Due::where('fiscal_year_id', $currentFiscalYear->id)
-            ->whereBetween('payment_date', [$this->startDate, $this->endDate]);
+        // Base query for all dues in current fiscal year
+        $baseDuesQuery = \App\Models\Due::where('fiscal_year_id', $currentFiscalYear->id);
 
         // If not admin or not showing all data, filter by current user
         if (!$this->isAdmin || !$this->showAllData) {
-            $duesQuery->where('member_id', $this->currentUser->id);
+            $baseDuesQuery->where('member_id', $this->currentUser->id);
         }
 
-        // Get all dues for the current fiscal year
-        $allDues = $duesQuery->get();
+        // 1. Get PAID dues within the date range (only paid dues have payment_date)
+        $paidDuesQuery = clone $baseDuesQuery;
+        $paidDues = $paidDuesQuery->whereIn('status', ['paid', 'partial'])
+            ->whereBetween('payment_date', [$this->startDate, $this->endDate])
+            ->get();
 
-        // 1. Calculate paid dues and paid members
-        $paidDues = $allDues->whereIn('status', ['paid', 'partial']);
         $this->paidMembers = $paidDues->groupBy('member_id')->count();
         $this->paidDues = $paidDues->sum(function($due) {
             return $due->amount + $due->penalty_amount;
         });
 
-        // 2. Calculate unpaid dues and unpaid members
-        $this->unpaidDues = $allDues->where('status', 'unpaid');
-        $this->unpaidMembers = $this->unpaidDues->groupBy('member_id')->count();
-        $this->unpaidDues = $this->unpaidDues->sum(function($due) {
+        // 2. Get ALL UNPAID dues (no date filtering since they don't have payment_date)
+        $unpaidDuesQuery = clone $baseDuesQuery;
+        $unpaidDues = $unpaidDuesQuery->where('status', 'unpaid')->get();
+
+        $this->unpaidMembers = $unpaidDues->groupBy('member_id')->count();
+        $this->unpaidDues = $unpaidDues->sum(function($due) {
             return $due->amount + $due->penalty_amount;
         });
 
-        // 3. Calculate totals based on actual Due records, not all approved members
+        // 3. Calculate totals
+        $allDues = $paidDues->merge($unpaidDues);
         $this->totalMembers = $allDues->groupBy('member_id')->count();
         $this->totalDues = $this->paidDues + $this->unpaidDues;
     }
