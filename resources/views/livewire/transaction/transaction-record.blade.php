@@ -529,7 +529,7 @@
                                             <div class="text-xs text-gray-600">{{ $transactionDetails['payment_date'] ? \Carbon\Carbon::parse($transactionDetails['payment_date'])->format('M j, Y g:i A') : 'N/A' }}</div>
                                         </div>
                                     </div>
-                                    @if($this->status === 'completed')
+                                    @if($transactionDetails['status'] === 'completed')
                                         <div class="flex items-center gap-3 p-3 bg-white/80 rounded-lg">
                                             <div class="w-3 h-3 bg-emerald-600 rounded-full"></div>
                                             <div class="flex-1">
@@ -537,7 +537,7 @@
                                                 <div class="text-xs text-gray-600">{{ $transactionDetails['completed_at'] ? \Carbon\Carbon::parse($transactionDetails['completed_at'])->format('M j, Y g:i A') : 'N/A' }}</div>
                                             </div>
                                         </div>
-                                    @elseif($this->status === 'pending')
+                                    @elseif($transactionDetails['status'] === 'pending')
                                         <div class="flex items-center gap-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
                                             <div class="w-3 h-3 bg-yellow-600 rounded-full animate-pulse"></div>
                                             <div class="flex-1">

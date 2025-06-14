@@ -53,7 +53,20 @@
                             </button>
                         </div>
                     </div>
+                   <div>
+                       @if($isAdmin)
+                           <button wire:click="toggleDataView" class="mb-4 px-4 py-2 bg-blue-500 text-white rounded">
+                               {{ $showAllData ? 'Show Only My Data' : 'Show All Data' }}
+                           </button>
+                       @endif
+                   </div>
+                    @if($isAdmin)
+                        <div class="mb-4 text-sm text-gray-600">
+                            Currently showing: {{ $showAllData ? 'All Members Data' : 'Only My Data' }}
+                        </div>
+                    @endif
                 </div>
+
             </div>
         </div>
 

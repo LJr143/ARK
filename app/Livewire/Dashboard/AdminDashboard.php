@@ -28,10 +28,16 @@ use Livewire\Component;
     public $submittingRequest = false;
     public $requestResult = null;
 
+    public $showAllData = false;
+    public $currentUser;
+    public $isAdmin = false;
+
     public function mount(): void
     {
         $this->startDate = now()->startOfMonth()->format('Y-m-d');
         $this->endDate = now()->format('Y-m-d');
+        $this->currentUser = auth()->user();
+        $this->isAdmin = $this->currentUser->hasRole(['admin', 'superadmin']);
         $this->loadData();
     }
 
@@ -71,15 +77,26 @@ use Livewire\Component;
             return;
         }
 
+        $membersQuery = User::where('status', 'approved');
+
+        // If regular member and not showing all data, filter their data only
+        if (!$this->isAdmin || !$this->showAllData) {
+            $membersQuery->where('id', $this->currentUser->id);
+        }
+
         // 1. Get total active members who should pay dues
-        $this->totalMembers = User::where('status', 'approved')->count();
+        $this->totalMembers = $membersQuery->count();
 
         // 2. Calculate paid members and paid dues through the Due model
-        $paidDues = \App\Models\Due::where('fiscal_year_id', $currentFiscalYear->id)
+        $paidDuesQuery = \App\Models\Due::where('fiscal_year_id', $currentFiscalYear->id)
             ->whereIn('status', ['paid', 'partial'])
-            ->whereBetween('payment_date', [$this->startDate, $this->endDate])
-            ->get();
+            ->whereBetween('payment_date', [$this->startDate, $this->endDate]);
 
+        if (!$this->isAdmin || !$this->showAllData) {
+            $paidDuesQuery->where('member_id', $this->currentUser->id);
+        }
+
+        $paidDues = $paidDuesQuery->get();
         // Count unique members who have paid
         $this->paidMembers = $paidDues->groupBy('member_id')->count();
 
@@ -98,7 +115,11 @@ use Livewire\Component;
         $this->unpaidDues = max(0, $this->totalDues - $this->paidDues);
     }
 
-
+    public function toggleDataView(): void
+    {
+        $this->showAllData = !$this->showAllData;
+        $this->loadData();
+    }
 
     public function openComputationModal(): void
     {
