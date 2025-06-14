@@ -86,38 +86,34 @@ use Livewire\Component;
             return;
         }
 
-        // Get all approved members (for total count)
-        $membersQuery = User::where('status', 'approved');
-        if (!$this->isAdmin || !$this->showAllData) {
-            $membersQuery->where('id', $this->currentUser->id);
-        }
-        $this->totalMembers = $membersQuery->count();
-
-        // Get dues for current fiscal year within date range
+        // Base query for members with dues in current fiscal year
         $duesQuery = \App\Models\Due::where('fiscal_year_id', $currentFiscalYear->id)
             ->whereBetween('payment_date', [$this->startDate, $this->endDate]);
 
+        // If not admin or not showing all data, filter by current user
         if (!$this->isAdmin || !$this->showAllData) {
             $duesQuery->where('member_id', $this->currentUser->id);
         }
 
+        // Get all dues for the current fiscal year
         $allDues = $duesQuery->get();
 
-        // Calculate paid dues and members
+        // 1. Calculate paid dues and paid members
         $paidDues = $allDues->whereIn('status', ['paid', 'partial']);
         $this->paidMembers = $paidDues->groupBy('member_id')->count();
         $this->paidDues = $paidDues->sum(function($due) {
             return $due->amount + $due->penalty_amount;
         });
 
-        // Calculate unpaid dues ONLY from actual Due records (not theoretical)
+        // 2. Calculate unpaid dues and unpaid members
         $unpaidDues = $allDues->where('status', 'unpaid');
         $this->unpaidMembers = $unpaidDues->groupBy('member_id')->count();
         $this->unpaidDues = $unpaidDues->sum(function($due) {
             return $due->amount + $due->penalty_amount;
         });
 
-        // Total dues is only from actual Due records
+        // 3. Calculate totals based on actual Due records, not all approved members
+        $this->totalMembers = $allDues->groupBy('member_id')->count();
         $this->totalDues = $this->paidDues + $this->unpaidDues;
     }
 
