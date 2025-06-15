@@ -174,13 +174,12 @@
                             <div class="flex justify-center space-x-3">
                                 @if(!$notificationResults || $sendingNotification)
                                     <button wire:click="sendReminder"
-                                            @if($sendingNotification) disabled @endif
+                                            wire:loading.attr="disabled"
+                                            wire:target="sendReminder"
                                             class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50">
-                                        @if($sendingNotification)
-                                            Sending...
-                                        @else
-                                            Send Reminder
-                                        @endif
+
+                                        <span wire:loading wire:target="sendReminder">Sending...</span>
+                                        <span wire:loading.remove wire:target="sendReminder">Send Reminder</span>
                                     </button>
                                 @endif
 

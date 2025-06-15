@@ -31,4 +31,5 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })->withSchedule(function (Schedule $schedule) {
         $schedule->command('fiscal-year:check')->everyMinute();
+        $schedule->command('reminders:update-statuses')->everyMinute();
     })->create();
