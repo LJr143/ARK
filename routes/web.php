@@ -6,8 +6,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PendingApprovalController;
 use App\Http\Controllers\ReminderController;
 use App\Http\Controllers\View\ViewController;
-use App\Models\Transaction;
-use App\Services\PayPalService;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Route;
 
 require __DIR__ . '/admin/routes.php';
@@ -47,20 +46,12 @@ Route::middleware(['auth:sanctum', 'user.status'])->group(function () {
     Route::get('/paypal/cancel', [PaymentController::class, 'cancel'])->name('paypal.cancel');
     Route::get('/settings/account-settings', [ViewController::class, 'accountSettings'])->name('admin.settings.account.settings');
 
-    Route::get('/receipt/{paymentId}/print', function ($paymentId) {
-        $receiptService = app(ReceiptService::class);
-        return $receiptService->generatePrintReceipt($paymentId);
-    })->name('receipt.print');
-
-    Route::get('/receipt/{paymentId}/show', function ($paymentId) {
-        $receiptService = app(ReceiptService::class);
-        return $receiptService->viewReceipt($paymentId);
-    })->name('receipt.show');
-
-    Route::get('/receipt/{paymentId}/download', function ($paymentId) {
-        $receiptService = app(ReceiptService::class);
-        return $receiptService->downloadReceipt($paymentId);
-    })->name('receipt.download');
-
 });
 
+Route::post('/test-broadcast-auth', function(Request $request) {
+    return response()->json([
+        'session' => $request->session()->all(),
+        'user' => auth()->user() ? auth()->user()->id : null,
+        'headers' => $request->headers->all(),
+    ]);
+});

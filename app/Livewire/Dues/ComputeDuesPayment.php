@@ -10,6 +10,7 @@ use App\Services\FiscalYearService;
 use App\Services\PayPalService;
 use App\Services\ReceiptService;
 use Exception;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
@@ -64,7 +65,7 @@ class ComputeDuesPayment extends Component
      *
      * @throws Exception
      */
-    public function computeUnpaidDues()
+    public function computeUnpaidDues(): void
     {
         if (!$this->selectedMember) {
             session()->flash('error', 'No member selected.');
@@ -86,7 +87,7 @@ class ComputeDuesPayment extends Component
         }
 
         try {
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             $now = now();
             $transactionReference = 'WALKIN-' . Str::uuid();
@@ -120,14 +121,14 @@ class ComputeDuesPayment extends Component
                 'identification_number' => $this->selectedMember->id,
             ]);
 
-            \DB::commit();
+            DB::commit();
 
             $this->recentPayment = $payment->load(['transaction', 'user']);
 
             session()->flash('message', 'Walk-in payment recorded successfully.');
             $this->resetComputation();
         } catch (Exception $e) {
-            \DB::rollBack();
+            DB::rollBack();
             session()->flash('error', 'Failed to process walk-in payment: ' . $e->getMessage());
         }
     }
@@ -169,73 +170,12 @@ class ComputeDuesPayment extends Component
         }
     }
 
-    public function viewReceipt($paymentId = null)
-    {
-        try {
-            $paymentId = $paymentId ?? ($this->recentPayment ? $this->recentPayment->id : null);
-
-            if (!$paymentId) {
-                session()->flash('error', 'No payment found to generate receipt.');
-                return;
-            }
-
-            // Open receipt in new window/tab
-            $this->dispatch('open-receipt', route('receipt.show', $paymentId));
-
-        } catch (\Exception $e) {
-            session()->flash('error', 'Failed to generate receipt: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     * Download receipt as PDF
-     */
-    public function downloadReceipt($paymentId = null)
-    {
-        try {
-            $paymentId = $paymentId ?? ($this->recentPayment ? $this->recentPayment->id : null);
-
-            if (!$paymentId) {
-                session()->flash('error', 'No payment found to download receipt.');
-                return;
-            }
-
-            // Redirect to download route
-            return redirect()->route('receipt.download', $paymentId);
-
-        } catch (\Exception $e) {
-            session()->flash('error', 'Failed to download receipt: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     * Print receipt
-     */
-    public function printReceipt($paymentId = null)
-    {
-        try {
-            $paymentId = $paymentId ?? ($this->recentPayment ? $this->recentPayment->id : null);
-
-            if (!$paymentId) {
-                session()->flash('error', 'No payment found to print receipt.');
-                return;
-            }
-
-            // Generate print-friendly HTML and dispatch event to open and print
-            $printUrl = route('receipt.print', $paymentId);
-            $this->dispatch('open-print-receipt', ['url' => $printUrl]);
-
-        } catch (\Exception $e) {
-            session()->flash('error', 'Failed to print receipt: ' . $e->getMessage());
-        }
-    }
-
-    public function resetModal()
+    public function resetModal(): void
     {
         $this->reset(['search', 'members', 'selectedMember', 'unpaidComputation', 'showModal']);
     }
 
-    private function resetComputation()
+    private function resetComputation(): void
     {
         $this->unpaidComputation = null;
         $this->selectedMember = null;

@@ -39,7 +39,10 @@ class ManageProfileSettings extends Component
         $this->users = User::with('roles')
             ->whereHas('roles', function ($query) {
                 $query->whereIn('name', ['superadmin', 'admin']);
-            })->get();
+            })
+            ->where('id', '!=', auth()->id())
+            ->get();
+
     }
 
     public function updatedSearchQuery(): void
