@@ -234,9 +234,12 @@ class ComputeDuesPayment extends Component
                 'receipt_number' => $receipt['receipt_number']
             ]);
 
+            // Add print parameter to URL to indicate this should auto-print
+            $printUrl = route('receipt.view', ['filename' => $receipt['receipt_number']]) . '?print=true';
+
             // Dispatch event to open receipt in new window for printing
             $this->dispatch('open-print-receipt', [
-                'url' => route('receipt.view', ['filename' => $receipt['receipt_number']])
+                'url' => $printUrl
             ]);
 
         } catch (\Exception $e) {

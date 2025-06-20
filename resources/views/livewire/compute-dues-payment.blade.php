@@ -190,10 +190,108 @@
     </div>
 
     <script>
+        // Main modal JavaScript
         document.addEventListener('livewire:init', () => {
             Livewire.on('redirect-to-paypal', (url) => {
                 window.location.href = url;
             });
+        });
+
+        document.addEventListener('livewire:initialized', () => {
+            Livewire.on('open-print-receipt', (event) => {
+                // Create a new window/tab for the receipt
+                const printWindow = window.open(event.url, '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes');
+
+                if (printWindow) {
+                    // Wait for the receipt page to fully load
+                    printWindow.onload = function() {
+                        // Give it a moment to render completely
+                        setTimeout(function() {
+                            // Focus on the print window and trigger print
+                            printWindow.focus();
+                            printWindow.print();
+
+                            // Optional: Close the window after printing (you can remove this if you want to keep it open)
+                            printWindow.onafterprint = function() {
+                                printWindow.close();
+                            };
+                        }, 1000); // Increased timeout to ensure full loading
+                    };
+
+                    // Fallback in case onload doesn't fire
+                    setTimeout(function() {
+                        if (printWindow && !printWindow.closed) {
+                            try {
+                                printWindow.focus();
+                                printWindow.print();
+                            } catch (e) {
+                                console.error('Error printing receipt:', e);
+                                alert('Unable to print receipt automatically. Please use the print button in the opened window.');
+                            }
+                        }
+                    }, 2000);
+                } else {
+                    // Popup blocked - show user-friendly message
+                    alert('Please allow popups for this website to print the receipt, or check if a new tab opened with your receipt.');
+                }
+            });
+
+            Livewire.on('open-receipt', (url) => {
+                window.open(url, '_blank');
+            });
+        });
+
+        // Receipt view JavaScript (for the actual receipt page)
+        function printReceipt() {
+            if (window.print) {
+                setTimeout(function() {
+                    window.print();
+                }, 100);
+            } else {
+                alert('Printing is not supported in this browser. Please use Ctrl+P or Cmd+P to print.');
+            }
+        }
+
+        function printReceiptAlt() {
+            window.focus();
+            window.print();
+        }
+
+        // Auto-print when receipt page loads (if opened for printing)
+        document.addEventListener('DOMContentLoaded', function() {
+            const printBtn = document.querySelector('.btn-print');
+            if (printBtn) {
+                printBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    printReceipt();
+                });
+            }
+
+            // Check if this window was opened for printing (you can pass a URL parameter)
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('print') === 'true') {
+                setTimeout(function() {
+                    window.print();
+                }, 1000);
+            }
+        });
+
+        // Keyboard shortcut for printing
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+                e.preventDefault();
+                printReceipt();
+            }
+        });
+
+        // Auto-print on window load (if this is the main way receipts are opened)
+        window.addEventListener('load', function() {
+            // Only auto-print if this page was opened in a popup or if print parameter exists
+            if (window.opener || new URLSearchParams(window.location.search).get('print') === 'true') {
+                setTimeout(function() {
+                    window.print();
+                }, 1000);
+            }
         });
     </script>
 </div>
