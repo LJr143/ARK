@@ -4,7 +4,6 @@ import Pusher from 'pusher-js';
 window.Pusher = Pusher;
 
 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-window.axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
 
 if (!csrfToken) {
     console.warn('CSRF token not found - WebSocket authentication may fail');
