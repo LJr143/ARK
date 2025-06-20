@@ -339,18 +339,20 @@
         <tbody>
         <tr>
             <td>Membership Dues Payment</td>
-            <td>₱{{ number_format($transaction->amount, 2) }}</td>
+            <td>Php {{ number_format($transaction->amount, 2) }}</td>
         </tr>
         </tbody>
     </table>
 
-    <div class="total">Total Paid: ₱{{ number_format($transaction->amount, 2) }}</div>
+    <div class="total">Total Paid: Php {{ number_format($transaction->amount, 2) }}</div>
 
     <!-- Print Button (hidden when printing) -->
     <div class="print-button no-print">
-        <button class="btn-print" onclick="window.print()">
-            🖨️ Print Receipt
+        <button class="btn-print" type="button" onclick="printReceipt()">
+            🖨Print Receipt
         </button>
+        <br><br>
+        <small style="color: #666;">You can also use Ctrl+P (Windows) or Cmd+P (Mac) to print</small>
     </div>
 
     <!-- Signature Section (only visible when printing) -->
@@ -371,13 +373,51 @@
 </div>
 
 <script>
-    // window.addEventListener('load', function() {
-    //     window.print();
-    // });
-
+    // Enhanced print function with better browser compatibility
     function printReceipt() {
+        // Check if browser supports print
+        if (window.print) {
+            // Small delay to ensure button click is processed
+            setTimeout(function() {
+                window.print();
+            }, 100);
+        } else {
+            alert('Printing is not supported in this browser. Please use Ctrl+P or Cmd+P to print.');
+        }
+    }
+
+    // Alternative print method using focus
+    function printReceiptAlt() {
+        window.focus();
         window.print();
     }
+
+    // Wait for page to fully load before enabling print
+    document.addEventListener('DOMContentLoaded', function() {
+        // Ensure print button is clickable
+        const printBtn = document.querySelector('.btn-print');
+        if (printBtn) {
+            printBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                printReceipt();
+            });
+        }
+    });
+
+    // Keyboard shortcut for printing (Ctrl+P or Cmd+P)
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+            e.preventDefault();
+            printReceipt();
+        }
+    });
+
+    // Optional: Auto-print when page loads (uncomment if needed)
+    // window.addEventListener('load', function() {
+    //     setTimeout(function() {
+    //         window.print();
+    //     }, 1000);
+    // });
 </script>
 </body>
 </html>
