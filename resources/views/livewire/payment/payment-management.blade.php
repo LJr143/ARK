@@ -171,7 +171,7 @@
                                         <div class="font-semibold text-gray-900">{{ trim("{$payment->user->first_name} {$payment->user->middle_name} {$payment->user->family_name}") }}</div>
                                         <div class="text-xs text-gray-500">PRC No. {{ $payment->user->prc_registration_number }}</div>
                                         <div class="sm:hidden mt-1">
-                                            @if($payment->user->status === 'active')
+                                            @if($payment->user->status === 'approved')
                                                 <span class="inline-flex items-center px-3 py-2 rounded-full text-xs font-bold bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-800 shadow-sm">
                                                         <span class="w-2 h-2 bg-emerald-500 rounded-full mr-2 animate-pulse"></span>
                                                         Active
