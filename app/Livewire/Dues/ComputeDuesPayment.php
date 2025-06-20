@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Dues;
 
+use App\Events\PaymentCompleted;
 use App\Models\Due;
 use App\Models\Payment;
 use App\Models\Transaction;
@@ -300,7 +301,7 @@ class ComputeDuesPayment extends Component
             $this->recentPayment = $payment;
             session()->flash('message', 'Payment completed successfully.');
 
-            // Generate receipt but don't try to open it immediately
+            // Generate receipt
             try {
                 $receiptService = app(ReceiptService::class);
                 $receipt = $receiptService->generateReceipt($payment);
@@ -315,9 +316,11 @@ class ComputeDuesPayment extends Component
                     'payment_id' => $payment->id,
                     'error' => $receiptError->getMessage()
                 ]);
-                // Don't fail the whole process if receipt generation fails
                 session()->flash('warning', 'Payment successful, but receipt generation failed.');
             }
+
+            // Dispatch the PaymentCompleted event
+            event(new PaymentCompleted($payment));
 
         } catch (\Exception $e) {
             Log::error('Error in handlePaymentSuccess', [

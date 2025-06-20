@@ -28,6 +28,10 @@ class DuesManagement extends Component
         'statusFilter' => ['except' => ''],
     ];
 
+    protected $listeners = [
+        'echo:payments,PaymentCompleted' => 'refreshTable'
+    ];
+
     public function mount(): void
     {
         $this->payment_date = now()->format('Y-m-d H:i:s');
@@ -74,13 +78,17 @@ class DuesManagement extends Component
         $this->resetForm();
     }
 
-
     public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse
     {
         return Excel::download(new PaymentExport, 'dues.xlsx');
     }
 
     public function resetForm(): void
+    {
+        $this->resetPage();
+    }
+
+    public function refreshTable($event): void
     {
         $this->resetPage();
     }
