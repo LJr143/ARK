@@ -152,10 +152,10 @@
                                         class="px-6 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-semibold rounded-xl transition-all duration-200 hover:shadow-lg">
                                     Pay Walk-in
                                 </button>
-                                <button wire:click="initiatePayPalPayment"
-                                        class="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hummingbird:bg-gradient-to-r hummingbird:from-blue-600 hummingbird:to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-xl transition-all duration-200 hover:shadow-lg">
-                                    Pay with PayPal
-                                </button>
+{{--                                <button wire:click="initiatePayPalPayment"--}}
+{{--                                        class="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hummingbird:bg-gradient-to-r hummingbird:from-blue-600 hummingbird:to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-xl transition-all duration-200 hover:shadow-lg">--}}
+{{--                                    Pay with PayPal--}}
+{{--                                </button>--}}
                             </div>
                         @else
                             <p class="text-gray-500">No unpaid dues found for this member.</p>
