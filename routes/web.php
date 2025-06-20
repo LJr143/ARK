@@ -108,10 +108,3 @@ Route::middleware(['auth:sanctum', 'user.status'])->group(function () {
 
 });
 
-Route::post('/test-broadcast-auth', function (Request $request) {
-    return response()->json([
-        'session' => $request->session()->all(),
-        'user' => auth()->user() ? auth()->user()->id : null,
-        'headers' => $request->headers->all(),
-    ]);
-});

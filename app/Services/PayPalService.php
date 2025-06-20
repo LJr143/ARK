@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Due;
 use App\Models\Payment;
 use App\Models\Transaction;
 use Srmklive\PayPal\Services\PayPal as PayPalClient;
@@ -89,6 +90,7 @@ class PayPalService
             if (isset($result['status']) && $result['status'] === 'COMPLETED') {
                 // Update transaction record
                 $transaction = Transaction::where('external_transaction_id', $orderId)->first();
+                $due = Due::where('id', $userId)->first();
 
                 if ($transaction) {
                     $transaction->update([
@@ -96,6 +98,13 @@ class PayPalService
                         'payer_id' => $result['payer']['payer_id'] ?? null,
                         'payment_details' => $result,
                         'completed_at' => now()
+                    ]);
+
+                    $due->update([
+                        'payment_date' => $transaction->completed_at,
+                        'status' => 'paid',
+                        'transaction_reference' => $transaction->id,
+
                     ]);
 
                     $payment = Payment::create([

@@ -228,7 +228,7 @@ use Livewire\Component;
     private function notifyAdminsOfComputationRequest(): void
     {
         $admins = \App\Models\User::whereHas('roles', function ($query) {
-            $query->where('name', 'superadmin')->where('name', 'admin');
+            $query->whereIn('name', ['superadmin', 'admin']);
         })->get();
 
         // Ensure all required fields exist with fallbacks
