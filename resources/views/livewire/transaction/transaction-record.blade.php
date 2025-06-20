@@ -427,7 +427,7 @@
 
                                 <div class="grid grid-cols-2 gap-4">
                                     <div class="text-center p-4 bg-white/80 rounded-xl">
-                                        <div class="text-3xl font-bold text-blue-600">${{ number_format($transactionDetails['amount'] ?? 0, 2) }}</div>
+                                        <div class="text-3xl font-bold text-blue-600">₱{{ number_format($transactionDetails['amount'] ?? 0, 2) }}</div>
                                         <div class="text-sm text-gray-600 font-medium">Transaction Amount</div>
                                     </div>
                                     <div class="text-center p-4 bg-white/80 rounded-xl">
