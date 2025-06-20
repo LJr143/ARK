@@ -178,9 +178,9 @@
                                     class="px-4 py-2 bg-white border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition">
                                 Download Receipt
                             </button>
-                            <button wire:click="printReceipt({{ $recentPayment->id }})"
+                            <button wire:click="viewReceipt({{ $recentPayment->id }})"
                                     class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-                                Print Receipt
+                                View Receipt
                             </button>
                         </div>
                     </div>
