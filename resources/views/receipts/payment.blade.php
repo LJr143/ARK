@@ -1,4 +1,3 @@
-// resources/views/receipts/payment.blade.php
 <!DOCTYPE html>
 <html>
 <head>
