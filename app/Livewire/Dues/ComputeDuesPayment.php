@@ -8,9 +8,7 @@ use App\Models\Transaction;
 use App\Models\User;
 use App\Services\FiscalYearService;
 use App\Services\PayPalService;
-use App\Services\ReceiptService;
 use Exception;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
@@ -65,7 +63,7 @@ class ComputeDuesPayment extends Component
      *
      * @throws Exception
      */
-    public function computeUnpaidDues(): void
+    public function computeUnpaidDues()
     {
         if (!$this->selectedMember) {
             session()->flash('error', 'No member selected.');
@@ -81,13 +79,14 @@ class ComputeDuesPayment extends Component
 
     public function initiateWalkInPayment(): void
     {
+        global $payment;
         if (!$this->unpaidComputation || $this->unpaidComputation['total_unpaid'] <= 0) {
             session()->flash('error', 'No unpaid dues to process.');
             return;
         }
 
         try {
-            DB::beginTransaction();
+            \DB::beginTransaction();
 
             $now = now();
             $transactionReference = 'WALKIN-' . Str::uuid();
@@ -106,6 +105,7 @@ class ComputeDuesPayment extends Component
                 'completed_at' => $now,
             ]);
 
+
             // Update Dues with transaction_reference and status
             Due::whereIn('id', $duesIds)->update([
                 'status' => 'paid',
@@ -114,22 +114,23 @@ class ComputeDuesPayment extends Component
             ]);
 
             // Create a Payment record
-            $payment = Payment::create([
+            Payment::create([
                 'user_id' => $this->selectedMember->id,
                 'transaction_id' => $transaction->id,
                 'payment_method' => 'walk-in',
                 'identification_number' => $this->selectedMember->id,
             ]);
 
-            DB::commit();
+            \DB::commit();
 
             $this->recentPayment = $payment->load(['transaction', 'user']);
 
             session()->flash('message', 'Walk-in payment recorded successfully.');
             $this->resetComputation();
         } catch (Exception $e) {
-            DB::rollBack();
+            \DB::rollBack();
             session()->flash('error', 'Failed to process walk-in payment: ' . $e->getMessage());
+        } catch (\Throwable $e) {
         }
     }
 
@@ -170,12 +171,12 @@ class ComputeDuesPayment extends Component
         }
     }
 
-    public function resetModal(): void
+    public function resetModal()
     {
         $this->reset(['search', 'members', 'selectedMember', 'unpaidComputation', 'showModal']);
     }
 
-    private function resetComputation(): void
+    private function resetComputation()
     {
         $this->unpaidComputation = null;
         $this->selectedMember = null;
