@@ -48,11 +48,62 @@ Route::middleware(['auth:sanctum', 'user.status'])->group(function () {
     Route::get('/settings/account-settings', [ViewController::class, 'accountSettings'])->name('admin.settings.account.settings');
 
     Route::get('/receipt/download/{filename}', function ($filename) {
-        return Storage::download($filename);
+        try {
+            // Ensure the filename has the proper path and extension
+            $filePath = "receipts/{$filename}.pdf";
+
+            if (!Storage::exists($filePath)) {
+                Log::error('Receipt file not found for download', [
+                    'requested_filename' => $filename,
+                    'full_path' => $filePath,
+                    'storage_path' => Storage::path($filePath)
+                ]);
+                abort(404, 'Receipt not found');
+            }
+
+            Log::info('Downloading receipt', ['filename' => $filename, 'path' => $filePath]);
+
+            return Storage::download($filePath, $filename . '.pdf');
+
+        } catch (\Exception $e) {
+            Log::error('Error downloading receipt', [
+                'filename' => $filename,
+                'error' => $e->getMessage()
+            ]);
+            abort(500, 'Error downloading receipt');
+        }
     })->name('receipt.download');
 
     Route::get('/receipt/view/{filename}', function ($filename) {
-        return response()->file(Storage::path($filename));
+        try {
+            // Ensure the filename has the proper path and extension
+            $filePath = "receipts/{$filename}.pdf";
+
+            if (!Storage::exists($filePath)) {
+                Log::error('Receipt file not found for viewing', [
+                    'requested_filename' => $filename,
+                    'full_path' => $filePath,
+                    'storage_path' => Storage::path($filePath)
+                ]);
+                abort(404, 'Receipt not found');
+            }
+
+            Log::info('Viewing receipt', ['filename' => $filename, 'path' => $filePath]);
+
+            $fullPath = Storage::path($filePath);
+
+            return response()->file($fullPath, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="' . $filename . '.pdf"'
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Error viewing receipt', [
+                'filename' => $filename,
+                'error' => $e->getMessage()
+            ]);
+            abort(500, 'Error viewing receipt');
+        }
     })->name('receipt.view');
 
 });

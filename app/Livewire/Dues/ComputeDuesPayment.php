@@ -11,6 +11,7 @@ use App\Services\PayPalService;
 use App\Services\ReceiptService;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
@@ -175,20 +176,50 @@ class ComputeDuesPayment extends Component
 
     public function downloadReceipt($paymentId)
     {
-        $payment = Payment::with(['transaction', 'user'])->findOrFail($paymentId);
-        $receiptService = app(ReceiptService::class);
-        $receipt = $receiptService->generateReceipt($payment);
+        try {
+            $payment = Payment::with(['transaction', 'user'])->findOrFail($paymentId);
+            $receiptService = app(ReceiptService::class);
+            $receipt = $receiptService->generateReceipt($payment);
 
-        return response()->download(storage_path("app/{$receipt['filename']}"))->deleteFileAfterSend();
+            Log::info('Receipt generated for download', [
+                'payment_id' => $paymentId,
+                'receipt_number' => $receipt['receipt_number']
+            ]);
+
+            // Redirect to download route
+            return redirect()->route('receipt.download', ['filename' => $receipt['receipt_number']]);
+
+        } catch (\Exception $e) {
+            Log::error('Error in downloadReceipt', [
+                'payment_id' => $paymentId,
+                'error' => $e->getMessage()
+            ]);
+            session()->flash('error', 'Error generating receipt: ' . $e->getMessage());
+        }
     }
 
     public function viewReceipt($paymentId)
     {
-        $payment = Payment::with(['transaction', 'user'])->findOrFail($paymentId);
-        $receiptService = app(ReceiptService::class);
-        $receipt = $receiptService->generateReceipt($payment);
+        try {
+            $payment = Payment::with(['transaction', 'user'])->findOrFail($paymentId);
+            $receiptService = app(ReceiptService::class);
+            $receipt = $receiptService->generateReceipt($payment);
 
-        return response()->file(storage_path("app/{$receipt['filename']}"));
+            Log::info('Receipt generated for viewing', [
+                'payment_id' => $paymentId,
+                'receipt_number' => $receipt['receipt_number']
+            ]);
+
+            // Open in new tab/window
+            $this->dispatch('open-receipt', route('receipt.view', ['filename' => $receipt['receipt_number']]));
+
+        } catch (\Exception $e) {
+            Log::error('Error in viewReceipt', [
+                'payment_id' => $paymentId,
+                'error' => $e->getMessage()
+            ]);
+            session()->flash('error', 'Error generating receipt: ' . $e->getMessage());
+        }
     }
 
 
@@ -211,8 +242,7 @@ class ComputeDuesPayment extends Component
     public function handlePaymentSuccess($paymentId): void
     {
         try {
-            // Debug logging
-            \Log::info('handlePaymentSuccess called', [
+            Log::info('handlePaymentSuccess called', [
                 'paymentId' => $paymentId,
                 'type' => gettype($paymentId),
                 'is_array' => is_array($paymentId)
@@ -226,7 +256,7 @@ class ComputeDuesPayment extends Component
             }
 
             if (!$actualPaymentId) {
-                \Log::error('No valid payment ID found', ['original' => $paymentId]);
+                Log::error('No valid payment ID found', ['original' => $paymentId]);
                 session()->flash('error', 'Invalid payment ID provided.');
                 return;
             }
@@ -234,7 +264,7 @@ class ComputeDuesPayment extends Component
             $payment = Payment::with(['transaction', 'user'])->find($actualPaymentId);
 
             if (!$payment) {
-                \Log::error('Payment not found in database', ['paymentId' => $actualPaymentId]);
+                Log::error('Payment not found in database', ['paymentId' => $actualPaymentId]);
                 session()->flash('error', 'Payment not found.');
                 return;
             }
@@ -242,15 +272,27 @@ class ComputeDuesPayment extends Component
             $this->recentPayment = $payment;
             session()->flash('message', 'Payment completed successfully.');
 
-            // Generate receipt
-            $receiptService = app(ReceiptService::class);
-            $receipt = $receiptService->generateReceipt($payment);
+            // Generate receipt but don't try to open it immediately
+            try {
+                $receiptService = app(ReceiptService::class);
+                $receipt = $receiptService->generateReceipt($payment);
 
-            // Instead of dispatching, just set a property to show the receipt section
-            $this->dispatch('open-receipt', $receipt['filename']);
+                Log::info('Receipt generated successfully in handlePaymentSuccess', [
+                    'payment_id' => $payment->id,
+                    'receipt_number' => $receipt['receipt_number']
+                ]);
+
+            } catch (\Exception $receiptError) {
+                Log::error('Error generating receipt in handlePaymentSuccess', [
+                    'payment_id' => $payment->id,
+                    'error' => $receiptError->getMessage()
+                ]);
+                // Don't fail the whole process if receipt generation fails
+                session()->flash('warning', 'Payment successful, but receipt generation failed.');
+            }
 
         } catch (\Exception $e) {
-            \Log::error('Error in handlePaymentSuccess', [
+            Log::error('Error in handlePaymentSuccess', [
                 'error' => $e->getMessage(),
                 'paymentId' => $paymentId
             ]);
