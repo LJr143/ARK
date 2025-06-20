@@ -195,25 +195,5 @@
                 window.location.href = url;
             });
         });
-
-        document.addEventListener('livewire:initialized', () => {
-            Livewire.on('open-print-receipt', (event) => {
-                const printWindow = window.open(event.url, '_blank', 'width=800,height=600');
-                if (printWindow) {
-                    printWindow.onload = function() {
-                        setTimeout(function() {
-                            printWindow.print();
-                            printWindow.close();
-                        }, 500);
-                    };
-                } else {
-                    alert('Please allow popups for this website to print the receipt.');
-                }
-            });
-
-            Livewire.on('open-receipt', (url) => {
-                window.open(url, '_blank');
-            });
-        });
     </script>
 </div>

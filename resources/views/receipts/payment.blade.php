@@ -373,11 +373,9 @@
 </div>
 
 <script>
-    // Enhanced print function with better browser compatibility
+
     function printReceipt() {
-        // Check if browser supports print
         if (window.print) {
-            // Small delay to ensure button click is processed
             setTimeout(function() {
                 window.print();
             }, 100);
@@ -386,15 +384,32 @@
         }
     }
 
-    // Alternative print method using focus
     function printReceiptAlt() {
         window.focus();
         window.print();
     }
 
-    // Wait for page to fully load before enabling print
+    document.addEventListener('livewire:initialized', () => {
+        Livewire.on('open-print-receipt', (event) => {
+            const printWindow = window.open(event.url, '_blank', 'width=800,height=600');
+            if (printWindow) {
+                printWindow.onload = function() {
+                    setTimeout(function() {
+                        printWindow.print();
+                        printWindow.close();
+                    }, 500);
+                };
+            } else {
+                alert('Please allow popups for this website to print the receipt.');
+            }
+        });
+
+        Livewire.on('open-receipt', (url) => {
+            window.open(url, '_blank');
+        });
+    });
+
     document.addEventListener('DOMContentLoaded', function() {
-        // Ensure print button is clickable
         const printBtn = document.querySelector('.btn-print');
         if (printBtn) {
             printBtn.addEventListener('click', function(e) {
@@ -404,7 +419,6 @@
         }
     });
 
-    // Keyboard shortcut for printing (Ctrl+P or Cmd+P)
     document.addEventListener('keydown', function(e) {
         if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
             e.preventDefault();
