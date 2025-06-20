@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Services\FiscalYearService;
 use App\Services\PayPalService;
 use Exception;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
@@ -22,12 +23,6 @@ class ComputeDuesPayment extends Component
 
     public $recentPayment = null;
 
-    protected $receiptService;
-
-    public function boot()
-    {
-        $this->receiptService = app(ReceiptService::class);
-    }
 
     public function render()
     {
@@ -86,7 +81,7 @@ class ComputeDuesPayment extends Component
         }
 
         try {
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             $now = now();
             $transactionReference = 'WALKIN-' . Str::uuid();
@@ -121,14 +116,14 @@ class ComputeDuesPayment extends Component
                 'identification_number' => $this->selectedMember->id,
             ]);
 
-            \DB::commit();
+            DB::commit();
 
             $this->recentPayment = $payment->load(['transaction', 'user']);
 
             session()->flash('message', 'Walk-in payment recorded successfully.');
             $this->resetComputation();
         } catch (Exception $e) {
-            \DB::rollBack();
+            DB::rollBack();
             session()->flash('error', 'Failed to process walk-in payment: ' . $e->getMessage());
         } catch (\Throwable $e) {
         }
