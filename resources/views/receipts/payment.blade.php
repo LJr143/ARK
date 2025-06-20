@@ -37,18 +37,18 @@
         }
 
         .receipt-title {
-            font-size: 32px;
+            font-size: 25px;
             font-weight: 700;
             color: #212529;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             letter-spacing: 0.5px;
             text-transform: uppercase;
         }
 
         .receipt-subtitle {
-            font-size: 16px;
+            font-size: 12px;
             color: #6c757d;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             font-weight: 500;
         }
 
@@ -57,11 +57,11 @@
             background-color: #28a745;
             color: white;
             padding: 8px 24px;
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .receipt-meta {
@@ -76,14 +76,14 @@
         }
 
         .receipt-meta-label {
-            font-size: 14px;
+            font-size: 12px;
             color: #6c757d;
             font-weight: 500;
             margin-bottom: 5px;
         }
 
         .receipt-meta-value {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
             color: #212529;
         }
@@ -93,14 +93,14 @@
         }
 
         .section {
-            margin-bottom: 35px;
+            margin-bottom: 25px;
         }
 
         .section-title {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
             color: #495057;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             border-bottom: 1px solid #dee2e6;
@@ -141,7 +141,7 @@
         .transaction-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             border: 1px solid #dee2e6;
         }
 
@@ -151,7 +151,7 @@
             padding: 15px 20px;
             text-align: left;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 12px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -159,7 +159,7 @@
         .transaction-table td {
             padding: 15px 20px;
             border-bottom: 1px solid #dee2e6;
-            font-size: 15px;
+            font-size: 13px;
         }
 
         .transaction-table tbody tr:nth-child(even) {
@@ -179,7 +179,7 @@
             text-align: right;
             font-weight: 600;
             color: #28a745;
-            font-size: 16px;
+            font-size: 14px;
         }
 
         .total-section {
@@ -190,14 +190,14 @@
         }
 
         .total-label {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
             color: #495057;
             margin-bottom: 8px;
         }
 
         .total-amount {
-            font-size: 28px;
+            font-size: 26px;
             font-weight: 700;
             color: #28a745;
         }
@@ -215,48 +215,13 @@
             color: white;
             border: none;
             padding: 12px 30px;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 500;
             cursor: pointer;
             transition: background-color 0.2s ease;
         }
 
-        .btn-print:hover {
-            background-color: #0056b3;
-        }
 
-        .print-instructions {
-            font-size: 14px;
-            color: #6c757d;
-            margin-top: 10px;
-        }
-
-        .signature-section {
-            display: none;
-            margin-top: 50px;
-            padding-top: 30px;
-            border-top: 1px solid #dee2e6;
-        }
-
-        .signature-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 80px;
-            margin-top: 40px;
-        }
-
-        .signature-box {
-            text-align: center;
-        }
-
-        .signature-line {
-            border-top: 1px solid #343a40;
-            margin-top: 60px;
-            padding-top: 8px;
-            font-size: 13px;
-            color: #6c757d;
-            font-weight: 500;
-        }
 
         .footer {
             border-top: 1px solid #dee2e6;
@@ -271,14 +236,14 @@
         }
 
         .footer-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
             color: #212529;
             margin-bottom: 10px;
         }
 
         .footer-text {
-            font-size: 14px;
+            font-size: 12px;
             color: #6c757d;
             margin-bottom: 5px;
         }
@@ -499,24 +464,6 @@
             </div>
         </div>
 
-        <div class="print-section no-print">
-            <button class="btn-print" onclick="printReceipt()">Print Receipt</button>
-            <div class="print-instructions">
-                For your records, please print or save this receipt.<br>
-                You may also use Ctrl+P (Windows) or Cmd+P (Mac) to print.
-            </div>
-        </div>
-
-        <div class="signature-section">
-            <div class="signature-grid">
-                <div class="signature-box">
-                    <div class="signature-line">Member Signature</div>
-                </div>
-                <div class="signature-box">
-                    <div class="signature-line">Authorized Representative</div>
-                </div>
-            </div>
-        </div>
     </div>
 
     <div class="footer">
@@ -534,26 +481,5 @@
         </div>
     </div>
 </div>
-
-<script>
-    function printReceipt() {
-        window.print();
-    }
-
-    // Keyboard shortcuts
-    document.addEventListener('keydown', function(e) {
-        if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
-            e.preventDefault();
-            printReceipt();
-        }
-    });
-
-    // Optional auto-print on load (uncomment if needed)
-    // window.addEventListener('load', function() {
-    //     setTimeout(function() {
-    //         window.print();
-    //     }, 1000);
-    // });
-</script>
 </body>
 </html>
