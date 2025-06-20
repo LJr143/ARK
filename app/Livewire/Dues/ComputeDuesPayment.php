@@ -222,6 +222,31 @@ class ComputeDuesPayment extends Component
         }
     }
 
+    public function printReceipt($paymentId)
+    {
+        try {
+            $payment = Payment::with(['transaction', 'user'])->findOrFail($paymentId);
+            $receiptService = app(ReceiptService::class);
+            $receipt = $receiptService->generateReceipt($payment);
+
+            Log::info('Receipt generated for printing', [
+                'payment_id' => $paymentId,
+                'receipt_number' => $receipt['receipt_number']
+            ]);
+
+            // Dispatch event to open receipt in new window for printing
+            $this->dispatch('open-print-receipt', [
+                'url' => route('receipt.view', ['filename' => $receipt['receipt_number']])
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Error in printReceipt', [
+                'payment_id' => $paymentId,
+                'error' => $e->getMessage()
+            ]);
+            session()->flash('error', 'Error generating receipt: ' . $e->getMessage());
+        }
+    }
 
     public function resetModal()
     {
@@ -299,6 +324,7 @@ class ComputeDuesPayment extends Component
             session()->flash('error', 'Error processing payment success: ' . $e->getMessage());
         }
     }
+
     public function handlePaymentCompleted($data): void
     {
         \Log::info('handlePaymentCompleted called', ['data' => $data]);
@@ -313,6 +339,7 @@ class ComputeDuesPayment extends Component
             $this->handlePaymentSuccess($paymentId);
         }
     }
+
     public function debugPayment(): void
     {
         if ($this->recentPayment) {
@@ -334,7 +361,6 @@ class ComputeDuesPayment extends Component
             ]);
         }
     }
-
 
     /**
      * Get recent payment details for display

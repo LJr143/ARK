@@ -178,7 +178,7 @@
                                     class="px-4 py-2 bg-white border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition">
                                 Download Receipt
                             </button>
-                            <button onclick="window.print()"
+                            <button wire:click="printReceipt({{ $recentPayment->id }})"
                                     class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
                                 Print Receipt
                             </button>
@@ -198,10 +198,13 @@
 
         document.addEventListener('livewire:initialized', () => {
             Livewire.on('open-print-receipt', (event) => {
-                const printWindow = window.open(event.url, '_blank');
+                const printWindow = window.open(event.url, '_blank', 'width=800,height=600');
                 if (printWindow) {
                     printWindow.onload = function() {
-                        printWindow.print();
+                        setTimeout(function() {
+                            printWindow.print();
+                            printWindow.close();
+                        }, 500);
                     };
                 } else {
                     alert('Please allow popups for this website to print the receipt.');
