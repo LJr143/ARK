@@ -190,15 +190,13 @@
     </div>
 
     <script>
-        document.addEventListener('livewire:initialized', () => {
-            Livewire.on('payment-completed', (event) => {
-                @this.call('handlePaymentSuccess', event);
-            });
-
+        document.addEventListener('livewire:init', () => {
             Livewire.on('redirect-to-paypal', (url) => {
                 window.location.href = url;
             });
+        });
 
+        document.addEventListener('livewire:initialized', () => {
             Livewire.on('open-print-receipt', (event) => {
                 const printWindow = window.open(event.url, '_blank');
                 if (printWindow) {

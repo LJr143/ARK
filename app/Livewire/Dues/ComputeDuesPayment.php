@@ -24,7 +24,9 @@ class ComputeDuesPayment extends Component
 
     public $recentPayment = null;
 
-    protected $listeners = ['payment-completed' => 'handlePaymentSuccess'];
+    protected $listeners = [
+        'payment-completed' => 'handlePaymentCompleted'
+    ];
 
 
     public function render()
@@ -119,12 +121,15 @@ class ComputeDuesPayment extends Component
 
             DB::commit();
 
-            // Set the recent payment and dispatch event
+            // Set the recent payment and handle success directly
             $this->recentPayment = $payment->load(['transaction', 'user']);
-            $this->dispatch('payment-completed', ['payment_id' => $payment->id]);
+
+            // Call the success handler directly instead of dispatching an event
+            $this->handlePaymentSuccess($payment->id);
 
             session()->flash('message', 'Walk-in payment recorded successfully.');
             $this->resetComputation();
+
         } catch (Exception $e) {
             DB::rollBack();
             session()->flash('error', 'Failed to process walk-in payment: ' . $e->getMessage());
@@ -203,26 +208,33 @@ class ComputeDuesPayment extends Component
     /**
      * Handle payment success callback
      */
-    public function handlePaymentSuccess($data): void
+    public function handlePaymentSuccess($paymentId): void
     {
         try {
-            // Extract payment ID from the event data
-            $paymentId = null;
+            // Debug logging
+            \Log::info('handlePaymentSuccess called', [
+                'paymentId' => $paymentId,
+                'type' => gettype($paymentId),
+                'is_array' => is_array($paymentId)
+            ]);
 
-            if (is_array($data)) {
-                $paymentId = $data['payment_id'] ?? $data['paymentId'] ?? null;
+            // Handle different parameter formats
+            if (is_array($paymentId)) {
+                $actualPaymentId = $paymentId['payment_id'] ?? $paymentId['paymentId'] ?? $paymentId[0] ?? null;
             } else {
-                $paymentId = $data;
+                $actualPaymentId = $paymentId;
             }
 
-            if (!$paymentId) {
+            if (!$actualPaymentId) {
+                \Log::error('No valid payment ID found', ['original' => $paymentId]);
                 session()->flash('error', 'Invalid payment ID provided.');
                 return;
             }
 
-            $payment = Payment::with(['transaction', 'user'])->find($paymentId);
+            $payment = Payment::with(['transaction', 'user'])->find($actualPaymentId);
 
             if (!$payment) {
+                \Log::error('Payment not found in database', ['paymentId' => $actualPaymentId]);
                 session()->flash('error', 'Payment not found.');
                 return;
             }
@@ -230,16 +242,57 @@ class ComputeDuesPayment extends Component
             $this->recentPayment = $payment;
             session()->flash('message', 'Payment completed successfully.');
 
-            // Generate receipt and dispatch event
+            // Generate receipt
             $receiptService = app(ReceiptService::class);
             $receipt = $receiptService->generateReceipt($payment);
 
+            // Instead of dispatching, just set a property to show the receipt section
             $this->dispatch('open-receipt', $receipt['filename']);
 
         } catch (\Exception $e) {
+            \Log::error('Error in handlePaymentSuccess', [
+                'error' => $e->getMessage(),
+                'paymentId' => $paymentId
+            ]);
             session()->flash('error', 'Error processing payment success: ' . $e->getMessage());
         }
     }
+    public function handlePaymentCompleted($data): void
+    {
+        \Log::info('handlePaymentCompleted called', ['data' => $data]);
+
+        if (is_array($data)) {
+            $paymentId = $data['payment_id'] ?? $data['paymentId'] ?? null;
+        } else {
+            $paymentId = $data;
+        }
+
+        if ($paymentId) {
+            $this->handlePaymentSuccess($paymentId);
+        }
+    }
+    public function debugPayment(): void
+    {
+        if ($this->recentPayment) {
+            \Log::info('Recent payment exists', [
+                'id' => $this->recentPayment->id,
+                'user_id' => $this->recentPayment->user_id,
+                'transaction_id' => $this->recentPayment->transaction_id
+            ]);
+        } else {
+            \Log::info('No recent payment found');
+        }
+
+        // Also check the last payment in the database
+        $lastPayment = Payment::latest()->first();
+        if ($lastPayment) {
+            \Log::info('Last payment in DB', [
+                'id' => $lastPayment->id,
+                'created_at' => $lastPayment->created_at
+            ]);
+        }
+    }
+
 
     /**
      * Get recent payment details for display
