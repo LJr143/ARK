@@ -77,7 +77,6 @@ class ComputeDuesPayment extends Component
 
     public function initiateWalkInPayment(): void
     {
-        global $payment;
         if (!$this->unpaidComputation || $this->unpaidComputation['total_unpaid'] <= 0) {
             session()->flash('error', 'No unpaid dues to process.');
             return;
@@ -103,7 +102,6 @@ class ComputeDuesPayment extends Component
                 'completed_at' => $now,
             ]);
 
-
             // Update Dues with transaction_reference and status
             Due::whereIn('id', $duesIds)->update([
                 'status' => 'paid',
@@ -112,7 +110,7 @@ class ComputeDuesPayment extends Component
             ]);
 
             // Create a Payment record
-            Payment::create([
+            $payment = Payment::create([
                 'user_id' => $this->selectedMember->id,
                 'transaction_id' => $transaction->id,
                 'payment_method' => 'walk-in',
@@ -121,14 +119,15 @@ class ComputeDuesPayment extends Component
 
             DB::commit();
 
+            // Set the recent payment and dispatch event
             $this->recentPayment = $payment->load(['transaction', 'user']);
+            $this->dispatch('payment-completed', ['payment_id' => $payment->id]);
 
             session()->flash('message', 'Walk-in payment recorded successfully.');
             $this->resetComputation();
         } catch (Exception $e) {
             DB::rollBack();
             session()->flash('error', 'Failed to process walk-in payment: ' . $e->getMessage());
-        } catch (\Throwable $e) {
         }
     }
 
@@ -217,10 +216,10 @@ class ComputeDuesPayment extends Component
             $this->recentPayment = $payment;
             session()->flash('message', 'Payment completed successfully.');
 
+            // Generate receipt and dispatch event
             $receiptService = app(ReceiptService::class);
             $receipt = $receiptService->generateReceipt($payment);
 
-            // Dispatch event to show receipt options
             $this->dispatch('open-receipt', route('receipt.view', $receipt['filename']));
 
         } catch (\Exception $e) {
