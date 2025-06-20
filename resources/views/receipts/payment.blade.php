@@ -412,12 +412,11 @@
         }
     });
 
-    // Optional: Auto-print when page loads (uncomment if needed)
-    // window.addEventListener('load', function() {
-    //     setTimeout(function() {
-    //         window.print();
-    //     }, 1000);
-    // });
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+            window.print();
+        }, 1000);
+    });
 </script>
 </body>
 </html>
