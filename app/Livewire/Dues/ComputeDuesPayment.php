@@ -203,16 +203,16 @@ class ComputeDuesPayment extends Component
     /**
      * Handle payment success callback
      */
-    public function handlePaymentSuccess($paymentId): void
+    public function handlePaymentSuccess($data): void
     {
         try {
-            // Debug: Log what we received
-            \Log::info('handlePaymentSuccess called with:', ['paymentId' => $paymentId, 'type' => gettype($paymentId)]);
+            // Extract payment ID from the event data
+            $paymentId = null;
 
-            // Ensure we're working with a single payment ID, not an array
-            if (is_array($paymentId)) {
-                $paymentId = $paymentId['payment_id'] ?? $paymentId[0] ?? null;
-                \Log::info('Extracted payment ID from array:', ['paymentId' => $paymentId]);
+            if (is_array($data)) {
+                $paymentId = $data['payment_id'] ?? $data['paymentId'] ?? null;
+            } else {
+                $paymentId = $data;
             }
 
             if (!$paymentId) {
@@ -227,9 +227,6 @@ class ComputeDuesPayment extends Component
                 return;
             }
 
-            // Debug: Confirm we have a single Payment model
-            \Log::info('Payment found:', ['payment_class' => get_class($payment), 'payment_id' => $payment->id]);
-
             $this->recentPayment = $payment;
             session()->flash('message', 'Payment completed successfully.');
 
@@ -237,10 +234,9 @@ class ComputeDuesPayment extends Component
             $receiptService = app(ReceiptService::class);
             $receipt = $receiptService->generateReceipt($payment);
 
-            $this->dispatch('open-receipt', route('receipt.view', $receipt['filename']));
+            $this->dispatch('open-receipt', $receipt['filename']);
 
         } catch (\Exception $e) {
-            \Log::error('Error in handlePaymentSuccess:', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
             session()->flash('error', 'Error processing payment success: ' . $e->getMessage());
         }
     }
