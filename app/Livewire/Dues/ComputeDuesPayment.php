@@ -8,6 +8,7 @@ use App\Models\Transaction;
 use App\Models\User;
 use App\Services\FiscalYearService;
 use App\Services\PayPalService;
+use App\Services\ReceiptService;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -22,6 +23,8 @@ class ComputeDuesPayment extends Component
     public $showModal = false;
 
     public $recentPayment = null;
+
+    protected $listeners = ['payment-completed' => 'handlePaymentSuccess'];
 
 
     public function render()
@@ -166,6 +169,25 @@ class ComputeDuesPayment extends Component
         }
     }
 
+    public function downloadReceipt($paymentId)
+    {
+        $payment = Payment::with(['transaction', 'user'])->findOrFail($paymentId);
+        $receiptService = app(ReceiptService::class);
+        $receipt = $receiptService->generateReceipt($payment);
+
+        return response()->download(storage_path("app/{$receipt['filename']}"))->deleteFileAfterSend();
+    }
+
+    public function viewReceipt($paymentId)
+    {
+        $payment = Payment::with(['transaction', 'user'])->findOrFail($paymentId);
+        $receiptService = app(ReceiptService::class);
+        $receipt = $receiptService->generateReceipt($payment);
+
+        return response()->file(storage_path("app/{$receipt['filename']}"));
+    }
+
+
     public function resetModal()
     {
         $this->reset(['search', 'members', 'selectedMember', 'unpaidComputation', 'showModal']);
@@ -195,11 +217,11 @@ class ComputeDuesPayment extends Component
             $this->recentPayment = $payment;
             session()->flash('message', 'Payment completed successfully.');
 
+            $receiptService = app(ReceiptService::class);
+            $receipt = $receiptService->generateReceipt($payment);
+
             // Dispatch event to show receipt options
-            $this->dispatch('payment-completed', [
-                'payment_id' => $payment->id,
-                'payment_method' => $payment->payment_method
-            ]);
+            $this->dispatch('open-receipt', route('receipt.view', $receipt['filename']));
 
         } catch (\Exception $e) {
             session()->flash('error', 'Error processing payment success: ' . $e->getMessage());

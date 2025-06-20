@@ -23,8 +23,9 @@ Route::get('/login', fn() => redirect('/'))->name('login');
 Route::get('login/google', [LoginController::class, 'redirectToGoogle'])->name('login.google');
 Route::get('login/google/callback', [LoginController::class, 'handleGoogleCallback']);
 Route::get('/pending-approval', [PendingApprovalController::class, 'index'])->name('pending-approval');
-Route::get('/registration/success', function () {return view('ark.admin.auth.success');})->name('member.registration.success');
-
+Route::get('/registration/success', function () {
+    return view('ark.admin.auth.success');
+})->name('member.registration.success');
 
 
 Route::middleware(['auth:sanctum', 'user.status'])->group(function () {
@@ -40,15 +41,23 @@ Route::middleware(['auth:sanctum', 'user.status'])->group(function () {
     Route::get('/manage/reminder/{reminder}', [ViewController::class, 'ManageReminder'])->name('manage.reminder');
     Route::get('/attachments/{attachment}/download', [ReminderController::class, 'downloadAttachment'])->name('attachments.download');
     Route::get('/request/request-history', [ViewController::class, 'requestHistory'])->name('request.history');
-    Route::get('/membership/dues',[ViewController::class, 'membershipDues'])->name('membership-fee.dues');
+    Route::get('/membership/dues', [ViewController::class, 'membershipDues'])->name('membership-fee.dues');
 
     Route::get('/paypal/success', [PaymentController::class, 'success'])->name('paypal.success');
     Route::get('/paypal/cancel', [PaymentController::class, 'cancel'])->name('paypal.cancel');
     Route::get('/settings/account-settings', [ViewController::class, 'accountSettings'])->name('admin.settings.account.settings');
 
+    Route::get('/receipt/download/{filename}', function ($filename) {
+        return Storage::download($filename);
+    })->name('receipt.download');
+
+    Route::get('/receipt/view/{filename}', function ($filename) {
+        return response()->file(Storage::path($filename));
+    })->name('receipt.view');
+
 });
 
-Route::post('/test-broadcast-auth', function(Request $request) {
+Route::post('/test-broadcast-auth', function (Request $request) {
     return response()->json([
         'session' => $request->session()->all(),
         'user' => auth()->user() ? auth()->user()->id : null,

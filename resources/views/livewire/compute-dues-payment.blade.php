@@ -172,6 +172,21 @@
             </div>
         </div>
     </div>
+    @if ($recentPayment)
+        <div class="mt-6 p-4 bg-green-50 rounded-xl border border-green-200">
+            <h4 class="text-lg font-bold text-green-800 mb-2">Payment Successful!</h4>
+            <div class="flex gap-3">
+                <button wire:click="downloadReceipt({{ $recentPayment->id }})"
+                        class="px-4 py-2 bg-white border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition">
+                    Download Receipt
+                </button>
+                <button onclick="window.print()"
+                        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                    Print Receipt
+                </button>
+            </div>
+        </div>
+    @endif
 
     <script>
         document.addEventListener('livewire:init', () => {
