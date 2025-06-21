@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Dues;
 
+use App\Exports\DuesExport;
 use App\Exports\PaymentExport;
 use App\Models\Due;
 use App\Models\Payment;
@@ -80,7 +81,7 @@ class DuesManagement extends Component
 
     public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse
     {
-        return Excel::download(new PaymentExport, 'dues.xlsx');
+        return Excel::download(new DuesExport, 'dues.xlsx');
     }
 
     public function resetForm(): void
