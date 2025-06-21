@@ -92,7 +92,6 @@ class PayPalService
                 $transaction = Transaction::where('external_transaction_id', $orderId)->first();
                 $due = Due::where('id', $userId)->first();
 
-                dd($userId);
 
                 if ($transaction) {
                     $transaction->update([
