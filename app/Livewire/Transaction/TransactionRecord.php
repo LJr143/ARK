@@ -4,6 +4,7 @@ namespace App\Livewire\Transaction;
 
 use AllowDynamicProperties;
 use App\Exports\MembersExport;
+use App\Exports\TransactionExport;
 use App\Models\Transaction;
 use App\Models\User;
 use Livewire\Component;
@@ -72,7 +73,7 @@ class TransactionRecord extends Component
 
     public function export(): \Symfony\Component\HttpFoundation\BinaryFileResponse
     {
-        return Excel::download(new MembersExport, 'members.xlsx');
+        return Excel::download(new TransactionExport, 'members.xlsx');
     }
 
 
