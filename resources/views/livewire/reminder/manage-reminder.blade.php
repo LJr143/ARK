@@ -812,32 +812,6 @@
 
                                                 <div class="space-y-4">
                                                     <div class="timeline-item">
-                                                        <div class="timeline-dot"></div>
-                                                        <div
-                                                            class="bg-white p-4 rounded-xl border border-gray-200 hover:shadow-md transition-shadow">
-                                                            <div class="flex items-center justify-between mb-2">
-                                                                <span class="font-semibold text-gray-800">Email Notification Sent</span>
-                                                                <span class="text-sm text-gray-500">May 28, 2025</span>
-                                                            </div>
-                                                            <p class="text-gray-600 text-sm">Sent by System
-                                                                Administrator</p>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="timeline-item">
-                                                        <div class="timeline-dot bg-yellow-500"></div>
-                                                        <div
-                                                            class="bg-white p-4 rounded-xl border border-gray-200 hover:shadow-md transition-shadow">
-                                                            <div class="flex items-center justify-between mb-2">
-                                                                <span
-                                                                    class="font-semibold text-gray-800">SMS Reminder</span>
-                                                                <span class="text-sm text-gray-500">May 27, 2025</span>
-                                                            </div>
-                                                            <p class="text-gray-600 text-sm">Sent by John Doe</p>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="timeline-item">
                                                         <div class="timeline-dot bg-purple-500"></div>
                                                         <div
                                                             class="bg-white p-4 rounded-xl border border-gray-200 hover:shadow-md transition-shadow">
