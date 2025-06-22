@@ -855,216 +855,216 @@
 
                                         <!-- Sidebar -->
                                         <div class="space-y-6">
-                                            @if(auth()->user()->hasRole('member') && $reminder->category->name == 'Deadline')
-                                                @php
-                                                    $existingRequest = \App\Models\ComputationRequest::where('member_id', auth()->id())
-                                                                                        ->where('status', 'pending')
-                                                                                        ->first();
-                                                @endphp
+{{--                                            @if(auth()->user()->hasRole('member') && $reminder->category->name == 'Deadline')--}}
+{{--                                                @php--}}
+{{--                                                    $existingRequest = \App\Models\ComputationRequest::where('member_id', auth()->id())--}}
+{{--                                                                                        ->where('status', 'pending')--}}
+{{--                                                                                        ->first();--}}
+{{--                                                @endphp--}}
 
-                                                <div
-                                                    class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 lg:p-8">
-                                                    @if ($existingRequest)
-                                                        <!-- Existing Request State -->
-                                                        <div class="text-center py-8">
-                                                            <div
-                                                                class="mx-auto w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-4">
-                                                                <svg class="w-8 h-8 text-amber-600" fill="none"
-                                                                     stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round"
-                                                                          stroke-linejoin="round"
-                                                                          stroke-width="2"
-                                                                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                                                </svg>
-                                                            </div>
-                                                            <h3 class="text-lg font-semibold text-gray-900 mb-2">
-                                                                Request Already Submitted</h3>
-                                                            <p class="text-sm text-gray-600 mb-6 max-w-md mx-auto">
-                                                                You already have a pending computation request.
-                                                                Please wait for the administrator to process
-                                                                your request.
-                                                            </p>
+{{--                                                <div--}}
+{{--                                                    class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 lg:p-8">--}}
+{{--                                                    @if ($existingRequest)--}}
+{{--                                                        <!-- Existing Request State -->--}}
+{{--                                                        <div class="text-center py-8">--}}
+{{--                                                            <div--}}
+{{--                                                                class="mx-auto w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-4">--}}
+{{--                                                                <svg class="w-8 h-8 text-amber-600" fill="none"--}}
+{{--                                                                     stroke="currentColor" viewBox="0 0 24 24">--}}
+{{--                                                                    <path stroke-linecap="round"--}}
+{{--                                                                          stroke-linejoin="round"--}}
+{{--                                                                          stroke-width="2"--}}
+{{--                                                                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>--}}
+{{--                                                                </svg>--}}
+{{--                                                            </div>--}}
+{{--                                                            <h3 class="text-lg font-semibold text-gray-900 mb-2">--}}
+{{--                                                                Request Already Submitted</h3>--}}
+{{--                                                            <p class="text-sm text-gray-600 mb-6 max-w-md mx-auto">--}}
+{{--                                                                You already have a pending computation request.--}}
+{{--                                                                Please wait for the administrator to process--}}
+{{--                                                                your request.--}}
+{{--                                                            </p>--}}
 
-                                                            <!-- Status Badge -->
-                                                            <div
-                                                                class="inline-flex items-center gap-2 px-4 py-2 bg-amber-50 border border-amber-200 rounded-full">
-                                                                <div
-                                                                    class="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></div>
-                                                                <span
-                                                                    class="text-sm font-medium text-amber-800">Pending Review</span>
-                                                            </div>
-                                                        </div>
-                                                    @else
-                                                        <!-- New Request State -->
-                                                        <div class="text-center mb-8">
-                                                            <div
-                                                                class="mx-auto w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
-                                                                <svg class="w-8 h-8 text-indigo-600" fill="none"
-                                                                     stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round"
-                                                                          stroke-linejoin="round"
-                                                                          stroke-width="2"
-                                                                          d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                                                                </svg>
-                                                            </div>
-                                                            <h3 class="text-lg font-semibold text-gray-900 mb-2">
-                                                                Request Computation Breakdown</h3>
-                                                            <p class="text-sm text-gray-600 max-w-md mx-auto mb-6">
-                                                                Submit a request to get a detailed breakdown of
-                                                                your dues computation. This will help you
-                                                                understand your payment obligations.
-                                                            </p>
-                                                        </div>
+{{--                                                            <!-- Status Badge -->--}}
+{{--                                                            <div--}}
+{{--                                                                class="inline-flex items-center gap-2 px-4 py-2 bg-amber-50 border border-amber-200 rounded-full">--}}
+{{--                                                                <div--}}
+{{--                                                                    class="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></div>--}}
+{{--                                                                <span--}}
+{{--                                                                    class="text-sm font-medium text-amber-800">Pending Review</span>--}}
+{{--                                                            </div>--}}
+{{--                                                        </div>--}}
+{{--                                                    @else--}}
+{{--                                                        <!-- New Request State -->--}}
+{{--                                                        <div class="text-center mb-8">--}}
+{{--                                                            <div--}}
+{{--                                                                class="mx-auto w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mb-4">--}}
+{{--                                                                <svg class="w-8 h-8 text-indigo-600" fill="none"--}}
+{{--                                                                     stroke="currentColor" viewBox="0 0 24 24">--}}
+{{--                                                                    <path stroke-linecap="round"--}}
+{{--                                                                          stroke-linejoin="round"--}}
+{{--                                                                          stroke-width="2"--}}
+{{--                                                                          d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>--}}
+{{--                                                                </svg>--}}
+{{--                                                            </div>--}}
+{{--                                                            <h3 class="text-lg font-semibold text-gray-900 mb-2">--}}
+{{--                                                                Request Computation Breakdown</h3>--}}
+{{--                                                            <p class="text-sm text-gray-600 max-w-md mx-auto mb-6">--}}
+{{--                                                                Submit a request to get a detailed breakdown of--}}
+{{--                                                                your dues computation. This will help you--}}
+{{--                                                                understand your payment obligations.--}}
+{{--                                                            </p>--}}
+{{--                                                        </div>--}}
 
-                                                        <!-- Action Buttons -->
-                                                        <div class="space-y-4">
-                                                            <!-- Primary Action Button -->
-                                                            <button
-                                                                wire:click="openComputationModal"
-                                                                wire:loading.attr="disabled"
-                                                                wire:loading.class="opacity-75 cursor-not-allowed"
-                                                                class="group w-full relative overflow-hidden bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-200"
-                                                            >
-                                                                <div
-                                                                    class="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                                                                <div
-                                                                    class="relative px-6 py-4 flex items-center justify-center gap-3">
-                        <span wire:loading.remove wire:target="openComputationModal" class="flex items-center gap-3">
-                            <svg class="w-5 h-5 transform group-hover:rotate-12 transition-transform duration-300"
-                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M9 5h6m-3 0v14m-4-7h8m-8 4h8"/>
-                            </svg>
-                            <span class="text-base font-semibold">Request Computation Breakdown</span>
-                        </span>
-                                                                    <span wire:loading
-                                                                          wire:target="openComputationModal"
-                                                                          class="flex items-center gap-3">
-                            <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M4 12a8 8 0 0116 0 8 8 0 01-16 0z"/>
-                            </svg>
-                            <span class="text-base font-semibold">Processing Request...</span>
-                        </span>
-                                                                </div>
-                                                            </button>
+{{--                                                        <!-- Action Buttons -->--}}
+{{--                                                        <div class="space-y-4">--}}
+{{--                                                            <!-- Primary Action Button -->--}}
+{{--                                                            <button--}}
+{{--                                                                wire:click="openComputationModal"--}}
+{{--                                                                wire:loading.attr="disabled"--}}
+{{--                                                                wire:loading.class="opacity-75 cursor-not-allowed"--}}
+{{--                                                                class="group w-full relative overflow-hidden bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-200"--}}
+{{--                                                            >--}}
+{{--                                                                <div--}}
+{{--                                                                    class="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>--}}
+{{--                                                                <div--}}
+{{--                                                                    class="relative px-6 py-4 flex items-center justify-center gap-3">--}}
+{{--                        <span wire:loading.remove wire:target="openComputationModal" class="flex items-center gap-3">--}}
+{{--                            <svg class="w-5 h-5 transform group-hover:rotate-12 transition-transform duration-300"--}}
+{{--                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">--}}
+{{--                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"--}}
+{{--                                      d="M9 5h6m-3 0v14m-4-7h8m-8 4h8"/>--}}
+{{--                            </svg>--}}
+{{--                            <span class="text-base font-semibold">Request Computation Breakdown</span>--}}
+{{--                        </span>--}}
+{{--                                                                    <span wire:loading--}}
+{{--                                                                          wire:target="openComputationModal"--}}
+{{--                                                                          class="flex items-center gap-3">--}}
+{{--                            <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">--}}
+{{--                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"--}}
+{{--                                      d="M4 12a8 8 0 0116 0 8 8 0 01-16 0z"/>--}}
+{{--                            </svg>--}}
+{{--                            <span class="text-base font-semibold">Processing Request...</span>--}}
+{{--                        </span>--}}
+{{--                                                                </div>--}}
+{{--                                                            </button>--}}
 
-                                                            <!-- Secondary Action Button -->
-                                                            {{--                                                            <button--}}
-                                                            {{--                                                                wire:click="openViewModal"--}}
-                                                            {{--                                                                wire:loading.attr="disabled"--}}
-                                                            {{--                                                                wire:loading.class="opacity-75 cursor-not-allowed"--}}
-                                                            {{--                                                                class="group w-full bg-white border-2 border-gray-200 text-gray-700 rounded-xl shadow-sm hover:shadow-md hover:border-indigo-300 hover:text-indigo-700 transform hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-gray-200"--}}
-                                                            {{--                                                            >--}}
-                                                            {{--                                                                <div--}}
-                                                            {{--                                                                    class="px-6 py-3 flex items-center justify-center gap-3">--}}
-                                                            {{--                                                                    <span wire:loading.remove--}}
-                                                            {{--                                                                          wire:target="openViewModal"--}}
-                                                            {{--                                                                          class="flex items-center gap-3">--}}
-                                                            {{--                                                                        <svg--}}
-                                                            {{--                                                                            class="w-5 h-5 transform group-hover:scale-110 transition-transform duration-300"--}}
-                                                            {{--                                                                            fill="none" stroke="currentColor"--}}
-                                                            {{--                                                                            viewBox="0 0 24 24">--}}
-                                                            {{--                                                                            <path stroke-linecap="round"--}}
-                                                            {{--                                                                                  stroke-linejoin="round"--}}
-                                                            {{--                                                                                  stroke-width="2"--}}
-                                                            {{--                                                                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>--}}
-                                                            {{--                                                                            <path stroke-linecap="round"--}}
-                                                            {{--                                                                                  stroke-linejoin="round"--}}
-                                                            {{--                                                                                  stroke-width="2"--}}
-                                                            {{--                                                                                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>--}}
-                                                            {{--                                                                        </svg>--}}
-                                                            {{--                                                                        <span class="text-sm font-medium">View Existing Requests</span>--}}
-                                                            {{--                                                                    </span>--}}
-                                                            {{--                                                                    <span wire:loading--}}
-                                                            {{--                                                                          wire:target="openViewModal"--}}
-                                                            {{--                                                                          class="flex items-center gap-3">--}}
-                                                            {{--                                                                        <svg class="w-5 h-5 animate-spin" fill="none"--}}
-                                                            {{--                                                                             stroke="currentColor" viewBox="0 0 24 24">--}}
-                                                            {{--                                                                            <path stroke-linecap="round"--}}
-                                                            {{--                                                                                  stroke-linejoin="round"--}}
-                                                            {{--                                                                                  stroke-width="2"--}}
-                                                            {{--                                                                                  d="M4 12a8 8 0 0116 0 8 8 0 01-16 0z"/>--}}
-                                                            {{--                                                                        </svg>--}}
-                                                            {{--                                                                        <span--}}
-                                                            {{--                                                                            class="text-sm font-medium">Loading...</span>--}}
-                                                            {{--                                                                    </span>--}}
-                                                            {{--                                                                </div>--}}
-                                                            {{--                                                            </button>--}}
-                                                        </div>
+{{--                                                            <!-- Secondary Action Button -->--}}
+{{--                                                            --}}{{--                                                            <button--}}
+{{--                                                            --}}{{--                                                                wire:click="openViewModal"--}}
+{{--                                                            --}}{{--                                                                wire:loading.attr="disabled"--}}
+{{--                                                            --}}{{--                                                                wire:loading.class="opacity-75 cursor-not-allowed"--}}
+{{--                                                            --}}{{--                                                                class="group w-full bg-white border-2 border-gray-200 text-gray-700 rounded-xl shadow-sm hover:shadow-md hover:border-indigo-300 hover:text-indigo-700 transform hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-gray-200"--}}
+{{--                                                            --}}{{--                                                            >--}}
+{{--                                                            --}}{{--                                                                <div--}}
+{{--                                                            --}}{{--                                                                    class="px-6 py-3 flex items-center justify-center gap-3">--}}
+{{--                                                            --}}{{--                                                                    <span wire:loading.remove--}}
+{{--                                                            --}}{{--                                                                          wire:target="openViewModal"--}}
+{{--                                                            --}}{{--                                                                          class="flex items-center gap-3">--}}
+{{--                                                            --}}{{--                                                                        <svg--}}
+{{--                                                            --}}{{--                                                                            class="w-5 h-5 transform group-hover:scale-110 transition-transform duration-300"--}}
+{{--                                                            --}}{{--                                                                            fill="none" stroke="currentColor"--}}
+{{--                                                            --}}{{--                                                                            viewBox="0 0 24 24">--}}
+{{--                                                            --}}{{--                                                                            <path stroke-linecap="round"--}}
+{{--                                                            --}}{{--                                                                                  stroke-linejoin="round"--}}
+{{--                                                            --}}{{--                                                                                  stroke-width="2"--}}
+{{--                                                            --}}{{--                                                                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>--}}
+{{--                                                            --}}{{--                                                                            <path stroke-linecap="round"--}}
+{{--                                                            --}}{{--                                                                                  stroke-linejoin="round"--}}
+{{--                                                            --}}{{--                                                                                  stroke-width="2"--}}
+{{--                                                            --}}{{--                                                                                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>--}}
+{{--                                                            --}}{{--                                                                        </svg>--}}
+{{--                                                            --}}{{--                                                                        <span class="text-sm font-medium">View Existing Requests</span>--}}
+{{--                                                            --}}{{--                                                                    </span>--}}
+{{--                                                            --}}{{--                                                                    <span wire:loading--}}
+{{--                                                            --}}{{--                                                                          wire:target="openViewModal"--}}
+{{--                                                            --}}{{--                                                                          class="flex items-center gap-3">--}}
+{{--                                                            --}}{{--                                                                        <svg class="w-5 h-5 animate-spin" fill="none"--}}
+{{--                                                            --}}{{--                                                                             stroke="currentColor" viewBox="0 0 24 24">--}}
+{{--                                                            --}}{{--                                                                            <path stroke-linecap="round"--}}
+{{--                                                            --}}{{--                                                                                  stroke-linejoin="round"--}}
+{{--                                                            --}}{{--                                                                                  stroke-width="2"--}}
+{{--                                                            --}}{{--                                                                                  d="M4 12a8 8 0 0116 0 8 8 0 01-16 0z"/>--}}
+{{--                                                            --}}{{--                                                                        </svg>--}}
+{{--                                                            --}}{{--                                                                        <span--}}
+{{--                                                            --}}{{--                                                                            class="text-sm font-medium">Loading...</span>--}}
+{{--                                                            --}}{{--                                                                    </span>--}}
+{{--                                                            --}}{{--                                                                </div>--}}
+{{--                                                            --}}{{--                                                            </button>--}}
+{{--                                                        </div>--}}
 
-                                                        <!-- Help Text -->
-                                                        <div
-                                                            class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                                                            <div class="flex items-start gap-3">
-                                                                <svg
-                                                                    class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5"
-                                                                    fill="none" stroke="currentColor"
-                                                                    viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round"
-                                                                          stroke-linejoin="round"
-                                                                          stroke-width="2"
-                                                                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                                                </svg>
-                                                                <div class="text-sm text-blue-800">
-                                                                    <p class="font-medium mb-1">What happens
-                                                                        next?</p>
-                                                                    <ul class="space-y-1 text-blue-700">
-                                                                        <li>• Your request will be reviewed by
-                                                                            an administrator
-                                                                        </li>
-                                                                        <li>• You'll receive a detailed
-                                                                            computation breakdown
-                                                                        </li>
-                                                                        <li>• Processing typically takes 1-2
-                                                                            business days
-                                                                        </li>
-                                                                    </ul>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    @endif
-                                                </div>
-                                            @else
-                                                <!-- Unauthorized State -->
-                                                <div
-                                                    class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                                                    <div class="text-center py-8">
-                                                        <div
-                                                            class="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
-                                                            <svg class="w-8 h-8 text-red-600" fill="none"
-                                                                 stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round"
-                                                                      stroke-linejoin="round" stroke-width="2"
-                                                                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>
-                                                            </svg>
-                                                        </div>
-                                                        <h3 class="text-lg font-semibold text-gray-900 mb-2">
-                                                            Access Restricted</h3>
-                                                        <p class="text-sm text-gray-600 max-w-md mx-auto">
-                                                            You are not authorized to request a computation
-                                                            breakdown. This feature is only available for active
-                                                            members with deadline reminders.
-                                                        </p>
+{{--                                                        <!-- Help Text -->--}}
+{{--                                                        <div--}}
+{{--                                                            class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">--}}
+{{--                                                            <div class="flex items-start gap-3">--}}
+{{--                                                                <svg--}}
+{{--                                                                    class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5"--}}
+{{--                                                                    fill="none" stroke="currentColor"--}}
+{{--                                                                    viewBox="0 0 24 24">--}}
+{{--                                                                    <path stroke-linecap="round"--}}
+{{--                                                                          stroke-linejoin="round"--}}
+{{--                                                                          stroke-width="2"--}}
+{{--                                                                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>--}}
+{{--                                                                </svg>--}}
+{{--                                                                <div class="text-sm text-blue-800">--}}
+{{--                                                                    <p class="font-medium mb-1">What happens--}}
+{{--                                                                        next?</p>--}}
+{{--                                                                    <ul class="space-y-1 text-blue-700">--}}
+{{--                                                                        <li>• Your request will be reviewed by--}}
+{{--                                                                            an administrator--}}
+{{--                                                                        </li>--}}
+{{--                                                                        <li>• You'll receive a detailed--}}
+{{--                                                                            computation breakdown--}}
+{{--                                                                        </li>--}}
+{{--                                                                        <li>• Processing typically takes 1-2--}}
+{{--                                                                            business days--}}
+{{--                                                                        </li>--}}
+{{--                                                                    </ul>--}}
+{{--                                                                </div>--}}
+{{--                                                            </div>--}}
+{{--                                                        </div>--}}
+{{--                                                    @endif--}}
+{{--                                                </div>--}}
+{{--                                            @else--}}
+{{--                                                <!-- Unauthorized State -->--}}
+{{--                                                <div--}}
+{{--                                                    class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">--}}
+{{--                                                    <div class="text-center py-8">--}}
+{{--                                                        <div--}}
+{{--                                                            class="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">--}}
+{{--                                                            <svg class="w-8 h-8 text-red-600" fill="none"--}}
+{{--                                                                 stroke="currentColor" viewBox="0 0 24 24">--}}
+{{--                                                                <path stroke-linecap="round"--}}
+{{--                                                                      stroke-linejoin="round" stroke-width="2"--}}
+{{--                                                                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"/>--}}
+{{--                                                            </svg>--}}
+{{--                                                        </div>--}}
+{{--                                                        <h3 class="text-lg font-semibold text-gray-900 mb-2">--}}
+{{--                                                            Access Restricted</h3>--}}
+{{--                                                        <p class="text-sm text-gray-600 max-w-md mx-auto">--}}
+{{--                                                            You are not authorized to request a computation--}}
+{{--                                                            breakdown. This feature is only available for active--}}
+{{--                                                            members with deadline reminders.--}}
+{{--                                                        </p>--}}
 
-                                                        <!-- Contact Support -->
-                                                        <div
-                                                            class="mt-6 p-4 bg-gray-50 border border-gray-200 rounded-lg">
-                                                            <div
-                                                                class="flex items-center justify-center gap-2 text-sm text-gray-600">
-                                                                <svg class="w-4 h-4" fill="none"
-                                                                     stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round"
-                                                                          stroke-linejoin="round"
-                                                                          stroke-width="2"
-                                                                          d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                                                </svg>
-                                                                <span>Need help? Contact support for assistance.</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endif
+{{--                                                        <!-- Contact Support -->--}}
+{{--                                                        <div--}}
+{{--                                                            class="mt-6 p-4 bg-gray-50 border border-gray-200 rounded-lg">--}}
+{{--                                                            <div--}}
+{{--                                                                class="flex items-center justify-center gap-2 text-sm text-gray-600">--}}
+{{--                                                                <svg class="w-4 h-4" fill="none"--}}
+{{--                                                                     stroke="currentColor" viewBox="0 0 24 24">--}}
+{{--                                                                    <path stroke-linecap="round"--}}
+{{--                                                                          stroke-linejoin="round"--}}
+{{--                                                                          stroke-width="2"--}}
+{{--                                                                          d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>--}}
+{{--                                                                </svg>--}}
+{{--                                                                <span>Need help? Contact support for assistance.</span>--}}
+{{--                                                            </div>--}}
+{{--                                                        </div>--}}
+{{--                                                    </div>--}}
+{{--                                                </div>--}}
+{{--                                            @endif--}}
 
                                             <!-- Attachments Section -->
                                             <div class="glass-effect rounded-2xl p-6 card-hover">

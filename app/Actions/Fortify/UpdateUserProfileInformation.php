@@ -4,11 +4,9 @@ namespace App\Actions\Fortify;
 
 use App\Models\User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Laravel\Fortify\Contracts\UpdatesUserProfileInformation;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class UpdateUserProfileInformation implements UpdatesUserProfileInformation
 {
@@ -17,7 +15,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
      *
      * @param  array<string, mixed>  $input
      */
-    public function update(User $user, array $input): Redirector
+    public function update(User $user, array $input): void
     {
         Validator::make($input, [
             'first_name' => ['required', 'string', 'max:255'],
@@ -42,7 +40,6 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
                 'email' => $input['email'],
             ])->save();
         }
-        return redirect()->route('admin.settings.account.settings');
     }
 
     /**

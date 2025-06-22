@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Traits\HandlesProfilePhotoUploads;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -20,7 +21,8 @@ class User extends Authenticatable
 
     /** @use HasFactory<UserFactory> */
     use HasFactory;
-    use HasProfilePhoto;
+//    use HasProfilePhoto;
+    use HandlesProfilePhotoUploads;
     use Notifiable;
     use TwoFactorAuthenticatable;
 
