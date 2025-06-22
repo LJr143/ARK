@@ -16,7 +16,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
      *
      * @param  array<string, mixed>  $input
      */
-    public function update(User $user, array $input): RedirectResponse
+    public function update(User $user, array $input)
     {
         Validator::make($input, [
             'first_name' => ['required', 'string', 'max:255'],
