@@ -927,7 +927,7 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Account Status</label>
                                 <select wire:model="status"
                                         class="w-full px-4 py-3 border-2 border-gray-200/50 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 bg-white/80 backdrop-blur-sm text-gray-900 shadow-sm hover:shadow-md">
-                                    <option value="active">Active</option>
+                                    <option value="approved">Active</option>
                                     <option value="pending">Pending</option>
                                     <option value="inactive">Inactive</option>
                                 </select>
