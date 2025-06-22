@@ -398,28 +398,29 @@
                                         <!-- View Button with Loading State -->
                                         <button
                                             wire:click="openViewModal({{ $member->id }})"
-                                            wire:target="openViewModal"
-                                            wire:loading.attr="disabled"
-                                            wire:loading.class="opacity-75 cursor-not-allowed"
-                                            class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-sm font-semibold rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-blue-600/30 hover:-translate-y-0.5 group">
+                                            wire:target="openViewModal({{ $member->id }})"
+                                        wire:loading.attr="disabled"
+                                        wire:loading.class="opacity-75 cursor-not-allowed"
+                                        class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-sm font-semibold rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-blue-600/30 hover:-translate-y-0.5 group">
 
-                                            <!-- Loading State (only for this button) -->
-                                            <span wire:loading wire:target="openViewModal" class="flex items-center">
-        <svg class="animate-spin w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
-        Loading...
-    </span>
+                                        <!-- Update all target references to include the ID -->
+                                        <span wire:loading wire:target="openViewModal({{ $member->id }})">
+                                                    <svg class="animate-spin w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                        </span>
 
-                                            <!-- Default State (hidden during loading) -->
-                                            <span wire:loading.remove wire:target="openViewModal" class="flex items-center">
-        <svg class="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-            <path stroke-linecap="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-        </svg>
-        View
-    </span>
+                                                                            <span wire:loading.remove wire:target="openViewModal({{ $member->id }})">
+                                            <svg class="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                <path stroke-linecap="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                            </svg>
+                                        </span>
+
+                                                                            <span wire:loading.class="invisible" wire:target="openViewModal({{ $member->id }})">
+                                            View
+                                        </span>
                                         </button>
 
                                         <!-- Edit Button with Loading State -->
