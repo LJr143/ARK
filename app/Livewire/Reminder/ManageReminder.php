@@ -229,8 +229,12 @@ class ManageReminder extends Component
         $this->editableFields = [
             'title' => $this->reminder->title,
             'description' => $this->reminder->description,
-            'start_datetime' => $this->reminder->start_datetime,
-            'end_datetime' => $this->reminder->end_datetime,
+            'start_datetime' => $this->reminder->start_datetime
+                ? Carbon::parse($this->reminder->start_datetime)->format('Y-m-d\TH:i')
+                : null,
+            'end_datetime' => $this->reminder->end_datetime
+                ? Carbon::parse($this->reminder->end_datetime)->format('Y-m-d\TH:i')
+                : null,
             'location' => $this->reminder->location ?? '',
             'period' => (bool)$this->reminder->period,
         ];
