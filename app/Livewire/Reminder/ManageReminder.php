@@ -90,12 +90,12 @@ class ManageReminder extends Component
             'period' => $this->reminder->period,
             'description' => $this->reminder->description,
             'location' => $this->reminder->location ?? '—',
-            'start_date' => [
+            'start_datetime' => [
                 'date' => $startDateTime->format('F j, Y'),
                 'time' => $startDateTime->format('g:i A'),
                 'datetime' => $this->reminder->start_datetime
             ],
-            'end_date' => [
+            'end_datetime' => [
                 'date' => $endDateTime->format('F j, Y'),
                 'time' => $endDateTime->format('g:i A'),
                 'datetime' => $this->reminder->end_datetime

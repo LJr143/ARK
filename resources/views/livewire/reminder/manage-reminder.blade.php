@@ -690,11 +690,11 @@
                                                                            wire:model="editableFields.start_datetime"
                                                                            class="px-3 py-1 bg-white border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500">
                                                                 @else
-                                                                    <p class="text-green-800 font-semibold">{{ $reminderDetails['start_date']['date'] }}</p>
+                                                                    <p class="text-green-800 font-semibold">{{ $reminderDetails['start_datetime']['date'] }}</p>
                                                                 @endif
                                                             </div>
                                                             @if(!$isEditing)
-                                                                <p class="text-green-700 text-sm">{{ $reminderDetails['start_date']['time'] }}</p>
+                                                                <p class="text-green-700 text-sm">{{ $reminderDetails['start_datetime']['time'] }}</p>
                                                             @endif
                                                         </div>
                                                         <div class="p-4 bg-blue-50 rounded-xl border border-blue-200">
@@ -729,11 +729,11 @@
                                                                            wire:model="editableFields.end_datetime"
                                                                            class="px-3 py-1 bg-white border border-gray-300 rounded-md focus:ring-red-500 focus:border-red-500">
                                                                 @else
-                                                                    <p class="text-red-800 font-semibold">{{ $reminderDetails['end_date']['date'] }}</p>
+                                                                    <p class="text-red-800 font-semibold">{{ $reminderDetails['end_datetime']['date'] }}</p>
                                                                 @endif
                                                             </div>
                                                             @if(!$isEditing)
-                                                                <p class="text-red-700 text-sm">{{ $reminderDetails['end_date']['time'] }}</p>
+                                                                <p class="text-red-700 text-sm">{{ $reminderDetails['end_datetime']['time'] }}</p>
                                                             @endif
                                                         </div>
 
