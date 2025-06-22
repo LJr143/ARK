@@ -53,7 +53,7 @@ class MemberManagement extends Component
         'prc_registration_number' => 'required|string|max:50|unique:users,prc_registration_number',
         'email' => 'required|email|unique:users,email',
         'mobile' => 'required|string|max:20',
-        'status' => 'required|in:active,pending,deactivated,inactive',
+        'status' => 'required|in:approved,pending,deactivated,inactive',
         'current_chapter' => 'required|string|max:255',
         'importFile' => 'required|mimes:xlsx,xls,csv|max:10240',
     ];
