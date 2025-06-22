@@ -247,8 +247,8 @@ class ManageReminder extends Component
         $validated = $this->validate([
             'editableFields.title' => 'required|string|max:255',
             'editableFields.description' => 'required|string',
-            'editableFields.start_datetime' => 'required|date',
-            'editableFields.end_datetime' => 'required|date|after:editableFields.start_datetime',
+            'editableFields.start_datetime' => 'nullable|date',
+            'editableFields.end_datetime' => 'nullable|date|after:editableFields.start_datetime',
             'editableFields.location' => 'nullable|string|max:255',
             'editableFields.period' => 'boolean',
         ]);
